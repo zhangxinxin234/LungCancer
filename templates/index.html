@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肺癌中医处方推荐系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>辨治非小细胞肺癌人工智能辅助诊疗系统</h1>
+            </div>
+        </header>
+
+        <main>
+            <form method="POST" action="/" class="diagnosis-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="western_diagnosis">西医诊断</label>
+                        <input type="text" id="western_diagnosis" name="western_diagnosis"
+                               placeholder="例如：左肺下叶腺癌术后4年余，放化疗后" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="current_stage">现病程阶段</label>
+                        <input type="text" id="current_stage" name="current_stage"
+                               placeholder="例如：化疗" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pathology">病理报告</label>
+                    <input type="text" id="pathology" name="pathology"
+                           placeholder="请输入完整的病理报告内容" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stage">分期</label>
+                        <input type="text" id="stage" name="stage"
+                               placeholder="例如：ⅡB" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tnm">TNM分期</label>
+                        <input type="text" id="tnm" name="tnm"
+                               placeholder="例如：T2bN1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lab_tests">实验室检查</label>
+                        <input type="text" id="lab_tests" name="lab_tests"
+                               placeholder="例如：肿标、生化检查结果" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imaging">影像学检查</label>
+                        <input type="text" id="imaging" name="imaging"
+                               placeholder="例如：CT、MRI检查结果" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="symptoms">症状</label>
+                    <input type="text" id="symptoms" name="symptoms"
+                           placeholder="请描述当前主要症状" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tongue">舌象</label>
+                        <input type="text" id="tongue" name="tongue"
+                               placeholder="例如：舌淡红苔白" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pulse">脉象</label>
+                        <input type="text" id="pulse" name="pulse"
+                               placeholder="例如：沉细" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">
+                        <span>生成处方</span>
+                    </button>
+                    <div id="loading" style="display: none;">正在生成处方，请稍候...</div>
+                </div>
+            </form>
+
+            <div class="result-section" id="result-section">
+                <div class="result-group">
+                    <label>处方</label>
+                    <div class="result-content" id="prescription-content"></div>
+                </div>
+                <div class="result-group">
+                    <label>中成药</label>
+                    <div class="result-content" id="medicine-content"></div>
+                </div>
+                <div class="result-group">
+                    <label>西医诊疗分组</label>
+                    <div class="result-content" id="clinical-cls-content"></div>
+                </div>
+                <div class="result-group">
+                    <label>西医标准诊疗方案</label>
+                    <div class="result-content markdown-content" id="clinical-path-content"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const loadingElement = document.getElementById('loading');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const resultSection = document.getElementById('result-section');
+
+            // 显示加载状态
+            if (loadingElement) {
+                loadingElement.style.display = 'block';
+                loadingElement.setAttribute('aria-busy', 'true');
+            }
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.querySelector('span').textContent = '处理中...';
+            }
+            if (resultSection) {
+                resultSection.style.display = 'none';
+            }
+
+            const formData = new FormData(this);
+            const headers = new Headers();
+            headers.append('X-Requested-With', 'XMLHttpRequest');
+
+            fetch('/', {
+                method: 'POST',
+                body: formData,
+                headers: headers
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // 更新结果内容
+                document.getElementById('prescription-content').textContent = data.prescription || '无处方信息';
+                document.getElementById('medicine-content').textContent = data.medicine || '无中成药信息';
+                document.getElementById('clinical-cls-content').textContent = data.clinical_cls || '无西医诊疗分层信息';
+
+                // 使用marked.js渲染Markdown内容
+                const clinicalPathElement = document.getElementById('clinical-path-content');
+                clinicalPathElement.innerHTML = marked.parse(data.clinical_path || '无西医标准诊疗方案');
+
+                // 显示结果区域并滚动到结果
+                resultSection.style.display = 'block';
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorElement = document.createElement('div');
+                errorElement.className = 'error-message';
+                errorElement.textContent = `错误: ${error.message}`;
+                resultSection.innerHTML = '';
+                resultSection.appendChild(errorElement);
+                resultSection.style.display = 'block';
+            })
+            .finally(() => {
+                // 重置加载状态
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                    loadingElement.setAttribute('aria-busy', 'false');
+                }
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.querySelector('span').textContent = '生成处方';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
