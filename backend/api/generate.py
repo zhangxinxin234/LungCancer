@@ -25,7 +25,7 @@ class ChatResponse(BaseModel):
     """聊天响应模型"""
     prescription: str = Field(..., description="处方内容")
     medicine: str = Field(..., description="中成药内容")
-    clinical_cls: str = Field(..., description="西医标准诊疗方案-分组信息")
+    clinical_cls: str = Field(..., description="西医标准诊疗方案-分期信息")
     clinical_path: str = Field(..., description="西医标准诊疗方案")
 
 @router.post("/", response_model=ChatResponse, summary="处方推荐接口", description="根据患者信息生成中医处方、中成药推荐和西医标准诊疗方案")
@@ -51,7 +51,7 @@ async def chat(
             prescription=result.get("prescription", "无处方信息"),
             medicine=result.get("medicine", "无中成药信息"),
             clinical_path=result.get("clinical_path", "无西医标准诊疗方案"),
-            clinical_cls=result.get("clinical_cls", "无西医诊疗分组信息"),
+            clinical_cls=result.get("clinical_cls", "无西医诊疗分期信息"),
         )
 
     except Exception as e:
