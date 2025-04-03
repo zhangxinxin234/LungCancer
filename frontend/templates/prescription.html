@@ -193,6 +193,35 @@
                 padding: 1rem;
             }
         }
+
+        .csco-table {
+            margin: 1rem 0;
+        }
+        
+        .csco-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            font-size: 0.95rem;
+        }
+        
+        .csco-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .csco-table td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            line-height: 1.5;
+        }
+        
+        .csco-table tr:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 <body>
@@ -263,10 +292,35 @@
                             </div>
                         </div>
 
-                        <div class="prescription-section">
-                            <h5 class="prescription-title">CSCO指南</h5>
-                            <div class="prescription-content" id="cscoGuidelines">
-                                <!-- CSCO指南将通过JavaScript动态填充 -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">CSCO指南</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="csco-table">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>分期</th>
+                                                <th>治疗方案</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>IIA期</td>
+                                                <td>手术切除</td>
+                                            </tr>
+                                            <tr>
+                                                <td>IIB期</td>
+                                                <td>手术切除+辅助化疗</td>
+                                            </tr>
+                                            <tr>
+                                                <td>IIIA期</td>
+                                                <td>新辅助化疗+手术切除</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
