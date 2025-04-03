@@ -14,10 +14,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentPatientId = patientId;
         updateNavigationLinks(patientId);
         await loadPatientPrescription(patientId);
-        await loadLatestRepairRule(patientId); // 加载最新的修复规则
+        await loadLatestRepairRule(patientId);
     }
-    await getPatients();
+    await getPatients(); // 确保在页面加载时获取患者列表
 });
+
+// 获取患者列表
+async function getPatients() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients`, {
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error('获取患者列表失败');
+        }
+
+        const data = await response.json();
+        // 确保data是数组
+        const patients = Array.isArray(data) ? data : [];
+        displayPatients(patients);
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        alert('获取患者列表失败：' + error.message);
+    }
+}
+
+// 显示患者列表
+function displayPatients(patients) {
+    const patientList = document.getElementById('patientList');
+    if (!patientList) return; // 确保元素存在
+    patientList.innerHTML = '';
+    
+    if (!currentPatientId) return; // 如果没有当前患者ID，不显示任何内容
+    
+    // 只显示当前患者
+    const currentPatient = patients.find(p => String(p.id) === String(currentPatientId));
+    if (!currentPatient) return;
+
+    const patientItem = document.createElement('div');
+    patientItem.className = 'card mb-2';
+    patientItem.innerHTML = `
+        <div class="card-body">
+            <h6 class="card-title">患者ID: ${currentPatient.id}</h6>
+            <p class="card-text">${currentPatient.diagnosis || '暂无诊断'}</p>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-primary" onclick="selectPatient(${currentPatient.id})">查看</button>
+            </div>
+        </div>
+    `;
+    patientList.appendChild(patientItem);
+}
 
 // 更新导航链接
 function updateNavigationLinks(patientId) {
@@ -55,7 +105,6 @@ async function loadPatientPrescription(patientId) {
         // 如果有修复后的处方和中成药，也显示出来
         document.getElementById('repairedPrescription').textContent = patient.prescription_repair || '';
         document.getElementById('repairedMedicine').textContent = patient.medicine_repair || '';
-        document.getElementById('repairRules').value = patient.repair_rules || '';
         
         // 清空修复建议，除非是刚加载的修复后的处方
         if (!patient.prescription_repair) {
@@ -67,88 +116,6 @@ async function loadPatientPrescription(patientId) {
     }
 }
 
-// 获取患者列表
-async function getPatients() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/patients`, {
-            headers: {
-                'Accept': 'application/json'
-            },
-            credentials: 'include'
-        });
-        
-        if (!response.ok) {
-            throw new Error('获取患者列表失败');
-        }
-
-        const patients = await response.json();
-        displayPatients(patients);
-    } catch (error) {
-        console.error('Error fetching patients:', error);
-        alert('获取患者列表失败：' + error.message);
-    }
-}
-
-// 显示患者列表
-function displayPatients(patients) {
-    const patientList = document.getElementById('patientList');
-    patientList.innerHTML = '';
-    
-    patients.sort((a, b) => b.id - a.id);
-    
-    patients.forEach(patient => {
-        const patientItem = document.createElement('div');
-        patientItem.className = 'card mb-2';
-        const isActive = patient.id === currentPatientId;
-        patientItem.innerHTML = `
-            <div class="card-body ${isActive ? 'bg-light' : ''}">
-                <h6 class="card-title">患者ID: ${patient.id}</h6>
-                <p class="card-text">${patient.diagnosis || '暂无诊断'}</p>
-                <div class="btn-group">
-                    <button class="btn btn-sm ${isActive ? 'btn-secondary' : 'btn-primary'}" onclick="selectPatient(${patient.id})">查看</button>
-                    <button class="btn btn-sm btn-danger ms-2" onclick="deletePatient(${patient.id})">删除</button>
-                </div>
-            </div>
-        `;
-        patientList.appendChild(patientItem);
-    });
-}
-
-// 选择患者
-async function selectPatient(patientId) {
-    currentPatientId = patientId;
-    updateNavigationLinks(patientId);
-    await loadPatientPrescription(patientId);
-    await loadLatestRepairRule(patientId); // 加载最新的修复规则
-    // 更新URL，但不刷新页面
-    window.history.pushState({}, '', `/repair?patient_id=${patientId}`);
-    // 重新渲染患者列表以更新选中状态
-    await getPatients();
-}
-
-// 删除患者
-async function deletePatient(patientId) {
-    if (!confirm('确定要删除这个患者吗？此操作不可恢复。')) {
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
-            method: 'DELETE'
-        });
-        
-        if (response.ok) {
-            alert('患者删除成功');
-            getPatients();
-        } else {
-            alert('删除失败');
-        }
-    } catch (error) {
-        console.error('Error deleting patient:', error);
-        alert('删除失败');
-    }
-}
-
 // 修复处方
 async function repairPrescription() {
     if (!currentPatientId) {
@@ -157,6 +124,10 @@ async function repairPrescription() {
     }
 
     const rules = document.getElementById('repairRules').value;
+    if (!rules.trim()) {
+        alert('请输入修复规则');
+        return;
+    }
 
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/repair-prescription`, {
@@ -270,6 +241,40 @@ async function saveRepairRule() {
     } catch (error) {
         console.error('Error saving repair rule:', error);
         alert('保存失败：' + error.message);
+    }
+}
+
+// 选择患者
+async function selectPatient(patientId) {
+    currentPatientId = patientId;
+    updateNavigationLinks(patientId);
+    await loadPatientPrescription(patientId);
+    await loadLatestRepairRule(patientId);
+    // 更新URL，但不刷新页面
+    window.history.pushState({}, '', `/repair?patient_id=${patientId}`);
+    await getPatients(); // 刷新患者列表以反映当前选择
+}
+
+// 删除患者
+async function deletePatient(patientId) {
+    if (!confirm('确定要删除这个患者吗？此操作不可恢复。')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            alert('患者删除成功');
+            getPatients();
+        } else {
+            alert('删除失败');
+        }
+    } catch (error) {
+        console.error('Error deleting patient:', error);
+        alert('删除失败');
     }
 }
 

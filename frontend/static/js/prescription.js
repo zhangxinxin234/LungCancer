@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await generatePrescription(patientId);
         }
     }
+    await getPatients(); // 确保在页面加载时获取患者列表
 });
 
 // 更新导航链接
@@ -60,36 +61,43 @@ async function loadExistingPrescription(patientId) {
 async function getPatients() {
     try {
         const response = await fetch(`${API_BASE_URL}/patients`);
-        const patients = await response.json();
+        if (!response.ok) {
+            throw new Error('获取患者列表失败');
+        }
+        const data = await response.json();
+        // 确保data是数组
+        const patients = Array.isArray(data) ? data : [];
         displayPatients(patients);
     } catch (error) {
         console.error('Error fetching patients:', error);
+        alert('获取患者列表失败：' + error.message);
     }
 }
 
 // 显示患者列表
 function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
+    if (!patientList) return; // 确保元素存在
     patientList.innerHTML = '';
     
-    // 按ID倒序排序（假设ID越大表示创建时间越新）
-    patients.sort((a, b) => b.id - a.id);
+    if (!currentPatientId) return; // 如果没有当前患者ID，不显示任何内容
     
-    patients.forEach(patient => {
-        const patientItem = document.createElement('div');
-        patientItem.className = 'card mb-2';
-        patientItem.innerHTML = `
-            <div class="card-body">
-                <h6 class="card-title">患者ID: ${patient.id}</h6>
-                <p class="card-text">${patient.diagnosis || '暂无诊断'}</p>
-                <div class="btn-group">
-                    <button class="btn btn-sm btn-primary" onclick="generatePrescription(${patient.id})">生成处方</button>
-                    <button class="btn btn-sm btn-danger ms-2" onclick="deletePatient(${patient.id})">删除</button>
-                </div>
+    // 只显示当前患者
+    const currentPatient = patients.find(p => String(p.id) === String(currentPatientId));
+    if (!currentPatient) return;
+
+    const patientItem = document.createElement('div');
+    patientItem.className = 'card mb-2';
+    patientItem.innerHTML = `
+        <div class="card-body">
+            <h6 class="card-title">患者ID: ${currentPatient.id}</h6>
+            <p class="card-text">${currentPatient.diagnosis || '暂无诊断'}</p>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-primary" onclick="loadPatientPrescription(${currentPatient.id})">查看</button>
             </div>
-        `;
-        patientList.appendChild(patientItem);
-    });
+        </div>
+    `;
+    patientList.appendChild(patientItem);
 }
 
 // 删除患者
@@ -162,5 +170,15 @@ async function savePrescription() {
     }
 }
 
-// 页面加载时获取患者列表
-document.addEventListener('DOMContentLoaded', getPatients); 
+// 加载患者处方
+async function loadPatientPrescription(patientId) {
+    try {
+        currentPatientId = patientId; // 设置当前患者ID
+        updateNavigationLinks(patientId);
+        await loadExistingPrescription(patientId);
+        await getPatients(); // 刷新患者列表以反映当前选择
+    } catch (error) {
+        console.error('Error loading patient prescription:', error);
+        alert('加载处方失败');
+    }
+} 
