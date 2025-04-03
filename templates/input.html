@@ -201,6 +201,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // 检查是否有保存的结果页面
+        const savedResultPage = sessionStorage.getItem('resultPage');
+        const formSubmitted = sessionStorage.getItem('formSubmitted');
+
+        // 如果页面加载时有上次提交的表单和结果页面，添加"返回结果"按钮
+        if (savedResultPage && formSubmitted === 'true') {
+            const formContainer = document.querySelector('.text-center');
+            const backButton = document.createElement('button');
+            backButton.type = 'button';
+            backButton.className = 'btn btn-outline-primary ms-2';
+            backButton.textContent = '返回上次结果';
+            backButton.addEventListener('click', function() {
+                const newDoc = document.open('text/html', 'replace');
+                newDoc.write(savedResultPage);
+                newDoc.close();
+            });
+            formContainer.appendChild(backButton);
+        }
+
         document.querySelector('form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
@@ -216,6 +235,10 @@
 
                 // 直接获取响应文本，而不是尝试解析 JSON
                 const result = await response.text();
+
+                // 保存表单数据和结果页面到 sessionStorage
+                sessionStorage.setItem('formSubmitted', 'true');
+                sessionStorage.setItem('resultPage', result);
 
                 // 创建一个新的 HTML 文档来显示结果
                 const newDoc = document.open('text/html', 'replace');

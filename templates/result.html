@@ -6,31 +6,124 @@
     <title>肺癌中医处方推荐系统 - 结果</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 0;
+            font-family: 'Noto Sans SC', sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .logo h1 {
+            color: #2a5298;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .result-section {
+            margin-top: 2rem;
+        }
+        .result-group {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .result-content {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        }
+        .result-group label {
+            color: #2a5298;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .result-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+        .button {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .button.primary {
+            background: #2a5298;
+            color: #fff;
+            border: none;
+        }
+        .button.secondary {
+            background: #fff;
+            color: #2a5298;
+            border: 1px solid #2a5298;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid #e0e6ed;
+        }
+        th {
+            background: #f8f9fa;
+            color: #2a5298;
+            font-weight: 500;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <h1>辨治非小细胞肺癌人工智能辅助诊疗系统</h1>
+                <h1>林洪生教授</h1>
+                <h2>辨治非小细胞肺癌人工智能辅助诊疗系统</h2>
             </div>
             <nav class="page-nav">
                 <div class="nav-item">
-                    <a href="/">1. 患者信息输入</a>
+                    <a href="javascript:void(0)" onclick="goBack()">1. 患者信息输入</a>
                 </div>
                 <div class="nav-item active">2. 诊疗方案推荐</div>
             </nav>
+            <script>
+                function goBack() {
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.href = '/';
+                    }
+                }
+            </script>
         </header>
 
         <main>
-            <div class="patient-summary">
-                <h2>患者信息摘要</h2>
-                <div class="summary-content">
-                    <p><strong>西医诊断:</strong> {{ western_diagnosis }}</p>
-                    <p><strong>现病程阶段:</strong> {{ current_stage }}</p>
-                    <p><strong>分期:</strong> {{ stage }} ({{ tnm }})</p>
-                </div>
-            </div>
-
             <div class="result-section">
                 <div class="result-group">
                     <label>处方</label>

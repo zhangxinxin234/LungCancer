@@ -101,13 +101,13 @@ def data_loader_fun(raw_data_path, colletion_type):
 
             doc_content = [{doc_query: document_infos.get("分层内容", "")}]
 
-            if doc_refer_id:
-                doc_content = [{doc_query: document_infos.get("分层内容", "")}]
-                for refer_id in doc_refer_id.split("，"):
-                    if all_data_dict[refer_id].get("参考id", ""):
-                        print("参考id:", all_data_dict[refer_id].get("参考id", ""))
-
-                    doc_content.append({all_data_dict[refer_id].get("分期", ""): all_data_dict[refer_id].get("分层内容", "")})
+            # if doc_refer_id:
+            #     doc_content = [{doc_query: document_infos.get("分层内容", "")}]
+            #     for refer_id in doc_refer_id.split("，"):
+            #         if all_data_dict[refer_id].get("参考id", ""):
+            #             print("参考id:", all_data_dict[refer_id].get("参考id", ""))
+            #
+            #         doc_content.append({all_data_dict[refer_id].get("分期", ""): all_data_dict[refer_id].get("分层内容", "")})
 
             doc_content = format_content(doc_content)
             print(doc_content)

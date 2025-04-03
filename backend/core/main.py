@@ -54,15 +54,19 @@ async def generate_prescription_and_cmedcine(patient_text:str):
     print(f"处方  pred: {prescription_text}")
     print(f"中成药 pred: {medicine_text}")
 
-    return pred_str, prescription_text, medicine_text
+    return prescription_text, medicine_text
 
 
-async def system_repair(patient_text: str, model_output: str, rules_text: str=None):
+async def system_repair(patient_text: str, pred_prescription: str, pred_medicine: str, rules_text: str=None):
     system= """你是一名资深的中医药智能诊疗助手，擅长根据非小细胞肺癌患者的病情信息与中医药治疗经验，对模型初步生成的中医处方和中成药推荐结果进行修复和优化。只返回修复后的中医处方和中成药推荐，不返回任何解释。"""
 
     # 1. 模型初步输出
     model_text = f"""【系统初步推荐】
-{model_output}"""
+1. 中医处方：
+{pred_prescription}
+
+2. 中成药推荐：
+{pred_medicine}"""
 
     # 2. 修复规则
     if rules_text is None:
@@ -238,12 +242,12 @@ async def main(patient_info:dict, use_repair:bool=False, rules_text:str=None):
     patient_str = get_patient_info(patient_info)
 
     # 2. 生成处方和中成药
-    pred_str, prescription_text, medicine_text = await generate_prescription_and_cmedcine(patient_str)
+    prescription_text, medicine_text = await generate_prescription_and_cmedcine(patient_str)
 
     # 3. 修复生成的处方和中成药
     if use_repair:
         pred_str, prescription_text, medicine_text = await system_repair(
-            patient_str, pred_str, rules_text=rules_text
+            patient_str, pred_prescription=prescription_text, pred_medicine=medicine_text, rules_text=rules_text
         )
 
     # 4. 生成临床路径

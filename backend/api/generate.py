@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-from core.main import main
+from core.main import main, system_repair
 
 
 class ChatRequest(BaseModel):
