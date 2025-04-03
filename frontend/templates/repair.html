@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>处方修复 - 肺癌中医诊疗智能辅助系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .prescription-content {
+            white-space: pre-line;
+            font-family: "SimSun", serif;
+            line-height: 2;
+            min-height: 100px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">肺癌中医诊疗智能辅助系统</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/patient_info" id="patientInfoLink">患者信息</a>
+                <a class="nav-link" href="/prescription" id="prescriptionLink">处方生成</a>
+                <a class="nav-link active" href="/repair" id="repairLink">处方修复</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">患者列表</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="patientList"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">处方修复</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6>处方</h6>
+                                    <div id="originalPrescription" class="prescription-content"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>处方修复</h6>
+                                    <div id="repairedPrescription" class="prescription-content"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>中成药</h6>
+                                    <div id="originalMedicine" class="prescription-content"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>中成药修复</h6>
+                                    <div id="repairedMedicine" class="prescription-content"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6>修复建议</h6>
+                                    <textarea id="repairRules" class="form-control" rows="15" placeholder="请输入处方和中成药的修复建议..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-warning" onclick="repairPrescription()">修复</button>
+                            <button class="btn btn-success ms-2" onclick="adoptRepair()">采纳</button>
+                            <button class="btn btn-secondary ms-2" onclick="window.location.href='/prescription'">返回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/repair.js') }}"></script>
+</body>
+</html> 
