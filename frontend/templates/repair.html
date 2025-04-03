@@ -68,9 +68,12 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <h6>修复建议</h6>
-                                    <textarea id="repairRules" class="form-control" rows="15" placeholder="请输入处方和中成药的修复建议..."></textarea>
+                                <div class="form-group">
+                                    <label for="repairRules">修复建议</label>
+                                    <textarea class="form-control" id="repairRules" rows="10"></textarea>
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-primary" onclick="saveRepairRule()">保存规则</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

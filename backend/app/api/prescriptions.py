@@ -86,4 +86,36 @@ async def adopt_repair(
         "message": "Repair adopted successfully",
         "prescription": patient.prescription,
         "medicine": patient.chinese_medicine
-    } 
+    }
+
+@router.get("/patients/{patient_id}/latest-repair-rule")
+async def get_latest_repair_rule(
+    patient_id: int,
+    db: Session = Depends(get_db)
+):
+    # 获取该患者最新的修复规则
+    latest_rule = db.query(RepairRule)\
+        .filter(RepairRule.patient_id == patient_id)\
+        .order_by(RepairRule.id.desc())\
+        .first()
+    
+    if not latest_rule:
+        return {"rule_content": ""}
+    
+    return {"rule_content": latest_rule.rule_content}
+
+@router.post("/patients/{patient_id}/save-repair-rule")
+async def save_repair_rule(
+    patient_id: int,
+    repair_request: RepairRequest,
+    db: Session = Depends(get_db)
+):
+    # 创建新的修复规则
+    repair_rule = RepairRule(
+        patient_id=patient_id,
+        rule_content=repair_request.rule_content
+    )
+    db.add(repair_rule)
+    db.commit()
+    
+    return {"message": "Repair rule saved successfully"} 

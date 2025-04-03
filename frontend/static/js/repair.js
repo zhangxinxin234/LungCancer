@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentPatientId = patientId;
         updateNavigationLinks(patientId);
         await loadPatientPrescription(patientId);
+        await loadLatestRepairRule(patientId); // 加载最新的修复规则
     }
     await getPatients();
 });
@@ -118,6 +119,7 @@ async function selectPatient(patientId) {
     currentPatientId = patientId;
     updateNavigationLinks(patientId);
     await loadPatientPrescription(patientId);
+    await loadLatestRepairRule(patientId); // 加载最新的修复规则
     // 更新URL，但不刷新页面
     window.history.pushState({}, '', `/repair?patient_id=${patientId}`);
     // 重新渲染患者列表以更新选中状态
@@ -210,5 +212,63 @@ async function adoptRepair() {
     } catch (error) {
         console.error('Error adopting repair:', error);
         alert('采纳失败：' + error.message);
+    }
+}
+
+// 加载最新的修复规则
+async function loadLatestRepairRule(patientId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/latest-repair-rule`, {
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error('加载修复规则失败');
+        }
+
+        const result = await response.json();
+        document.getElementById('repairRules').value = result.rule_content;
+    } catch (error) {
+        console.error('Error loading repair rule:', error);
+        alert('加载修复规则失败：' + error.message);
+    }
+}
+
+// 保存修复规则
+async function saveRepairRule() {
+    if (!currentPatientId) {
+        alert('请先选择一个患者');
+        return;
+    }
+
+    const rules = document.getElementById('repairRules').value;
+    if (!rules.trim()) {
+        alert('请输入修复规则');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-repair-rule`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ rule_content: rules })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || '保存失败');
+        }
+
+        alert('修复规则保存成功');
+    } catch (error) {
+        console.error('Error saving repair rule:', error);
+        alert('保存失败：' + error.message);
     }
 } 
