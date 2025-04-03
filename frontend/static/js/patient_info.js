@@ -30,31 +30,48 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function getPatients() {
     try {
         const response = await fetch(`${API_BASE_URL}/patients`);
+        if (!response.ok) {
+            throw new Error('获取患者列表失败');
+        }
         const patients = await response.json();
         displayPatients(patients);
     } catch (error) {
         console.error('Error fetching patients:', error);
+        alert('获取患者列表失败');
     }
 }
 
 // 显示患者列表
 function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
+    if (!patientList) return;
+    
     patientList.innerHTML = '';
+    
+    if (!Array.isArray(patients)) {
+        console.error('Invalid patients data:', patients);
+        return;
+    }
     
     // 按ID倒序排序（假设ID越大表示创建时间越新）
     patients.sort((a, b) => b.id - a.id);
     
     patients.forEach(patient => {
         const patientItem = document.createElement('div');
-        patientItem.className = 'card mb-2';
+        patientItem.className = `patient-item ${patient.id === currentPatientId ? 'active' : ''}`;
         patientItem.innerHTML = `
-            <div class="card-body">
-                <h6 class="card-title">患者ID: ${patient.id}</h6>
-                <p class="card-text">${patient.diagnosis || '暂无诊断'}</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>患者 #${patient.id}</strong>
+                    <div class="text-muted small">${patient.diagnosis || '暂无诊断'}</div>
+                </div>
                 <div class="btn-group">
-                    <button class="btn btn-sm btn-primary" onclick="loadPatientInfo(${patient.id})">查看</button>
-                    <button class="btn btn-sm btn-danger ms-2" onclick="deletePatient(${patient.id})">删除</button>
+                    <button class="btn btn-sm btn-primary" onclick="loadPatientInfo(${patient.id})">
+                        <i class="bx bx-show"></i> 查看
+                    </button>
+                    <button class="btn btn-sm btn-danger ms-2" onclick="deletePatient(${patient.id})">
+                        <i class="bx bx-trash"></i>
+                    </button>
                 </div>
             </div>
         `;
@@ -75,6 +92,9 @@ async function deletePatient(patientId) {
         
         if (response.ok) {
             alert('患者删除成功');
+            if (currentPatientId === patientId) {
+                createNewPatient();
+            }
             getPatients(); // 刷新患者列表
         } else {
             alert('删除失败');
@@ -95,6 +115,10 @@ function updateNavigationLinks(patientId) {
         prescriptionLink.href = `/prescription?patient_id=${patientId}`;
         repairLink.href = `/repair?patient_id=${patientId}`;
         patientInfoLink.href = `/patient_info?patient_id=${patientId}`;
+    } else {
+        prescriptionLink.href = '/prescription';
+        repairLink.href = '/repair';
+        patientInfoLink.href = '/patient_info';
     }
 }
 
@@ -102,10 +126,17 @@ function updateNavigationLinks(patientId) {
 async function loadPatientInfo(patientId) {
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
+        if (!response.ok) {
+            throw new Error('获取患者信息失败');
+        }
         const patient = await response.json();
         currentPatientId = patientId; // 设置当前患者ID
         fillPatientForm(patient);
         updateNavigationLinks(patientId);
+        // 更新URL
+        window.history.pushState({}, '', `/patient_info?patient_id=${patientId}`);
+        // 刷新患者列表以更新选中状态
+        await getPatients();
     } catch (error) {
         console.error('Error loading patient info:', error);
         alert('加载患者信息失败');
@@ -114,60 +145,52 @@ async function loadPatientInfo(patientId) {
 
 // 填充患者表单
 function fillPatientForm(patient) {
-    const form = document.getElementById('patientForm');
-    form.elements['diagnosis'].value = patient.diagnosis || '';
-    form.elements['disease_stage'].value = patient.disease_stage || '';
-    form.elements['pathology_report'].value = patient.pathology_report || '';
-    form.elements['staging'].value = patient.staging || '';
-    form.elements['tnm_staging'].value = patient.tnm_staging || '';
-    form.elements['lab_tests'].value = patient.lab_tests || '';
-    form.elements['imaging_report'].value = patient.imaging_report || '';
-    form.elements['symptoms'].value = patient.symptoms || '';
-    form.elements['tongue'].value = patient.tongue || '';
-    form.elements['pulse'].value = patient.pulse || '';
-}
-
-// 生成处方
-function generatePrescription() {
-    if (!currentPatientId) {
-        alert('请先保存患者信息');
-        return;
-    }
-    // 跳转到处方生成页面，并传递生成标志
-    window.location.href = `/prescription?patient_id=${currentPatientId}&generate=true`;
+    // 基本信息
+    document.getElementById('diagnosis').value = patient.diagnosis || '';
+    document.getElementById('diseaseStage').value = patient.disease_stage || '';
+    document.getElementById('pathologyReport').value = patient.pathology_report || '';
+    document.getElementById('staging').value = patient.staging || '';
+    document.getElementById('tnmStaging').value = patient.tnm_staging || '';
+    document.getElementById('labTests').value = patient.lab_tests || '';
+    document.getElementById('imagingReport').value = patient.imaging_report || '';
+    document.getElementById('symptoms').value = patient.symptoms || '';
+    document.getElementById('tongue').value = patient.tongue || '';
+    document.getElementById('pulse').value = patient.pulse || '';
 }
 
 // 新建患者
 function createNewPatient() {
     // 清空表单
-    document.getElementById('patientForm').reset();
+    const form = document.getElementById('patientForm');
+    if (form) {
+        form.reset();
+    }
     // 清除当前患者ID
     currentPatientId = null;
     // 更新URL，移除patient_id参数
     window.history.pushState({}, '', '/patient_info');
     // 更新导航链接
     updateNavigationLinks(null);
+    // 刷新患者列表以更新选中状态
+    getPatients();
 }
 
 // 保存患者信息
 async function savePatient() {
-    const form = document.getElementById('patientForm');
     const patientData = {
-        diagnosis: form.elements['diagnosis'].value,
-        disease_stage: form.elements['disease_stage'].value,
-        pathology_report: form.elements['pathology_report'].value,
-        staging: form.elements['staging'].value,
-        tnm_staging: form.elements['tnm_staging'].value,
-        lab_tests: form.elements['lab_tests'].value,
-        imaging_report: form.elements['imaging_report'].value,
-        symptoms: form.elements['symptoms'].value,
-        tongue: form.elements['tongue'].value,
-        pulse: form.elements['pulse'].value
+        diagnosis: document.getElementById('diagnosis').value,
+        disease_stage: document.getElementById('diseaseStage').value,
+        pathology_report: document.getElementById('pathologyReport').value,
+        staging: document.getElementById('staging').value,
+        tnm_staging: document.getElementById('tnmStaging').value,
+        lab_tests: document.getElementById('labTests').value,
+        imaging_report: document.getElementById('imagingReport').value,
+        symptoms: document.getElementById('symptoms').value,
+        tongue: document.getElementById('tongue').value,
+        pulse: document.getElementById('pulse').value
     };
 
     try {
-        console.log('Saving patient data:', patientData);
-        
         let url = `${API_BASE_URL}/patients`;
         let method = 'POST';
         
@@ -183,32 +206,101 @@ async function savePatient() {
             },
             body: JSON.stringify(patientData)
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Server error:', errorData);
-            throw new Error(errorData.detail || '保存失败');
-        }
-
-        const result = await response.json();
-        console.log('Save result:', result);
         
-        // 如果是新建患者，设置当前患者ID
-        if (!currentPatientId) {
-            currentPatientId = result.id;
-            // 更新URL
-            window.history.pushState({}, '', `/patient_info?patient_id=${currentPatientId}`);
-            // 更新导航链接
-            updateNavigationLinks(currentPatientId);
+        if (response.ok) {
+            const savedPatient = await response.json();
+            alert('保存成功');
+            
+            if (!currentPatientId) {
+                // 如果是新建患者，保存后跳转到该患者的页面
+                window.location.href = `/patient_info?patient_id=${savedPatient.id}`;
+            } else {
+                // 如果是更新患者，刷新患者列表
+                await getPatients();
+            }
+        } else {
+            throw new Error('保存失败');
         }
-        
-        alert('保存成功');
-        getPatients(); // 刷新患者列表
     } catch (error) {
         console.error('Error saving patient:', error);
-        alert('保存失败：' + error.message);
+        alert('保存失败');
+    }
+}
+
+// 生成处方
+async function generatePrescription() {
+    if (!currentPatientId) {
+        alert('请先保存患者信息');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            // 直接跳转到处方页面
+            window.location.href = `/prescription?patient_id=${currentPatientId}`;
+        } else {
+            throw new Error('处方生成失败');
+        }
+    } catch (error) {
+        console.error('Error generating prescription:', error);
+        alert('处方生成失败');
     }
 }
 
 // 页面加载时获取患者列表
-document.addEventListener('DOMContentLoaded', getPatients); 
+document.addEventListener('DOMContentLoaded', getPatients);
+
+function displayPatientInfo(patient) {
+    document.getElementById('diagnosis').value = patient.diagnosis || '';
+    document.getElementById('disease_stage').value = patient.disease_stage || '';
+    document.getElementById('pathology_report').value = patient.pathology_report || '';
+    document.getElementById('staging').value = patient.staging || '';
+    document.getElementById('tnm_staging').value = patient.tnm_staging || '';
+    document.getElementById('lab_tests').value = patient.lab_tests || '';
+    document.getElementById('imaging_report').value = patient.imaging_report || '';
+    document.getElementById('symptoms').value = patient.symptoms || '';
+    document.getElementById('tongue').value = patient.tongue || '';
+    document.getElementById('pulse').value = patient.pulse || '';
+}
+
+function displayPatientCard(patient) {
+    const patientInfo = document.getElementById('patientInfo');
+    if (!patientInfo) return;
+
+    patientInfo.innerHTML = `
+        <div class="patient-info-card">
+            <h4>患者编号：#${patient.id}</h4>
+            <div class="info-section">
+                <p><strong>西医诊断：</strong>${patient.diagnosis || '暂无'}</p>
+                <p><strong>现病程阶段：</strong>${patient.disease_stage || '暂无'}</p>
+            </div>
+            <div class="info-section">
+                <p><strong>病理报告：</strong>${patient.pathology_report || '暂无'}</p>
+                <p><strong>分期：</strong>${patient.staging || '暂无'}</p>
+                <p><strong>TNM分期：</strong>${patient.tnm_staging || '暂无'}</p>
+            </div>
+            <div class="info-section">
+                <p><strong>实验室检查：</strong>${patient.lab_tests || '暂无'}</p>
+                <p><strong>影像学报告：</strong>${patient.imaging_report || '暂无'}</p>
+            </div>
+            <div class="info-section">
+                <p><strong>症状：</strong>${patient.symptoms || '暂无'}</p>
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>舌苔：</strong>${patient.tongue || '暂无'}</p>
+                    </div>
+                    <div class="col-6">
+                        <p><strong>脉象：</strong>${patient.pulse || '暂无'}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+} 

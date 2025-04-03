@@ -5,72 +5,286 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>处方生成 - 肺癌中医诊疗智能辅助系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --secondary-color: #4299e1;
+            --accent-color: #63b3ed;
+            --background-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .prescription-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .prescription-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
         .prescription-content {
-            white-space: pre-line;
-            font-family: "SimSun", serif;
-            line-height: 2;
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
-        .medicine-content {
-            white-space: pre-line;
-            font-family: "SimSun", serif;
-            line-height: 2;
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .btn-success:hover {
+            background-color: #38a169;
+            border-color: #38a169;
+        }
+
+        .medical-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .patient-info {
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .patient-info p {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .patient-info strong {
+            color: var(--primary-color);
+        }
+
+        .guideline-section {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .guideline-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
         .guideline-content {
-            white-space: pre-line;
-            font-family: "SimSun", serif;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .patient-info-column {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            max-width: 400px;
+        }
+
+        .patient-info-column p {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .patient-info-column p:last-child {
+            border-bottom: none;
+        }
+
+        .patient-info-column strong {
+            color: #2c5282;
+            min-width: 100px;
+            display: inline-block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .prescription-section {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">肺癌中医诊疗智能辅助系统</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="/patient_info" id="patientInfoLink">患者信息</a>
-                <a class="nav-link active" href="/prescription" id="prescriptionLink">处方生成</a>
-                <a class="nav-link" href="/repair" id="repairLink">处方修复</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class='bx bx-plus-medical medical-icon'></i>肺癌中医诊疗智能辅助系统</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" id="patientInfoLink" href="/patient_info"><i class='bx bx-user medical-icon'></i>患者信息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-notepad medical-icon'></i>处方生成</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container">
         <div class="row">
+            <!-- 左侧患者信息 -->
             <div class="col-md-4">
-                <div class="card">
+                <div class="card sticky-top" style="top: 20px;">
                     <div class="card-header">
-                        <h5 class="card-title">患者列表</h5>
+                        <i class='bx bx-user medical-icon'></i>患者信息
                     </div>
                     <div class="card-body">
-                        <div id="patientList"></div>
+                        <div class="patient-info" id="patientInfo">
+                            <!-- 患者信息将通过JavaScript动态填充 -->
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 右侧处方生成 -->
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">处方信息</h5>
+                        <i class='bx bx-notepad medical-icon'></i>处方生成
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <h6>西医诊疗分期</h6>
-                            <p id="westernTreatmentStage" class="prescription-content"></p>
+                        <div class="prescription-section">
+                            <h5 class="prescription-title">西医治疗阶段</h5>
+                            <div class="prescription-content" id="treatmentStage">
+                                <!-- 西医治疗阶段将通过JavaScript动态填充 -->
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <h6>CSCO指南</h6>
-                            <div id="cscoGuideline" class="guideline-content"></div>
+
+                        <div class="prescription-section">
+                            <h5 class="prescription-title">CSCO指南</h5>
+                            <div class="prescription-content" id="cscoGuidelines">
+                                <!-- CSCO指南将通过JavaScript动态填充 -->
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <h6>处方</h6>
-                            <p id="prescription" class="prescription-content"></p>
+
+                        <div class="prescription-section">
+                            <h5 class="prescription-title">中医处方</h5>
+                            <div class="prescription-content" id="prescription">
+                                <!-- 中医处方将通过JavaScript动态填充 -->
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <h6>中成药</h6>
-                            <p id="medicine" class="medicine-content"></p>
+
+                        <div class="prescription-section">
+                            <h5 class="prescription-title">推荐中成药</h5>
+                            <div class="prescription-content" id="medicine">
+                                <!-- 推荐中成药将通过JavaScript动态填充 -->
+                            </div>
                         </div>
-                        <button class="btn btn-primary" onclick="savePrescription()">保存处方</button>
-                        <button class="btn btn-warning ms-2" onclick="window.location.href='/repair'">修复处方</button>
-                        <button class="btn btn-secondary ms-2" onclick="window.location.href='/patient_info'">返回</button>
+
+                        <div class="text-center mt-4">
+                            <div class="btn-group">
+                                <button class="btn btn-secondary" onclick="goBack()">
+                                    <i class='bx bx-arrow-back'></i> 返回
+                                </button>
+                                <button class="btn btn-primary" onclick="generatePrescription()">
+                                    <i class='bx bx-refresh'></i> 重新生成
+                                </button>
+                                <button class="btn btn-success" onclick="savePrescription()">
+                                    <i class='bx bx-save'></i> 保存处方
+                                </button>
+                                <button class="btn btn-info" onclick="goToRepair()">
+                                    <i class='bx bx-edit'></i> 处方修复
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,6 +292,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/prescription.js') }}"></script>
+    <script src="/static/js/prescription.js"></script>
 </body>
 </html> 

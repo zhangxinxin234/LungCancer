@@ -1,85 +1,351 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>患者信息 - 肺癌中医诊疗智能辅助系统</title>
+    <title>肺癌中医诊疗智能辅助系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --secondary-color: #4299e1;
+            --accent-color: #63b3ed;
+            --background-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .btn-success:hover {
+            background-color: #38a169;
+            border-color: #38a169;
+        }
+
+        .btn-warning {
+            background-color: #ecc94b;
+            border-color: #ecc94b;
+            color: #744210;
+        }
+
+        .btn-warning:hover {
+            background-color: #d69e2e;
+            border-color: #d69e2e;
+        }
+
+        .btn-danger {
+            background-color: #f56565;
+            border-color: #f56565;
+        }
+
+        .btn-danger:hover {
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        .patient-list {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .patient-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .patient-item:last-child {
+            border-bottom: none;
+        }
+
+        .patient-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* 医疗相关图标样式 */
+        .medical-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-section .row {
+            margin: 0;
+            align-items: center;
+        }
+
+        .info-section .col-6 {
+            padding: 0.5rem;
+        }
+
+        .info-section .col-6 p {
+            margin: 0;
+            padding: 0.5rem;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-section strong {
+            color: #2c5282;
+            min-width: 80px;
+            display: inline-block;
+        }
+
+        .section-title {
+            color: #2c5282;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #4299e1;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">肺癌中医诊疗智能辅助系统</a>
-            <div class="navbar-nav">
-                <a class="nav-link active" href="/patient_info" id="patientInfoLink">患者信息</a>
-                <a class="nav-link" href="/prescription" id="prescriptionLink">处方生成</a>
-                <a class="nav-link" href="/repair" id="repairLink">处方修复</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class='bx bx-plus-medical medical-icon'></i>肺癌中医诊疗智能辅助系统</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" id="patientInfoLink" href="/patient_info"><i class='bx bx-user medical-icon'></i>患者信息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-notepad medical-icon'></i>处方生成</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">患者列表</h5>
+                        <i class='bx bx-list-ul medical-icon'></i>患者列表
                     </div>
                     <div class="card-body">
-                        <button class="btn btn-primary mb-3" onclick="createNewPatient()">新建患者</button>
-                        <div id="patientList"></div>
+                        <button class="btn btn-primary mb-3 w-100" onclick="window.location.href='/patient_info'">
+                            <i class='bx bx-plus medical-icon'></i>新建患者
+                        </button>
+                        <div id="patientList" class="patient-list"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">患者信息</h5>
+                        <i class='bx bx-info-circle medical-icon'></i>患者信息
                     </div>
                     <div class="card-body">
                         <form id="patientForm">
-                            <div class="mb-3">
-                                <label class="form-label">西医诊断</label>
-                                <input type="text" class="form-control" name="diagnosis">
+                            <h5 class="section-title">基本信息</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">西医诊断</label>
+                                        <input type="text" id="diagnosis" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">现病程阶段</label>
+                                        <input type="text" id="diseaseStage" class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">现病程阶段</label>
-                                <input type="text" class="form-control" name="disease_stage">
+
+                            <h5 class="section-title">病理与分期</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">病理报告</label>
+                                        <textarea id="pathologyReport" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">分期</label>
+                                        <input type="text" id="staging" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">TNM分期</label>
+                                        <input type="text" id="tnmStaging" class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">病理报告</label>
-                                <textarea class="form-control" name="pathology_report" rows="3"></textarea>
+
+                            <h5 class="section-title">检查结果</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">实验室检查</label>
+                                        <textarea id="labTests" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">影像学报告</label>
+                                        <textarea id="imagingReport" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">分期</label>
-                                <input type="text" class="form-control" name="staging">
+
+                            <div class="section">
+                                <h3 class="section-title">症状体征</h3>
+                                <div class="form-group">
+                                    <label for="symptoms">症状</label>
+                                    <textarea class="form-control" id="symptoms" rows="3"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tongue">舌苔</label>
+                                            <input type="text" class="form-control" id="tongue">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pulse">脉象</label>
+                                            <input type="text" class="form-control" id="pulse">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">TNM分期</label>
-                                <input type="text" class="form-control" name="tnm_staging">
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class='bx bx-save medical-icon'></i>保存
+                                </button>
+                                <button type="button" class="btn btn-success" onclick="generatePrescription()">
+                                    <i class='bx bx-notepad medical-icon'></i>生成处方
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="deletePatient()">
+                                    <i class='bx bx-trash medical-icon'></i>删除
+                                </button>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">实验室检查</label>
-                                <textarea class="form-control" name="lab_tests" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">影像学报告</label>
-                                <textarea class="form-control" name="imaging_report" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">症状</label>
-                                <textarea class="form-control" name="symptoms" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">舌苔</label>
-                                <input type="text" class="form-control" name="tongue">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">脉象</label>
-                                <input type="text" class="form-control" name="pulse">
-                            </div>
-                            <button type="submit" class="btn btn-primary">提交</button>
-                            <button type="button" class="btn btn-success ms-2" onclick="generatePrescription()">生成处方</button>
                         </form>
                     </div>
                 </div>
@@ -88,6 +354,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/patient_info.js') }}"></script>
+    <script src="/static/js/patient_info.js"></script>
 </body>
 </html> 

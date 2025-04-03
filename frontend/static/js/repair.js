@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (patientId) {
         currentPatientId = patientId;
         updateNavigationLinks(patientId);
+        await loadPatientInfo(patientId); // 加载患者信息
         await loadPatientPrescription(patientId);
-        await loadLatestRepairRule(patientId);
+        await loadLatestRepairRule();
     }
     await getPatients(); // 确保在页面加载时获取患者列表
 });
@@ -69,6 +70,43 @@ function displayPatients(patients) {
     patientList.appendChild(patientItem);
 }
 
+// 加载患者信息
+async function loadPatientInfo(patientId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
+        if (!response.ok) {
+            throw new Error('获取患者信息失败');
+        }
+        const patient = await response.json();
+        displayPatientInfo(patient);
+    } catch (error) {
+        console.error('Error loading patient info:', error);
+        alert('加载患者信息失败');
+    }
+}
+
+// 显示患者信息
+function displayPatientInfo(patient) {
+    const patientInfo = document.getElementById('patientInfo');
+    if (!patientInfo) return;
+
+    patientInfo.innerHTML = `
+        <div class="patient-info-column">
+            <p><strong>患者编号：</strong>#${patient.id}</p>
+            <p><strong>西医诊断：</strong>${patient.diagnosis || '暂无'}</p>
+            <p><strong>现病程阶段：</strong>${patient.disease_stage || '暂无'}</p>
+            <p><strong>分期：</strong>${patient.staging || '暂无'}</p>
+            <p><strong>TNM分期：</strong>${patient.tnm_staging || '暂无'}</p>
+            <p><strong>病理报告：</strong>${patient.pathology_report || '暂无'}</p>
+            <p><strong>实验室检查：</strong>${patient.lab_tests || '暂无'}</p>
+            <p><strong>影像学报告：</strong>${patient.imaging_report || '暂无'}</p>
+            <p><strong>症状：</strong>${patient.symptoms || '暂无'}</p>
+            <p><strong>舌苔：</strong>${patient.tongue || '暂无'}</p>
+            <p><strong>脉象：</strong>${patient.pulse || '暂无'}</p>
+        </div>
+    `;
+}
+
 // 更新导航链接
 function updateNavigationLinks(patientId) {
     const prescriptionLink = document.getElementById('prescriptionLink');
@@ -79,6 +117,10 @@ function updateNavigationLinks(patientId) {
         prescriptionLink.href = `/prescription?patient_id=${patientId}`;
         repairLink.href = `/repair?patient_id=${patientId}`;
         patientInfoLink.href = `/patient_info?patient_id=${patientId}`;
+    } else {
+        prescriptionLink.href = '/prescription';
+        repairLink.href = '/repair';
+        patientInfoLink.href = '/patient_info';
     }
 }
 
@@ -116,6 +158,30 @@ async function loadPatientPrescription(patientId) {
     }
 }
 
+// 显示加载动画
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.classList.add('active');
+    }
+    // 禁用所有按钮
+    document.querySelectorAll('button').forEach(button => {
+        button.disabled = true;
+    });
+}
+
+// 隐藏加载动画
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.classList.remove('active');
+    }
+    // 启用所有按钮
+    document.querySelectorAll('button').forEach(button => {
+        button.disabled = false;
+    });
+}
+
 // 修复处方
 async function repairPrescription() {
     if (!currentPatientId) {
@@ -130,6 +196,8 @@ async function repairPrescription() {
     }
 
     try {
+        showLoading(); // 显示加载动画
+
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/repair-prescription`, {
             method: 'POST',
             headers: {
@@ -146,12 +214,22 @@ async function repairPrescription() {
         }
 
         const result = await response.json();
-        document.getElementById('repairedPrescription').textContent = result.prescription;
-        document.getElementById('repairedMedicine').textContent = result.medicine;
-        alert('修复成功');
+        // 直接更新界面
+        document.getElementById('repairedPrescription').textContent = result.prescription || '';
+        document.getElementById('repairedMedicine').textContent = result.medicine || '';
     } catch (error) {
         console.error('Error repairing prescription:', error);
-        alert('修复失败：' + error.message);
+        // 只在控制台显示错误，不弹窗
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'alert alert-danger mt-3';
+        errorMessage.textContent = '修复失败：' + error.message;
+        document.getElementById('repairedPrescription').parentNode.appendChild(errorMessage);
+        // 3秒后自动移除错误提示
+        setTimeout(() => {
+            errorMessage.remove();
+        }, 3000);
+    } finally {
+        hideLoading(); // 隐藏加载动画
     }
 }
 
@@ -187,9 +265,9 @@ async function adoptRepair() {
 }
 
 // 加载最新的修复规则
-async function loadLatestRepairRule(patientId) {
+async function loadLatestRepairRule() {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/latest-repair-rule`, {
+        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/latest-repair-rule`, {
             headers: {
                 'Accept': 'application/json'
             },
@@ -201,9 +279,36 @@ async function loadLatestRepairRule(patientId) {
         }
 
         const result = await response.json();
-        document.getElementById('repairRules').value = result.rule_content;
+        if (result.rule_content) {
+            document.getElementById('repairRules').value = result.rule_content;
+        } else {
+            // 如果没有找到规则，加载默认规则
+            document.getElementById('repairRules').value = `1. 放疗阶段需加：天冬12g、麦冬12g；
+2. 化疗阶段需加：半夏12g、竹茹15g、阿胶珠6g；
+3. 靶向治疗阶段加：生黄芪15g、炒白术12g、防风10g；
+4. 所有阶段可加：红景天12g、灵芝15g、鸡血藤15g、白芍12g；
+5. 恶性程度高（如Ki-67高、肿瘤标志物升高、淋巴转移）可加：山慈菇6g、红豆杉6g、重楼10g、猫抓草10g；
+6. 脑转移：加钩藤12g、川牛膝10g、益智仁10g、猪苓15g、茯苓12g；
+7. 肺部感染：蒲公英15g、银花12g；
+8. 胸水：猪苓15g、茯苓12g；
+9. 腹泻轻度：芡实15g，重度：诃子10g；
+10. 腹胀：枳壳10g、大腹皮10g；
+11. 失眠：炒枣仁10g、柏子仁10g；
+12. 体虚或恶病质：加太子参15g或西洋参10g；
+13. 护胃需求：可加露蜂房10g；
+14. 中成药推荐，最多推荐两个：
+    - 首推：
+        - 肺1膏：适用于Ia期、轻症、稳定期；
+        - 肺2膏：适用于II-IV期、进展期、转移；
+    - 其次：
+        - 西黄解毒丸：热毒壅盛、进展迅速；
+        - 肺瘤平片、川贝粉：咳嗽痰多、痰湿壅肺；
+        - 生血宝合剂：化疗后气血亏；
+        - 贞芪扶正颗粒：体虚明显、纳差；
+        - 血府逐瘀类：舌暗瘀斑、舌下静脉怒张。`;
+        }
     } catch (error) {
-        console.error('Error loading repair rule:', error);
+        console.error('Error loading repair rules:', error);
         alert('加载修复规则失败：' + error.message);
     }
 }
@@ -249,7 +354,7 @@ async function selectPatient(patientId) {
     currentPatientId = patientId;
     updateNavigationLinks(patientId);
     await loadPatientPrescription(patientId);
-    await loadLatestRepairRule(patientId);
+    await loadLatestRepairRule();
     // 更新URL，但不刷新页面
     window.history.pushState({}, '', `/repair?patient_id=${patientId}`);
     await getPatients(); // 刷新患者列表以反映当前选择
@@ -281,4 +386,14 @@ async function deletePatient(patientId) {
 // 新建患者
 function createNewPatient() {
     window.location.href = '/patient_info';
+}
+
+// 返回到处方生成界面
+function goBack() {
+    const patientId = getUrlParam('patient_id');
+    if (patientId) {
+        window.location.href = `/prescription?patient_id=${patientId}`;
+    } else {
+        window.location.href = '/prescription';
+    }
 } 

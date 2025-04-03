@@ -1,87 +1,388 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>处方修复 - 肺癌中医诊疗智能辅助系统</title>
+    <title>肺癌中医诊疗智能辅助系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --secondary-color: #4299e1;
+            --accent-color: #63b3ed;
+            --background-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .prescription-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .prescription-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
         .prescription-content {
-            white-space: pre-line;
-            font-family: "SimSun", serif;
-            line-height: 2;
-            min-height: 100px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .btn-success:hover {
+            background-color: #38a169;
+            border-color: #38a169;
+        }
+
+        .btn-warning {
+            background-color: #ecc94b;
+            border-color: #ecc94b;
+            color: #744210;
+        }
+
+        .btn-warning:hover {
+            background-color: #d69e2e;
+            border-color: #d69e2e;
+        }
+
+        .medical-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .patient-info {
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .patient-info p {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .patient-info strong {
+            color: var(--primary-color);
+        }
+
+        .repair-rules {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .repair-rules textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: "Noto Sans SC", monospace;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .repair-rules textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            outline: none;
+        }
+
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .comparison-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .comparison-content {
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            min-height: 200px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .comparison-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .patient-info-column {
+            padding: 15px;
             background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            max-width: 400px;
+        }
+
+        .patient-info-column p {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .patient-info-column p:last-child {
+            border-bottom: none;
+        }
+
+        .patient-info-column strong {
+            color: #2c5282;
+            min-width: 100px;
+            display: inline-block;
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">肺癌中医诊疗智能辅助系统</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="/patient_info" id="patientInfoLink">患者信息</a>
-                <a class="nav-link" href="/prescription" id="prescriptionLink">处方生成</a>
-                <a class="nav-link active" href="/repair" id="repairLink">处方修复</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class='bx bx-plus-medical medical-icon'></i>肺癌中医诊疗智能辅助系统</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" id="patientInfoLink" href="/patient_info"><i class='bx bx-user medical-icon'></i>患者信息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-notepad medical-icon'></i>处方生成</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container">
         <div class="row">
+            <!-- 左侧患者信息 -->
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">患者列表</h5>
-                        <button class="btn btn-primary btn-sm" onclick="createNewPatient()">新建患者</button>
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <i class='bx bx-user medical-icon'></i>患者信息
                     </div>
                     <div class="card-body">
-                        <div id="patientList"></div>
+                        <div class="patient-info" id="patientInfo">
+                            <!-- 患者信息将通过JavaScript动态填充 -->
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 右侧处方修复 -->
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">处方修复</h5>
+                        <i class='bx bx-edit medical-icon'></i>处方修复
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <h6>处方</h6>
-                                    <div id="originalPrescription" class="prescription-content"></div>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>处方修复</h6>
-                                    <div id="repairedPrescription" class="prescription-content"></div>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>中成药</h6>
-                                    <div id="originalMedicine" class="prescription-content"></div>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>中成药修复</h6>
-                                    <div id="repairedMedicine" class="prescription-content"></div>
+                        <div class="prescription-section">
+                            <h5 class="prescription-title">修复规则</h5>
+                            <div class="repair-rules">
+                                <textarea id="repairRules" placeholder="请输入或修改处方修复规则..."></textarea>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-primary" onclick="loadLatestRepairRule()">
+                                    <i class='bx bx-download medical-icon'></i>加载最新规则
+                                </button>
+                                <button class="btn btn-success" onclick="saveRepairRule()">
+                                    <i class='bx bx-save medical-icon'></i>保存规则
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="comparison-section">
+                            <div class="comparison-box">
+                                <h5 class="comparison-title">原处方</h5>
+                                <div class="comparison-content" id="originalPrescription">
+                                    <!-- 原处方将通过JavaScript动态填充 -->
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="repairRules">修复建议</label>
-                                    <textarea class="form-control" id="repairRules" rows="10"></textarea>
-                                    <div class="mt-2">
-                                        <button type="button" class="btn btn-primary" onclick="saveRepairRule()">保存规则</button>
-                                    </div>
+                            <div class="comparison-box">
+                                <h5 class="comparison-title">修复后处方</h5>
+                                <div class="comparison-content" id="repairedPrescription">
+                                    <!-- 修复后处方将通过JavaScript动态填充 -->
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <button class="btn btn-warning" onclick="repairPrescription()">修复</button>
-                            <button class="btn btn-success ms-2" onclick="adoptRepair()">采纳</button>
-                            <button class="btn btn-secondary ms-2" onclick="window.location.href='/prescription'">返回</button>
+
+                        <div class="comparison-section">
+                            <div class="comparison-box">
+                                <h5 class="comparison-title">原中成药</h5>
+                                <div class="comparison-content" id="originalMedicine">
+                                    <!-- 原中成药将通过JavaScript动态填充 -->
+                                </div>
+                            </div>
+                            <div class="comparison-box">
+                                <h5 class="comparison-title">修复后中成药</h5>
+                                <div class="comparison-content" id="repairedMedicine">
+                                    <!-- 修复后中成药将通过JavaScript动态填充 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <div class="btn-group">
+                                <button class="btn btn-secondary" onclick="goBack()">
+                                    <i class='bx bx-arrow-back'></i> 返回
+                                </button>
+                                <button class="btn btn-primary" onclick="repairPrescription()">
+                                    <i class='bx bx-edit'></i> 修复处方
+                                </button>
+                                <button class="btn btn-success" onclick="adoptRepair()">
+                                    <i class='bx bx-check'></i> 采纳修复结果
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -89,7 +390,12 @@
         </div>
     </div>
 
+    <!-- 添加加载动画元素 -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/repair.js') }}"></script>
+    <script src="/static/js/repair.js"></script>
 </body>
 </html> 
