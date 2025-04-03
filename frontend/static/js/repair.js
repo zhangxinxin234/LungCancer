@@ -271,4 +271,9 @@ async function saveRepairRule() {
         console.error('Error saving repair rule:', error);
         alert('保存失败：' + error.message);
     }
+}
+
+// 新建患者
+function createNewPatient() {
+    window.location.href = '/patient_info';
 } 

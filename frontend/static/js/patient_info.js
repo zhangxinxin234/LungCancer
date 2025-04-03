@@ -137,13 +137,20 @@ function generatePrescription() {
     window.location.href = `/prescription?patient_id=${currentPatientId}&generate=true`;
 }
 
+// 新建患者
+function createNewPatient() {
+    // 清空表单
+    document.getElementById('patientForm').reset();
+    // 清除当前患者ID
+    currentPatientId = null;
+    // 更新URL，移除patient_id参数
+    window.history.pushState({}, '', '/patient_info');
+    // 更新导航链接
+    updateNavigationLinks(null);
+}
+
 // 保存患者信息
 async function savePatient() {
-    if (!currentPatientId) {
-        alert('请先选择一个患者');
-        return;
-    }
-
     const form = document.getElementById('patientForm');
     const patientData = {
         diagnosis: form.elements['diagnosis'].value,
@@ -159,9 +166,18 @@ async function savePatient() {
     };
 
     try {
-        console.log('Saving patient data:', patientData); // 添加日志
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}`, {
-            method: 'PUT',
+        console.log('Saving patient data:', patientData);
+        
+        let url = `${API_BASE_URL}/patients`;
+        let method = 'POST';
+        
+        if (currentPatientId) {
+            url = `${API_BASE_URL}/patients/${currentPatientId}`;
+            method = 'PUT';
+        }
+        
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -170,12 +186,22 @@ async function savePatient() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error('Server error:', errorData); // 添加错误日志
+            console.error('Server error:', errorData);
             throw new Error(errorData.detail || '保存失败');
         }
 
         const result = await response.json();
-        console.log('Save result:', result); // 添加日志
+        console.log('Save result:', result);
+        
+        // 如果是新建患者，设置当前患者ID
+        if (!currentPatientId) {
+            currentPatientId = result.id;
+            // 更新URL
+            window.history.pushState({}, '', `/patient_info?patient_id=${currentPatientId}`);
+            // 更新导航链接
+            updateNavigationLinks(currentPatientId);
+        }
+        
         alert('保存成功');
         getPatients(); // 刷新患者列表
     } catch (error) {

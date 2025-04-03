@@ -93,9 +93,8 @@ async def get_latest_repair_rule(
     patient_id: int,
     db: Session = Depends(get_db)
 ):
-    # 获取该患者最新的修复规则
+    # 获取所有患者中最新的修复规则
     latest_rule = db.query(RepairRule)\
-        .filter(RepairRule.patient_id == patient_id)\
         .order_by(RepairRule.id.desc())\
         .first()
     
