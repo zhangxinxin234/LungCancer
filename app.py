@@ -48,13 +48,48 @@ def generate():
                           prescription=result.get('prescription', '无处方信息'),
                           medicine=result.get('medicine', '无中成药信息'),
                           clinical_cls=result.get('clinical_cls', '无西医诊疗分层信息'),
-                          clinical_path=result.get('clinical_path', '无西医标准诊疗方案'))
+                          clinical_path=result.get('clinical_path', '无西医标准诊疗方案'),
+                          patient_infos=json.dumps(patient_info))  # 添加 patient_infos 并转换为 JSON 字符串
 
     except Exception as e:
         error_message = str(e)
         app.logger.error(f"Error occurred: {error_message}")
         # 发生错误时返回输入页面并显示错误信息
         return render_template('input.html', error=error_message)
+
+@app.route('/repair', methods=['POST'])
+def repair():
+    """处理修复请求"""
+    try:
+        # 获取前端发送的数据
+        data = request.get_json()
+        patient_infos = data.get('patient_infos', {})
+        prescription = data.get('prescription', '')
+        medicine = data.get('medicine', '')
+        rules_text = data.get('rules_text', '')
+
+        # 调用后端修复API
+        app.logger.debug(f"Sending repair request to API with data: {data}")
+        response = requests.post(
+            'http://localhost:8001/api/v1/generate/repair',
+            json={
+                "patient_infos": patient_infos,
+                "prescription": prescription,
+                "medicine": medicine,
+                "rules_text": rules_text
+            }
+        )
+        app.logger.debug(f"API repair response status: {response.status_code}")
+        result = response.json()
+        app.logger.debug(f"API repair response content: {result}")
+
+        # 返回修复结果
+        return jsonify(result)
+
+    except Exception as e:
+        error_message = str(e)
+        app.logger.error(f"Repair error occurred: {error_message}")
+        return jsonify({"error": error_message}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

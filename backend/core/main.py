@@ -139,7 +139,12 @@ async def system_repair(patient_text: str, pred_prescription: str, pred_medicine
     print(f"修复后的处方  pred: {prescription_text}")
     print(f"修复后的中成药 pred: {medicine_text}")
 
-    return pred_str, prescription_text, medicine_text
+    result = {
+        "prescription": prescription_text,
+        "medicine": medicine_text,
+    }
+
+    return result
 
 
 async def clinical_pathway(patient_text:str, collection_name:str = "bge_2025_04_02_csco指南"):
@@ -246,9 +251,11 @@ async def main(patient_info:dict, use_repair:bool=False, rules_text:str=None):
 
     # 3. 修复生成的处方和中成药
     if use_repair:
-        pred_str, prescription_text, medicine_text = await system_repair(
+        repair_result = await system_repair(
             patient_str, pred_prescription=prescription_text, pred_medicine=medicine_text, rules_text=rules_text
         )
+        prescription_text = repair_result["prescription"]
+        medicine_text = repair_result["medicine"]
 
     # 4. 生成临床路径
     clinical_cls, clinical_path = await clinical_pathway(patient_str)

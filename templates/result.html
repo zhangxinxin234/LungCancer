@@ -42,7 +42,7 @@
             overflow-x: auto;
             max-width: 100%;
         }
-        }
+
         .result-group label {
             color: #2a5298;
             font-size: 1.1rem;
@@ -145,6 +145,7 @@
 
             <div class="action-buttons">
                 <a href="/" class="button secondary">返回输入</a>
+                <button id="repair-button" class="button secondary">修复结果</button>
                 <button id="print-button" class="button primary">打印结果</button>
             </div>
         </main>
@@ -159,6 +160,81 @@
             // 打印功能
             document.getElementById('print-button').addEventListener('click', function() {
                 window.print();
+            });
+
+            // 修复功能
+            document.getElementById('repair-button').addEventListener('click', function() {
+                // 显示加载状态
+                const repairButton = document.getElementById('repair-button');
+                const originalText = repairButton.textContent;
+                repairButton.textContent = '修复中...';
+                repairButton.disabled = true;
+
+                // 获取当前结果数据
+                const prescription = document.querySelector('.result-group:nth-child(1) .result-content').textContent;
+                const medicine = document.querySelector('.result-group:nth-child(2) .result-content').textContent;
+
+                // 获取患者信息（从服务器端传递过来的）
+                let patientInfos;
+                try {
+                    patientInfos = JSON.parse('{{ patient_infos|safe }}');
+                } catch (error) {
+                    console.error('解析患者信息失败:', error);
+                    alert('获取患者信息失败，请返回重新输入');
+                    repairButton.textContent = originalText;
+                    repairButton.disabled = false;
+                    return;
+                }
+
+                // 打印请求数据，用于调试
+                console.log('发送修复请求，数据：', {
+                    prescription: prescription.trim(),
+                    medicine: medicine.trim(),
+                    patient_infos: patientInfos,
+                    rules_text: ''
+                });
+
+                // 发送修复请求
+                fetch('/repair', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prescription: prescription,
+                        medicine: medicine,
+                        patient_infos: patientInfos,
+                        rules_text: null
+                    })
+                })
+                .then(response => {
+                    console.log('修复响应状态:', response.status);
+                    if (!response.ok) {
+                        throw new Error('修复请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('修复响应数据:', data);
+                    // 只更新处方和中成药内容
+                    document.querySelector('.result-group:nth-child(1) .result-content').textContent = data.prescription;
+                    document.querySelector('.result-group:nth-child(2) .result-content').textContent = data.medicine;
+
+                    // 恢复按钮状态
+                    repairButton.textContent = originalText;
+                    repairButton.disabled = false;
+
+                    // 显示修复成功提示
+                    alert('处方和中成药修复完成！');
+                })
+                .catch(error => {
+                    console.error('修复请求错误:', error);
+                    alert('修复请求失败，请稍后再试');
+
+                    // 恢复按钮状态
+                    repairButton.textContent = originalText;
+                    repairButton.disabled = false;
+                });
             });
         });
     </script>
