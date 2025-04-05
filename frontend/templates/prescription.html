@@ -196,6 +196,11 @@
             display: inline-block;
         }
 
+        /* 卡片内容区域滚动样式 */
+        .col-md-4 .card-body, .col-md-8 .card-body {
+            max-height: calc(100vh - 220px);
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
@@ -204,10 +209,16 @@
 
             .card {
                 margin-bottom: 1rem;
+                height: auto !important; /* 移动设备上重置高度 */
             }
 
             .prescription-section {
                 padding: 1rem;
+            }
+
+            .col-md-4 .card-body, .col-md-8 .card-body {
+                max-height: none; /* 移动设备上不限制高度 */
+                overflow-y: visible; /* 移动设备上不使用滚动条 */
             }
         }
 
@@ -268,11 +279,11 @@
         <div class="row">
             <!-- 左侧患者信息 -->
             <div class="col-md-4">
-                <div class="card sticky-top" style="top: 20px;">
+                <div class="card sticky-top" style="top: 20px; height: calc(100vh - 140px);">
                     <div class="card-header">
                         <i class='bx bx-user medical-icon'></i>患者信息
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-y: auto; padding-bottom: 20px;">
                         <div class="patient-info" id="patientInfo">
                             <!-- 患者信息将通过JavaScript动态填充 -->
                         </div>
@@ -282,11 +293,11 @@
 
             <!-- 右侧处方生成 -->
             <div class="col-md-8">
-                <div class="card">
+                <div class="card" style="height: calc(100vh - 140px);">
                     <div class="card-header">
                         <i class='bx bx-notepad medical-icon'></i>处方生成
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-y: auto; padding-bottom: 20px;">
 
                         <div class="prescription-section">
                             <h5 class="prescription-title">中医处方</h5>
@@ -316,7 +327,7 @@
     </div>
 </div>
 
-                        <div class="text-center mt-4">
+                        <div class="text-center mt-4 mb-3">
                             <div class="btn-group">
                                 <button class="btn btn-secondary" onclick="goBack()">
                                     <i class='bx bx-arrow-back'></i> 返回
