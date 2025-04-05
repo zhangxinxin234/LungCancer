@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 设置表单提交事件
-    const form = document.getElementById('patientForm');
-    if (form) {
-        form.addEventListener('submit', async function(e) {
+    const actionForm = document.getElementById('actionForm');
+    if (actionForm) {
+        actionForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             await savePatient();
         });

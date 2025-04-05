@@ -353,56 +353,60 @@
 
             <!-- 右侧处方生成 -->
             <div class="col-md-8">
-                <div class="card" style="height: calc(100vh - 140px);">
-                    <div class="card-header">
-                        <i class='bx bx-notepad medical-icon'></i>处方生成
-                    </div>
-                    <div class="card-body" style="overflow-y: auto; padding-bottom: 20px;">
-
-                        <div class="prescription-section">
-                            <h5 class="prescription-title">中医处方</h5>
-                            <textarea class="prescription-content" id="prescription" rows="4"></textarea>
+                <div style="height: calc(100vh - 140px); display: flex; flex-direction: column;">
+                    <div class="card" style="flex: 1; overflow: hidden;">
+                        <div class="card-header">
+                            <i class='bx bx-notepad medical-icon'></i>处方生成
                         </div>
+                        <div class="card-body" style="overflow-y: auto;">
+                            <div style="height: 100%; display: flex; flex-direction: column;">
+                                <div style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+                                    <div style="padding-right: 15px;">
+                                        <div class="prescription-section">
+                                            <h5 class="prescription-title">中医处方</h5>
+                                            <textarea class="prescription-content" id="prescription" rows="4"></textarea>
+                                        </div>
 
-                        <div class="prescription-section">
-                            <h5 class="prescription-title">推荐中成药</h5>
-                            <input type="text" class="prescription-content single-line" id="medicine">
-                        </div>
+                                        <div class="prescription-section">
+                                            <h5 class="prescription-title">推荐中成药</h5>
+                                            <input type="text" class="prescription-content single-line" id="medicine">
+                                        </div>
 
-                        <div class="prescription-section">
-                            <h5 class="prescription-title">西医治疗阶段</h5>
-                            <div class="prescription-content" id="treatmentStage">
-                                <!-- 西医治疗阶段将通过JavaScript动态填充 -->
-                            </div>
-                        </div>
+                                        <div class="prescription-section">
+                                            <h5 class="prescription-title">西医治疗阶段</h5>
+                                            <div class="prescription-content" id="treatmentStage">
+                                                <!-- 西医治疗阶段将通过JavaScript动态填充 -->
+                                            </div>
+                                        </div>
 
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">CSCO指南</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="markdown-content" id="cscoGuideline">
-                                    <!-- CSCO指南内容将通过JavaScript动态填充 -->
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">CSCO指南</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="markdown-content" id="cscoGuideline">
+                                                    <!-- CSCO指南内容将通过JavaScript动态填充 -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="text-center mt-4 mb-3">
-                            <div class="btn-group">
-                                <button class="btn btn-secondary" onclick="goBack()">
-                                    <i class='bx bx-arrow-back'></i> 返回
-                                </button>
-                                <button class="btn btn-primary" onclick="generatePrescription()">
-                                    <i class='bx bx-refresh'></i> 重新生成
-                                </button>
-                                <button class="btn btn-success" onclick="savePrescription()">
-                                    <i class='bx bx-save'></i> 保存处方
-                                </button>
-                                <button class="btn btn-info" onclick="goToRepair()">
-                                    <i class='bx bx-edit'></i> 处方修复
-                                </button>
-                            </div>
-                        </div>
+                    </div>
+                    <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                        <button class="btn btn-secondary mx-2" onclick="goBack()">
+                            <i class='bx bx-arrow-back'></i>返回
+                        </button>
+                        <button class="btn btn-primary mx-2" onclick="generatePrescription()">
+                            <i class='bx bx-refresh'></i>重新生成
+                        </button>
+                        <button class="btn btn-success mx-2" onclick="savePrescription()">
+                            <i class='bx bx-save'></i>保存处方
+                        </button>
+                        <button class="btn btn-info mx-2" onclick="goToRepair()">
+                            <i class='bx bx-edit'></i>处方修复
+                        </button>
                     </div>
                 </div>
             </div>

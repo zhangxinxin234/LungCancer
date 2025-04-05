@@ -182,6 +182,7 @@
             border-radius: 8px;
             padding: 1.5rem;
             border: 1px solid var(--border-color);
+            flex: 1;
         }
 
         .comparison-title {
@@ -201,8 +202,10 @@
             border-radius: 6px;
             border: 1px solid var(--border-color);
             min-height: 200px;
+            height: 200px;
             width: 100%;
-            resize: vertical;
+            resize: none;
+            overflow-y: auto;
         }
 
         textarea.comparison-content {
@@ -345,65 +348,70 @@
 
             <!-- 右侧处方修复 -->
             <div class="col-md-8">
-                <div class="card" style="height: calc(100vh - 140px);">
-                    <div class="card-header">
-                        <i class='bx bx-edit medical-icon'></i>处方修复
+                <div style="height: calc(100vh - 140px); display: flex; flex-direction: column;">
+                    <div class="card" style="flex: 1; overflow: hidden;">
+                        <div class="card-header">
+                            <i class='bx bx-edit medical-icon'></i>处方修复
+                        </div>
+                        <div class="card-body" style="overflow-y: auto;">
+                            <div style="height: 100%; display: flex; flex-direction: column;">
+                                <div style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+                                    <div style="padding-right: 15px;">
+                                        <div class="prescription-section">
+                                            <h5 class="prescription-title">修复规则</h5>
+                                            <div class="repair-rules">
+                                                <textarea id="repairRules" placeholder="请输入或修改处方修复规则..."></textarea>
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <button class="btn btn-primary" onclick="loadLatestRepairRule()">
+                                                    <i class='bx bx-download medical-icon'></i>加载最新规则
+                                                </button>
+                                                <button class="btn btn-success" onclick="saveRepairRule()">
+                                                    <i class='bx bx-save medical-icon'></i>保存规则
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="comparison-section">
+                                            <div class="comparison-box">
+                                                <h5 class="comparison-title">原处方</h5>
+                                                <div class="comparison-content" id="originalPrescription">
+                                                    <!-- 原处方将通过JavaScript动态填充 -->
+                                                </div>
+                                            </div>
+                                            <div class="comparison-box">
+                                                <h5 class="comparison-title">修复后处方</h5>
+                                                <textarea class="comparison-content" id="repairedPrescription"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="comparison-section">
+                                            <div class="comparison-box">
+                                                <h5 class="comparison-title">原中成药</h5>
+                                                <div class="comparison-content" id="originalMedicine">
+                                                    <!-- 原中成药将通过JavaScript动态填充 -->
+                                                </div>
+                                            </div>
+                                            <div class="comparison-box">
+                                                <h5 class="comparison-title">修复后中成药</h5>
+                                                <textarea class="comparison-content" id="repairedMedicine"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body" style="overflow-y: auto; padding-bottom: 20px;">
-                        <div class="prescription-section">
-                            <h5 class="prescription-title">修复规则</h5>
-                            <div class="repair-rules">
-                                <textarea id="repairRules" placeholder="请输入或修改处方修复规则..."></textarea>
-                            </div>
-                            <div class="text-center mt-3">
-                                <button class="btn btn-primary" onclick="loadLatestRepairRule()">
-                                    <i class='bx bx-download medical-icon'></i>加载最新规则
-                                </button>
-                                <button class="btn btn-success" onclick="saveRepairRule()">
-                                    <i class='bx bx-save medical-icon'></i>保存规则
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="comparison-section">
-                            <div class="comparison-box">
-                                <h5 class="comparison-title">原处方</h5>
-                                <div class="comparison-content" id="originalPrescription">
-                                    <!-- 原处方将通过JavaScript动态填充 -->
-                                </div>
-                            </div>
-                            <div class="comparison-box">
-                                <h5 class="comparison-title">修复后处方</h5>
-                                <textarea class="comparison-content" id="repairedPrescription"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="comparison-section">
-                            <div class="comparison-box">
-                                <h5 class="comparison-title">原中成药</h5>
-                                <div class="comparison-content" id="originalMedicine">
-                                    <!-- 原中成药将通过JavaScript动态填充 -->
-                                </div>
-                            </div>
-                            <div class="comparison-box">
-                                <h5 class="comparison-title">修复后中成药</h5>
-                                <textarea class="comparison-content" id="repairedMedicine"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="text-center mt-4 mb-3">
-                            <div class="btn-group">
-                                <button class="btn btn-secondary" onclick="goBack()">
-                                    <i class='bx bx-arrow-back'></i> 返回
-                                </button>
-                                <button class="btn btn-primary" onclick="repairPrescription()">
-                                    <i class='bx bx-edit'></i> 修复处方
-                                </button>
-                                <button class="btn btn-success" onclick="adoptRepair()">
-                                    <i class='bx bx-check'></i> 采纳修复结果
-                                </button>
-                            </div>
-                        </div>
+                    <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                        <button class="btn btn-secondary mx-2" onclick="goBack()">
+                            <i class='bx bx-arrow-back'></i>返回
+                        </button>
+                        <button class="btn btn-primary mx-2" onclick="repairPrescription()">
+                            <i class='bx bx-edit'></i>修复处方
+                        </button>
+                        <button class="btn btn-success mx-2" onclick="adoptRepair()">
+                            <i class='bx bx-save'></i>采纳修复结果
+                        </button>
                     </div>
                 </div>
             </div>
