@@ -165,7 +165,6 @@ async function generatePrescription() {
         
         // 更新界面显示
         document.getElementById('treatmentStage').textContent = result.western_treatment_stage || '';
-        document.getElementById('cscoGuidelines').textContent = result.csco_guideline || '';
         document.getElementById('prescription').textContent = result.prescription || '';
         document.getElementById('medicine').textContent = result.medicine || '';
 
@@ -190,8 +189,7 @@ function displayPrescription(prescription) {
     const elements = {
         'prescription': document.getElementById('prescription'),
         'medicine': document.getElementById('medicine'),
-        'treatmentStage': document.getElementById('treatmentStage'),
-        'cscoGuidelines': document.getElementById('cscoGuidelines')
+        'treatmentStage': document.getElementById('treatmentStage')
     };
 
     // 检查所有需要的元素是否存在
@@ -212,9 +210,6 @@ function displayPrescription(prescription) {
     if (elements.treatmentStage) {
         elements.treatmentStage.textContent = prescription.western_treatment_stage || '';
     }
-    if (elements.cscoGuidelines) {
-        elements.cscoGuidelines.textContent = prescription.csco_guideline || '';
-    }
 }
 
 // 保存处方
@@ -228,9 +223,28 @@ async function savePrescription() {
     try {
         showLoading(); // 显示加载动画
 
+        // 根据当前治疗阶段设置相应的CSCO指南
+        const treatmentStage = document.getElementById('treatmentStage').textContent;
+        let cscoGuideline = '';
+        
+        // 根据治疗阶段设置对应的CSCO指南内容
+        switch (treatmentStage.trim()) {
+            case 'IIA期':
+                cscoGuideline = '手术切除';
+                break;
+            case 'IIB期':
+                cscoGuideline = '手术切除+辅助化疗';
+                break;
+            case 'IIIA期':
+                cscoGuideline = '新辅助化疗+手术切除';
+                break;
+            default:
+                cscoGuideline = '暂无指南';
+        }
+
         const prescriptionData = {
-            western_treatment_stage: document.getElementById('treatmentStage').textContent,
-            csco_guideline: document.getElementById('cscoGuidelines').textContent,
+            western_treatment_stage: treatmentStage,
+            csco_guideline: cscoGuideline,
             prescription: document.getElementById('prescription').textContent,
             medicine: document.getElementById('medicine').textContent
         };

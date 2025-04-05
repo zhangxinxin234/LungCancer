@@ -178,7 +178,7 @@ async def update_prescription(
     
     # 更新患者的处方信息
     patient.western_treatment_stage = prescription_update.western_treatment_stage
-    patient.csco_guideline = prescription_update.csco_guideline
+    # patient.csco_guideline = prescription_update.csco_guideline
     patient.prescription = prescription_update.prescription
     patient.chinese_medicine = prescription_update.medicine
     
