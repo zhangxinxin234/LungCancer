@@ -127,25 +127,92 @@
         }
 
         .patient-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.2s;
-        }
-
-        .patient-item:last-child {
-            border-bottom: none;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background-color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
         }
 
         .patient-item:hover {
-            background-color: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.15);
+            border-color: var(--accent-color);
         }
 
-        .section-title {
-            color: var(--primary-color);
+        .patient-item.active {
+            border: 2px solid var(--primary-color);
+            background-color: rgba(66, 153, 225, 0.05);
+        }
+
+        .patient-item .patient-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .patient-item .patient-id {
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--accent-color);
+            color: var(--primary-color);
+            margin-right: 1rem;
+        }
+
+        .patient-item .diagnosis {
+            font-size: 0.95rem;
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .patient-item .btn-group {
+            margin-top: 0.75rem;
+        }
+
+        .patient-item .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .patient-item .btn i {
+            margin-right: 0.25rem;
+        }
+
+        .patient-item .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .patient-item .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .patient-item .text-muted {
+            color: #718096 !important;
+            font-size: 0.9rem;
+        }
+
+        .patient-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .patient-item:hover::before {
+            opacity: 1;
         }
 
         .form-group {
@@ -313,24 +380,24 @@
                                 </div>
                             </div>
 
-                            <div class="section">
-                                <h3 class="section-title">症状体征</h3>
-                                <div class="form-group">
-                                    <label for="symptoms">症状</label>
-                                    <textarea class="form-control" id="symptoms" rows="3"></textarea>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="tongue">舌苔</label>
-                                            <input type="text" class="form-control" id="tongue">
-                                        </div>
+                            <h5 class="section-title">症状体征</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">症状</label>
+                                        <textarea id="symptoms" class="form-control" rows="3"></textarea>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="pulse">脉象</label>
-                                            <input type="text" class="form-control" id="pulse">
-                                        </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">舌苔</label>
+                                        <input type="text" id="tongue" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">脉象</label>
+                                        <input type="text" id="pulse" class="form-control">
                                     </div>
                                 </div>
                             </div>
