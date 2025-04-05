@@ -93,6 +93,30 @@
             border-color: var(--secondary-color);
         }
 
+        .btn-light-blue {
+            background-color: #4299e1 !important;
+            border-color: #4299e1 !important;
+            color: white !important;
+        }
+
+        .btn-light-blue:hover {
+            background-color: #3182ce !important;
+            border-color: #3182ce !important;
+            color: white !important;
+        }
+
+        .btn-light-blue {
+            background-color: #4299e1;
+            border-color: #4299e1;
+            color: white;
+        }
+
+        .btn-light-blue:hover {
+            background-color: #3182ce;
+            border-color: #3182ce;
+            color: white;
+        }
+
         .btn-success {
             background-color: #48bb78;
             border-color: #48bb78;
@@ -178,28 +202,57 @@
             margin-bottom: 0.75rem;
         }
 
+        .patient-item {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .patient-item .patient-info {
+            flex-grow: 1;
+        }
+
         .patient-item .btn-group {
-            margin-top: 0.75rem;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
         }
 
         .patient-item .btn {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            border-radius: 6px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 3px;
             transition: all 0.2s;
+            margin-left: 0.3rem;
         }
 
         .patient-item .btn i {
-            margin-right: 0.25rem;
+            margin-right: 0.2rem;
+            font-size: 0.8rem;
         }
 
-        .patient-item .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-        }
-
-        .patient-item .btn-primary:hover {
+        .patient-item .btn-light-blue {
             background-color: var(--secondary-color);
+            border: none;
+            color: white;
+        }
+
+        .patient-item .btn-light-blue:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .patient-item .btn-outline-danger {
+            border: 1px solid #f56565;
+            color: #f56565;
+            background-color: transparent;
+        }
+
+        .patient-item .btn-outline-danger:hover {
+            background-color: #f56565;
+            color: white;
             transform: translateY(-1px);
         }
 
@@ -439,16 +492,16 @@
                             </div>
 
                             <div class="text-center mt-4 mb-3">
-                            <button id="saveBtn" class="btn btn-primary mx-2">
-                                <i class='bx bx-save medical-icon'></i>保存
-                            </button>
-                            <button id="generateBtn" class="btn btn-success mx-2">
-                                <i class='bx bx-file medical-icon'></i>生成处方
-                            </button>
-                            <button id="deleteBtn" class="btn btn-danger mx-2">
-                                <i class='bx bx-trash medical-icon'></i>删除
-                            </button>
-                        </div>
+                                <button type="submit" id="saveBtn" class="btn btn-primary mx-2">
+                                    <i class='bx bx-save medical-icon'></i>保存
+                                </button>
+                                <button type="button" id="generateBtn" class="btn btn-success mx-2" onclick="generatePrescription()">
+                                    <i class='bx bx-file medical-icon'></i>生成处方
+                                </button>
+                                <button type="button" id="deleteBtn" class="btn btn-danger mx-2">
+                                    <i class='bx bx-trash medical-icon'></i>删除
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

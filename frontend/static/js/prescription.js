@@ -221,18 +221,7 @@ function displayCscoGuideline(guideline) {
     const cscoGuidelineElement = document.getElementById('cscoGuideline');
     if (!cscoGuidelineElement) return;
 
-    if (typeof guideline === 'string') {
-        cscoGuidelineElement.innerHTML = `<p>${guideline}</p>`;
-    } else if (typeof guideline === 'object') {
-        let tableHtml = '<table class="table table-bordered"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody>';
-        for (const [key, value] of Object.entries(guideline)) {
-            tableHtml += `<tr><td>${key}</td><td>${value}</td></tr>`;
-        }
-        tableHtml += '</tbody></table>';
-        cscoGuidelineElement.innerHTML = tableHtml;
-    } else {
-        cscoGuidelineElement.innerHTML = '<p>无可用的CSCO指南信息</p>';
-    }
+    cscoGuidelineElement.innerHTML = marked.parse(guideline || '无可用的CSCO指南信息');
 }
 
 // 保存处方

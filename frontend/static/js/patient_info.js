@@ -25,6 +25,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // 设置删除按钮事件
+    const deleteBtn = document.getElementById('deleteBtn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', async function() {
+            if (currentPatientId) {
+                await handleDeletePatient(currentPatientId);
+            } else {
+                showToast('请先选择要删除的患者', 'error');
+            }
+        });
+    }
+
     // 获取患者列表
     await getPatients();
 });
@@ -40,7 +52,7 @@ async function getPatients() {
         displayPatients(patients);
     } catch (error) {
         console.error('Error fetching patients:', error);
-        alert('获取患者列表失败');
+        showToast('获取患者列表失败', 'error');
     }
 }
 
@@ -54,24 +66,32 @@ function displayPatients(patients) {
     // 对患者列表进行倒序排列
     patients.sort((a, b) => b.id - a.id);
 
+    console.log(`正在显示患者列表，当前选中的患者ID: ${currentPatientId}`);
+
     patients.forEach(patient => {
         const patientItem = document.createElement('div');
         patientItem.className = 'patient-item';
-        if (patient.id === currentPatientId) {
+        patientItem.dataset.id = String(patient.id); // 添加 data-id 属性，统一使用字符串
+
+        // 统一转换为字符串进行比较
+        if (String(patient.id) === String(currentPatientId)) {
             patientItem.classList.add('active');
+            console.log(`标记患者 ${patient.id} 为活动状态`);
         }
 
         patientItem.innerHTML = `
-            <div class="patient-header">
-                <span class="patient-id">患者 #${patient.id}</span>
+            <div class="patient-info">
+                <div class="patient-header">
+                    <span class="patient-id">患者 #${patient.id}</span>
+                </div>
+                <div class="diagnosis">${patient.diagnosis || '暂无诊断'}</div>
             </div>
-            <div class="diagnosis">${patient.diagnosis || '暂无诊断'}</div>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="loadPatientInfo(${patient.id})">
-                    <i class="bx bx-show"></i> 查看详情
+                <button class="btn btn-light-blue" onclick="loadPatientInfo(${patient.id})">
+                    <i class="bx bx-show"></i>查看
                 </button>
-                <button class="btn btn-outline-danger" onclick="deletePatient(${patient.id})">
-                    <i class="bx bx-trash"></i> 删除
+                <button class="btn btn-outline-danger" onclick="handleDeletePatient(${patient.id})">
+                    <i class="bx bx-trash"></i>删除
                 </button>
             </div>
         `;
@@ -79,29 +99,125 @@ function displayPatients(patients) {
     });
 }
 
-// 删除患者
-async function deletePatient(patientId) {
-    if (!confirm('确定要删除这个患者吗？此操作不可恢复。')) {
-        return;
+// 显示提示信息
+function showToast(message, type = 'info') {
+    // 创建 toast 容器（如果不存在）
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+        `;
+        document.body.appendChild(toastContainer);
     }
 
+    // 创建新的 toast 元素
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+    // 添加到容器
+    toastContainer.appendChild(toast);
+
+    // 初始化 Bootstrap toast
+    const bsToast = new bootstrap.Toast(toast, {
+        autohide: true,
+        delay: 3000
+    });
+
+    // 显示 toast
+    bsToast.show();
+
+    // toast 隐藏后删除元素
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
+// 处理删除患者的点击事件
+async function handleDeletePatient(patientId) {
+    if (!confirm('确定要删除这个患者吗？')) {
+        return;
+    }
+    await deletePatient(patientId);
+}
+
+// 执行删除患者操作
+async function deletePatient(patientId) {
     try {
+        // 记录删除前的当前患者ID，用于后续比较
+        const deletingCurrentPatient = String(currentPatientId) === String(patientId);
+
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE'
         });
 
         if (response.ok) {
-            alert('患者删除成功');
-            if (currentPatientId === patientId) {
-                createNewPatient();
+            showToast('患者删除成功', 'success');
+
+            // 获取最新的患者列表
+            const patientsResponse = await fetch(`${API_BASE_URL}/patients/`);
+            if (patientsResponse.ok) {
+                const patients = await patientsResponse.json();
+
+                // 如果有患者，选择第一个
+                if (patients && patients.length > 0) {
+                    // 对患者列表进行倒序排列，以便获取最新添加的患者
+                    patients.sort((a, b) => b.id - a.id);
+                    const firstPatientId = patients[0].id;
+
+                    // 如果删除的是当前患者，或者当前没有选中患者，加载第一个患者
+                    if (deletingCurrentPatient || !currentPatientId) {
+                        console.log("删除的是当前患者，正在更新URL和加载新患者...");
+
+                        // 先清除当前患者ID，确保URL和状态完全更新
+                        currentPatientId = null;
+
+                        // 立即更新URL，避免显示已删除的患者ID
+                        window.history.pushState({}, '', '/patient_info');
+
+                        // 然后加载新的患者信息
+                        await loadPatientInfo(firstPatientId);
+                    } else {
+                        // 如果删除的不是当前患者，只需刷新列表
+                        console.log("删除的不是当前患者，仅刷新列表...");
+                        await getPatients();
+                    }
+                } else {
+                    // 如果没有患者了，清空表单并重置状态
+                    document.getElementById('patientForm').reset();
+                    if (document.getElementById('patientInfo')) {
+                        document.getElementById('patientInfo').innerHTML = '';
+                    }
+                    currentPatientId = null;
+                    // 更新URL
+                    window.history.pushState({}, '', '/patient_info');
+                    // 更新导航链接
+                    updateNavigationLinks(null);
+                    // 清空患者列表
+                    document.getElementById('patientList').innerHTML = '';
+                }
             }
-            getPatients(); // 刷新患者列表
         } else {
-            alert('删除失败');
+            throw new Error('删除患者失败');
         }
     } catch (error) {
         console.error('Error deleting patient:', error);
-        alert('删除失败');
+        showToast('删除患者失败', 'error');
     }
 }
 
@@ -130,17 +246,43 @@ async function loadPatientInfo(patientId) {
             throw new Error('获取患者信息失败');
         }
         const patient = await response.json();
-        currentPatientId = patientId; // 设置当前患者ID
+
+        // 设置当前患者ID
+        currentPatientId = patientId;
+
+        // 填充表单和显示患者卡片
         fillPatientForm(patient);
         displayPatientCard(patient);
-        updateNavigationLinks(patientId);
+
         // 更新URL
         window.history.pushState({}, '', `/patient_info?patient_id=${patientId}`);
+
+        // 更新导航链接
+        updateNavigationLinks(patientId);
+
+        // 更新患者列表中的活动项
+        updateActivePatientInList(patientId);
+
         // 刷新患者列表以更新选中状态
         await getPatients();
     } catch (error) {
         console.error('Error loading patient info:', error);
-        alert('加载患者信息失败');
+        showToast('获取患者信息失败', 'error');
+    }
+}
+
+// 更新患者列表中的活动项
+function updateActivePatientInList(patientId) {
+    // 移除所有活动项
+    const activeItems = document.querySelectorAll('.patient-item.active');
+    activeItems.forEach(item => item.classList.remove('active'));
+
+    // 设置当前患者为活动项
+    if (patientId) {
+        const currentItem = document.querySelector(`.patient-item[data-id="${patientId}"]`);
+        if (currentItem) {
+            currentItem.classList.add('active');
+        }
     }
 }
 
@@ -218,7 +360,7 @@ async function savePatient() {
 
         if (response.ok) {
             const savedPatient = await response.json();
-            alert('保存成功');
+            showToast('保存成功', 'success');
 
             if (!currentPatientId) {
                 // 如果是新建患者，保存后跳转到该患者的页面
@@ -232,14 +374,14 @@ async function savePatient() {
         }
     } catch (error) {
         console.error('Error saving patient:', error);
-        alert('保存失败');
+        showToast('保存失败', 'error');
     }
 }
 
 // 生成处方
 async function generatePrescription() {
     if (!currentPatientId) {
-        alert('请先保存患者信息');
+        showToast('请先保存患者信息', 'error');
         return;
     }
 
@@ -259,7 +401,7 @@ async function generatePrescription() {
         }
     } catch (error) {
         console.error('Error generating prescription:', error);
-        alert('处方生成失败');
+        showToast('处方生成失败', 'error');
     }
 }
 
