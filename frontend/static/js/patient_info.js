@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 获取患者列表
 async function getPatients() {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients`);
+        const response = await fetch(`${API_BASE_URL}/patients/`);
         if (!response.ok) {
             throw new Error('获取患者列表失败');
         }

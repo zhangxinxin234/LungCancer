@@ -70,7 +70,7 @@ async function loadExistingPrescription(patientId) {
 // 获取患者列表
 async function getPatients() {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients`);
+        const response = await fetch(`${API_BASE_URL}/patients/`);
         if (!response.ok) {
             throw new Error('获取患者列表失败');
         }
@@ -189,7 +189,8 @@ function displayPrescription(prescription) {
     const elements = {
         'prescription': document.getElementById('prescription'),
         'medicine': document.getElementById('medicine'),
-        'treatmentStage': document.getElementById('treatmentStage')
+        'treatmentStage': document.getElementById('treatmentStage'),
+        'cscoGuideline': document.getElementById('cscoGuideline')
     };
 
     // 检查所有需要的元素是否存在
@@ -209,6 +210,28 @@ function displayPrescription(prescription) {
     }
     if (elements.treatmentStage) {
         elements.treatmentStage.textContent = prescription.western_treatment_stage || '';
+    }
+    if (elements.cscoGuideline) {
+        displayCscoGuideline(prescription.csco_guideline);
+    }
+}
+
+// 显示CSCO指南
+function displayCscoGuideline(guideline) {
+    const cscoGuidelineElement = document.getElementById('cscoGuideline');
+    if (!cscoGuidelineElement) return;
+
+    if (typeof guideline === 'string') {
+        cscoGuidelineElement.innerHTML = `<p>${guideline}</p>`;
+    } else if (typeof guideline === 'object') {
+        let tableHtml = '<table class="table table-bordered"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody>';
+        for (const [key, value] of Object.entries(guideline)) {
+            tableHtml += `<tr><td>${key}</td><td>${value}</td></tr>`;
+        }
+        tableHtml += '</tbody></table>';
+        cscoGuidelineElement.innerHTML = tableHtml;
+    } else {
+        cscoGuidelineElement.innerHTML = '<p>无可用的CSCO指南信息</p>';
     }
 }
 

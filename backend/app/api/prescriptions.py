@@ -37,6 +37,7 @@ async def generate_prescription(
     patient.csco_guideline = result["csco_guideline"]
     patient.prescription = result["prescription"]
     patient.chinese_medicine = result["medicine"]
+    print(patient.csco_guideline)
     
     db.commit()
     
