@@ -64,31 +64,41 @@
         .prescription-section {
             background-color: white;
             border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             border: 1px solid var(--border-color);
         }
 
         .prescription-title {
             color: var(--primary-color);
             font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
             border-bottom: 2px solid var(--accent-color);
+            font-size: 0.95rem;
+        }
+
+        .prescription-content.single-line {
+            min-height: 38px;
+            max-height: 38px;
+            height: 38px;
+            resize: none;
+            white-space: nowrap;
+            overflow-x: auto;
         }
 
         .prescription-content {
             font-family: "Noto Sans SC", sans-serif;
-            line-height: 1.8;
+            line-height: 1.6;
             white-space: pre-wrap;
-            padding: 1rem;
+            padding: 0.75rem;
             background-color: #f8fafc;
             border-radius: 6px;
             border: 1px solid var(--border-color);
             width: 100%;
             resize: vertical;
-            min-height: 100px;
-            max-height: 400px;
+            min-height: 60px;
+            max-height: 150px;
             font-size: 14px;
             transition: border-color 0.2s;
         }
@@ -235,7 +245,8 @@
         }
 
         .csco-table th {
-            background-color: #f8f9fa;
+            background-color: #3182ce; /* 蓝色背景 */
+            color: white; /* 白色文字 */
             font-weight: 600;
             text-align: left;
             padding: 0.75rem;
@@ -262,31 +273,31 @@
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         .markdown-content th,
         .markdown-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #edf2f7;
         }
-        
+
         .markdown-content th {
-            background-color: var(--primary-color);
+            background-color: #3182ce; /* 更亮的蓝色 */
             color: white;
             font-weight: 500;
             text-transform: uppercase;
             font-size: 0.9em;
             letter-spacing: 0.5px;
         }
-        
+
         .markdown-content tr:nth-child(even) {
             background-color: #f8fafc;
         }
-        
+
         .markdown-content tr:nth-child(odd) {
             background-color: white;
         }
-        
+
         .markdown-content tr:hover {
             background-color: #edf2f7;
             transition: background-color 0.2s ease;
@@ -350,12 +361,12 @@
 
                         <div class="prescription-section">
                             <h5 class="prescription-title">中医处方</h5>
-                            <textarea class="prescription-content" id="prescription" rows="6"></textarea>
+                            <textarea class="prescription-content" id="prescription" rows="4"></textarea>
                         </div>
 
                         <div class="prescription-section">
                             <h5 class="prescription-title">推荐中成药</h5>
-                            <textarea class="prescription-content" id="medicine" rows="4"></textarea>
+                            <input type="text" class="prescription-content single-line" id="medicine">
                         </div>
 
                         <div class="prescription-section">
