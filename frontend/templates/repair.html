@@ -201,6 +201,19 @@
             border-radius: 6px;
             border: 1px solid var(--border-color);
             min-height: 200px;
+            width: 100%;
+            resize: vertical;
+        }
+
+        textarea.comparison-content {
+            display: block;
+            box-sizing: border-box;
+        }
+
+        textarea.comparison-content:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.1);
         }
 
         /* 响应式设计 */
@@ -208,7 +221,7 @@
             .container {
                 padding: 1rem;
             }
-            
+
             .card {
                 margin-bottom: 1rem;
             }
@@ -350,9 +363,7 @@
                             </div>
                             <div class="comparison-box">
                                 <h5 class="comparison-title">修复后处方</h5>
-                                <div class="comparison-content" id="repairedPrescription">
-                                    <!-- 修复后处方将通过JavaScript动态填充 -->
-                                </div>
+                                <textarea class="comparison-content" id="repairedPrescription"></textarea>
                             </div>
                         </div>
 
@@ -365,9 +376,7 @@
                             </div>
                             <div class="comparison-box">
                                 <h5 class="comparison-title">修复后中成药</h5>
-                                <div class="comparison-content" id="repairedMedicine">
-                                    <!-- 修复后中成药将通过JavaScript动态填充 -->
-                                </div>
+                                <textarea class="comparison-content" id="repairedMedicine"></textarea>
                             </div>
                         </div>
 

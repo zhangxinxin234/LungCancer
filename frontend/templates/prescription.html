@@ -84,6 +84,23 @@
             background-color: #f8fafc;
             border-radius: 6px;
             border: 1px solid var(--border-color);
+            width: 100%;
+            resize: vertical;
+            min-height: 100px;
+            max-height: 400px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        textarea.prescription-content {
+            display: block;
+            box-sizing: border-box;
+        }
+
+        textarea.prescription-content:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.1);
         }
 
         .btn {
@@ -184,7 +201,7 @@
             .container {
                 padding: 1rem;
             }
-            
+
             .card {
                 margin-bottom: 1rem;
             }
@@ -197,14 +214,14 @@
         .csco-table {
             margin: 1rem 0;
         }
-        
+
         .csco-table table {
             width: 100%;
             border-collapse: collapse;
             background-color: #fff;
             font-size: 0.95rem;
         }
-        
+
         .csco-table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -212,13 +229,13 @@
             padding: 0.75rem;
             border: 1px solid #dee2e6;
         }
-        
+
         .csco-table td {
             padding: 0.75rem;
             border: 1px solid #dee2e6;
             line-height: 1.5;
         }
-        
+
         .csco-table tr:hover {
             background-color: #f8f9fa;
         }
@@ -273,16 +290,12 @@
 
                         <div class="prescription-section">
                             <h5 class="prescription-title">中医处方</h5>
-                            <div class="prescription-content" id="prescription">
-                                <!-- 中医处方将通过JavaScript动态填充 -->
-                            </div>
+                            <textarea class="prescription-content" id="prescription" rows="6"></textarea>
                         </div>
 
                         <div class="prescription-section">
                             <h5 class="prescription-title">推荐中成药</h5>
-                            <div class="prescription-content" id="medicine">
-                                <!-- 推荐中成药将通过JavaScript动态填充 -->
-                            </div>
+                            <textarea class="prescription-content" id="medicine" rows="4"></textarea>
                         </div>
 
                         <div class="prescription-section">

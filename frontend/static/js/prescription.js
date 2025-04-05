@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateNavigationLinks(patientId);
         await loadPatientInfo(patientId); // 加载患者信息
         await loadExistingPrescription(patientId);
-        
+
         // 只有当从患者信息页面点击"生成处方"时才生成新处方
         const shouldGenerate = getUrlParam('generate');
         if (shouldGenerate === 'true') {
@@ -30,7 +30,7 @@ function updateNavigationLinks(patientId) {
     const prescriptionLink = document.getElementById('prescriptionLink');
     const repairLink = document.getElementById('repairLink');
     const patientInfoLink = document.getElementById('patientInfoLink');
-    
+
     if (patientId) {
         prescriptionLink.href = `/prescription?patient_id=${patientId}`;
         repairLink.href = `/repair?patient_id=${patientId}`;
@@ -89,9 +89,9 @@ function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
     if (!patientList) return; // 确保元素存在
     patientList.innerHTML = '';
-    
+
     if (!currentPatientId) return; // 如果没有当前患者ID，不显示任何内容
-    
+
     // 只显示当前患者
     const currentPatient = patients.find(p => String(p.id) === String(currentPatientId));
     if (!currentPatient) return;
@@ -124,7 +124,7 @@ async function deletePatient(patientId) {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE'
         });
-        
+
         if (response.ok) {
             alert('患者删除成功');
             getPatients(); // 刷新患者列表
@@ -162,11 +162,11 @@ async function generatePrescription() {
         }
 
         const result = await response.json();
-        
+
         // 更新界面显示
         document.getElementById('treatmentStage').textContent = result.western_treatment_stage || '';
-        document.getElementById('prescription').textContent = result.prescription || '';
-        document.getElementById('medicine').textContent = result.medicine || '';
+        document.getElementById('prescription').value = result.prescription || '';
+        document.getElementById('medicine').value = result.medicine || '';
 
     } catch (error) {
         console.error('Error generating prescription:', error);
@@ -185,7 +185,7 @@ async function generatePrescription() {
 // 显示处方
 function displayPrescription(prescription) {
     if (!prescription) return;
-    
+
     const elements = {
         'prescription': document.getElementById('prescription'),
         'medicine': document.getElementById('medicine'),
@@ -202,10 +202,10 @@ function displayPrescription(prescription) {
 
     // 设置内容
     if (elements.prescription) {
-        elements.prescription.textContent = prescription.prescription || '';
+        elements.prescription.value = prescription.prescription || '';
     }
     if (elements.medicine) {
-        elements.medicine.textContent = prescription.medicine || '';
+        elements.medicine.value = prescription.medicine || '';
     }
     if (elements.treatmentStage) {
         elements.treatmentStage.textContent = prescription.western_treatment_stage || '';
@@ -226,7 +226,7 @@ async function savePrescription() {
         // 根据当前治疗阶段设置相应的CSCO指南
         const treatmentStage = document.getElementById('treatmentStage').textContent;
         let cscoGuideline = '';
-        
+
         // 根据治疗阶段设置对应的CSCO指南内容
         switch (treatmentStage.trim()) {
             case 'IIA期':
@@ -245,8 +245,8 @@ async function savePrescription() {
         const prescriptionData = {
             western_treatment_stage: treatmentStage,
             csco_guideline: cscoGuideline,
-            prescription: document.getElementById('prescription').textContent,
-            medicine: document.getElementById('medicine').textContent
+            prescription: document.getElementById('prescription').value,
+            medicine: document.getElementById('medicine').value
         };
 
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`, {

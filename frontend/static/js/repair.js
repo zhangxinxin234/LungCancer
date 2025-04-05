@@ -29,7 +29,7 @@ async function getPatients() {
             },
             credentials: 'include'
         });
-        
+
         if (!response.ok) {
             throw new Error('获取患者列表失败');
         }
@@ -49,9 +49,9 @@ function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
     if (!patientList) return; // 确保元素存在
     patientList.innerHTML = '';
-    
+
     if (!currentPatientId) return; // 如果没有当前患者ID，不显示任何内容
-    
+
     // 只显示当前患者
     const currentPatient = patients.find(p => String(p.id) === String(currentPatientId));
     if (!currentPatient) return;
@@ -112,7 +112,7 @@ function updateNavigationLinks(patientId) {
     const prescriptionLink = document.getElementById('prescriptionLink');
     const repairLink = document.getElementById('repairLink');
     const patientInfoLink = document.getElementById('patientInfoLink');
-    
+
     if (patientId) {
         prescriptionLink.href = `/prescription?patient_id=${patientId}`;
         repairLink.href = `/repair?patient_id=${patientId}`;
@@ -133,21 +133,21 @@ async function loadPatientPrescription(patientId) {
             },
             credentials: 'include'
         });
-        
+
         if (!response.ok) {
             throw new Error('加载失败');
         }
 
         const patient = await response.json();
-        
+
         // 显示原始处方和中成药
         document.getElementById('originalPrescription').textContent = patient.prescription || '';
         document.getElementById('originalMedicine').textContent = patient.chinese_medicine || '';
-        
+
         // 如果有修复后的处方和中成药，也显示出来
-        document.getElementById('repairedPrescription').textContent = patient.prescription_repair || '';
-        document.getElementById('repairedMedicine').textContent = patient.medicine_repair || '';
-        
+        document.getElementById('repairedPrescription').value = patient.prescription_repair || '';
+        document.getElementById('repairedMedicine').value = patient.medicine_repair || '';
+
         // 清空修复建议，除非是刚加载的修复后的处方
         if (!patient.prescription_repair) {
             document.getElementById('repairRules').value = '';
@@ -215,8 +215,8 @@ async function repairPrescription() {
 
         const result = await response.json();
         // 直接更新界面
-        document.getElementById('repairedPrescription').textContent = result.prescription || '';
-        document.getElementById('repairedMedicine').textContent = result.medicine || '';
+        document.getElementById('repairedPrescription').value = result.prescription || '';
+        document.getElementById('repairedMedicine').value = result.medicine || '';
     } catch (error) {
         console.error('Error repairing prescription:', error);
         // 只在控制台显示错误，不弹窗
@@ -241,13 +241,21 @@ async function adoptRepair() {
     }
 
     try {
+        // 获取可能已编辑的处方和中成药内容
+        const repairedPrescription = document.getElementById('repairedPrescription').value;
+        const repairedMedicine = document.getElementById('repairedMedicine').value;
+
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/adopt-repair`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            credentials: 'include'
+            credentials: 'include',
+            body: JSON.stringify({
+                prescription: repairedPrescription,
+                medicine: repairedMedicine
+            })
         });
 
         if (!response.ok) {
@@ -273,7 +281,7 @@ async function loadLatestRepairRule() {
             },
             credentials: 'include'
         });
-        
+
         if (!response.ok) {
             throw new Error('加载修复规则失败');
         }
@@ -370,7 +378,7 @@ async function deletePatient(patientId) {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE'
         });
-        
+
         if (response.ok) {
             alert('患者删除成功');
             getPatients();
