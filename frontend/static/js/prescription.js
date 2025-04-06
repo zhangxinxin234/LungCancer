@@ -137,7 +137,7 @@ async function deletePatient(patientId) {
     }
 }
 
-// 生成处方
+// 重新生成处方
 async function generatePrescription() {
     const patientId = getUrlParam('patient_id');
     if (!patientId) {
@@ -300,9 +300,9 @@ async function savePrescription() {
 
 // 显示加载动画
 function showLoading() {
-    const spinner = document.getElementById('loadingSpinner');
-    if (spinner) {
-        spinner.classList.add('active');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
     }
     // 禁用所有按钮
     document.querySelectorAll('button').forEach(button => {
@@ -312,9 +312,9 @@ function showLoading() {
 
 // 隐藏加载动画
 function hideLoading() {
-    const spinner = document.getElementById('loadingSpinner');
-    if (spinner) {
-        spinner.classList.remove('active');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
     }
     // 启用所有按钮
     document.querySelectorAll('button').forEach(button => {

@@ -8,6 +8,43 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        /* 加载动画容器 */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2b6cb0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loading-text {
+            color: #2b6cb0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
         .fancy-title {
@@ -275,51 +312,100 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin: 15px 0;
-            border-radius: 8px;
+            margin: 1rem 0;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            background: white;
         }
 
         .markdown-content th,
         .markdown-content td {
-            padding: 12px 15px;
+            padding: 16px;
             text-align: left;
-            border: 1px solid #edf2f7;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            vertical-align: middle;
         }
 
         .markdown-content th {
-            background-color: #3182ce; /* 更亮的蓝色 */
+            background-color: #2b6cb0;
             color: white;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.9em;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
-        .markdown-content tr:nth-child(even) {
-            background-color: #f8fafc;
+        .markdown-content th:first-child {
+            border-top-left-radius: 8px;
         }
 
-        .markdown-content tr:nth-child(odd) {
-            background-color: white;
+        .markdown-content th:last-child {
+            border-top-right-radius: 8px;
+            border-right: none;
         }
 
-        .markdown-content tr:hover {
-            background-color: #edf2f7;
-            transition: background-color 0.2s ease;
+        .markdown-content td:last-child {
+            border-right: none;
         }
 
-        .markdown-content td {
-            border-bottom: 1px solid #edf2f7;
+        .markdown-content tr:last-child td:first-child {
+            border-bottom-left-radius: 8px;
+        }
+
+        .markdown-content tr:last-child td:last-child {
+            border-bottom-right-radius: 8px;
         }
 
         .markdown-content tr:last-child td {
             border-bottom: none;
         }
+
+        .markdown-content tbody tr {
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+
+        .markdown-content tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .markdown-content tbody tr:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 添加垂直分隔线的渐变效果 */
+        .markdown-content td {
+            position: relative;
+        }
+
+        .markdown-content td:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #e2e8f0, transparent);
+        }
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
+    <!-- 加载动画 -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在生成处方...</div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand fancy-title" href="#"><i class='bx bx-plus-medical medical-icon'></i>林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</a>
