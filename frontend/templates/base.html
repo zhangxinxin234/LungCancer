@@ -78,10 +78,13 @@
 
         .navbar-nav {
             margin-left: auto;
-            margin-right: 0;
+            margin-right: auto;
             height: 50px;
             display: flex;
             align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .nav-item {
@@ -128,7 +131,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid" style="width: 98%; margin: 0 auto;">
+        <div class="container-fluid" style="width: 98%; margin: 0 auto; position: relative;">
             <a class="navbar-brand fancy-title" href="/">
                 <i class='bx bx-plus-medical medical-icon'></i>
                 <span style="font-size: 2.2rem; font-weight: 700; color: #ffd700; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); display: inline-block; vertical-align: middle; margin-right: 2px;">林洪生</span>教授辨治非小细胞肺癌人工智能辅助诊疗系统
@@ -163,6 +166,27 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 设置当前页面对应的导航链接为激活状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = {
+                '/patient_info': document.getElementById('patientInfoLink'),
+                '/prescription': document.getElementById('prescriptionLink'),
+                '/repair': document.getElementById('repairLink')
+            };
+
+            // 移除所有导航链接的active类
+            Object.values(navLinks).forEach(link => {
+                if (link) link.classList.remove('active');
+            });
+
+            // 为当前页面的导航链接添加active类
+            if (navLinks[currentPath]) {
+                navLinks[currentPath].classList.add('active');
+            }
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html> 
