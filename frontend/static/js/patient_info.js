@@ -378,6 +378,22 @@ async function savePatient() {
     }
 }
 
+// 显示加载动画
+function showLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+    }
+}
+
+// 隐藏加载动画
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
+}
+
 // 生成处方
 async function generatePrescription() {
     if (!currentPatientId) {
@@ -386,6 +402,9 @@ async function generatePrescription() {
     }
 
     try {
+        // 显示加载动画
+        showLoading();
+
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
             method: 'POST',
             headers: {
@@ -397,9 +416,11 @@ async function generatePrescription() {
             // 直接跳转到处方页面
             window.location.href = `/prescription?patient_id=${currentPatientId}`;
         } else {
+            hideLoading(); // 出错时隐藏加载动画
             throw new Error('处方生成失败');
         }
     } catch (error) {
+        hideLoading(); // 确保出错时也隐藏加载动画
         console.error('Error generating prescription:', error);
         showToast('处方生成失败', 'error');
     }
