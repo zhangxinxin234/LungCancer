@@ -27,9 +27,9 @@ async def generate_prescription(
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-    
+
     result = await PrescriptionService.generate_prescription(patient)
-    
+
     # 更新患者信息
     patient.generated_prescription = result["prescription"]
     patient.generated_medicine = result["medicine"]
@@ -38,9 +38,9 @@ async def generate_prescription(
     patient.prescription = result["prescription"]
     patient.chinese_medicine = result["medicine"]
     print(patient.csco_guideline)
-    
+
     db.commit()
-    
+
     return result
 
 @router.post("/patients/{patient_id}/repair-prescription")
@@ -52,44 +52,49 @@ async def repair_prescription(
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-    
+
     # 创建新的修复规则
     repair_rule = RepairRule(
         patient_id=patient_id,
         rule_content=repair_request.rule_content
     )
     db.add(repair_rule)
-    
+
     result = await PrescriptionService.repair_prescription(
         patient=patient,
         prescription=patient.generated_prescription,
         medicine=patient.generated_medicine,
         rules=repair_request.rule_content
     )
-    
+
     # 更新患者信息
     patient.prescription_repair = result["prescription"]
     patient.medicine_repair = result["medicine"]
-    
+
     db.commit()
-    
+
     return result
+
+class AdoptRepairRequest(BaseModel):
+    prescription: str
+    medicine: str
 
 @router.post("/patients/{patient_id}/adopt-repair")
 async def adopt_repair(
     patient_id: int,
+    repair_data: AdoptRepairRequest,
     db: Session = Depends(get_db)
 ):
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-    
-    # 将修复后的处方和中成药更新为当前处方和中成药
-    patient.prescription = patient.prescription_repair
-    patient.chinese_medicine = patient.medicine_repair
-    
+
+    # 使用前端传递的处方和中成药更新
+    patient.prescription = repair_data.prescription
+    patient.chinese_medicine = repair_data.medicine
+
     db.commit()
-    
+
     return {
         "message": "Repair adopted successfully",
         "prescription": patient.prescription,
@@ -105,7 +110,7 @@ async def get_latest_repair_rule(
     latest_rule = db.query(RepairRule)\
         .order_by(RepairRule.id.desc())\
         .first()
-    
+
     if not latest_rule:
         # 如果没有找到规则，返回默认规则
         default_rule = """1. 放疗阶段需加：天冬12g、麦冬12g；
@@ -132,7 +137,7 @@ async def get_latest_repair_rule(
         - 贞芪扶正颗粒：体虚明显、纳差；
         - 血府逐瘀类：舌暗瘀斑、舌下静脉怒张。"""
         return {"rule_content": default_rule}
-    
+
     return {"rule_content": latest_rule.rule_content}
 
 @router.post("/patients/{patient_id}/save-repair-rule")
@@ -148,7 +153,7 @@ async def save_repair_rule(
     )
     db.add(repair_rule)
     db.commit()
-    
+
     return {"message": "Repair rule saved successfully"}
 
 @router.get("/patients/{patient_id}/prescription")
@@ -159,7 +164,7 @@ async def get_prescription(
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-    
+
     return {
         "prescription": patient.prescription,
         "medicine": patient.chinese_medicine,
@@ -176,13 +181,13 @@ async def update_prescription(
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-    
+
     # 更新患者的处方信息
     patient.western_treatment_stage = prescription_update.western_treatment_stage
     # patient.csco_guideline = prescription_update.csco_guideline
     patient.prescription = prescription_update.prescription
     patient.chinese_medicine = prescription_update.medicine
-    
+
     try:
         db.commit()
         return {

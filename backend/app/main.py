@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import patients, prescriptions, repair_rules
+from app.api import patients, prescriptions
 from app.db.database import engine
 from app.models.base import Base
 
@@ -26,7 +26,6 @@ app.add_middleware(
 # 包含路由
 app.include_router(patients.router, prefix="/api/v1", tags=["patients"])
 app.include_router(prescriptions.router, prefix="/api/v1", tags=["prescriptions"])
-app.include_router(repair_rules.router, prefix="/api/v1", tags=["repair_rules"])
 
 @app.get("/")
 async def root():
