@@ -275,24 +275,12 @@ async function savePrescription() {
             throw new Error('保存失败');
         }
 
-        // 显示成功消息
-        const successMessage = document.createElement('div');
-        successMessage.className = 'alert alert-success mt-3';
-        successMessage.textContent = '处方保存成功';
-        document.getElementById('prescription').parentNode.appendChild(successMessage);
-        setTimeout(() => {
-            successMessage.remove();
-        }, 3000);
+        // 显示全屏成功消息
+        showSuccessNotification('处方保存成功');
 
     } catch (error) {
         console.error('Error saving prescription:', error);
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'alert alert-danger mt-3';
-        errorMessage.textContent = '保存失败：' + error.message;
-        document.getElementById('prescription').parentNode.appendChild(errorMessage);
-        setTimeout(() => {
-            errorMessage.remove();
-        }, 3000);
+        showErrorNotification('保存失败：' + error.message);
     } finally {
         hideLoading(); // 隐藏加载动画
     }
@@ -390,4 +378,62 @@ function goBack() {
     } else {
         window.location.href = '/patient_info';
     }
-} 
+}
+
+// 显示全屏成功通知
+function showSuccessNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <div class="success-icon">
+            <i class='bx bx-check'></i>
+        </div>
+        <div class="success-message">${message}</div>
+    `;
+
+    // 添加到body
+    document.body.appendChild(notification);
+
+    // 显示通知
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    // 1秒后隐藏并移除
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300); // 等待淡出动画完成
+    }, 1000);
+}
+
+// 显示全屏错误通知
+function showErrorNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'success-notification error-notification';
+    notification.innerHTML = `
+        <div class="success-icon error-icon">
+            <i class='bx bx-x'></i>
+        </div>
+        <div class="success-message">${message}</div>
+    `;
+
+    // 添加到body
+    document.body.appendChild(notification);
+
+    // 显示通知
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    // 1秒后隐藏并移除
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300); // 等待淡出动画完成
+    }, 1000);
+}
