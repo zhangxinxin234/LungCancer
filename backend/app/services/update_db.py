@@ -7,8 +7,8 @@
 import os
 import json
 import requests
-from backend.core.config import settings, BASE_DIR
-from backend.core.embeddings import get_embeddings
+from app.core.config import settings, BASE_DIR
+from app.services.embeddings import get_embeddings
 import pandas as pd
 from tabulate import tabulate
 
