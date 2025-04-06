@@ -40,7 +40,7 @@ async function getPatients() {
         displayPatients(patients);
     } catch (error) {
         console.error('Error fetching patients:', error);
-        alert('获取患者列表失败：' + error.message);
+        showErrorNotification('获取患者列表失败：' + error.message);
     }
 }
 
@@ -81,7 +81,7 @@ async function loadPatientInfo(patientId) {
         displayPatientInfo(patient);
     } catch (error) {
         console.error('Error loading patient info:', error);
-        alert('加载患者信息失败');
+        showErrorNotification('加载患者信息失败');
     }
 }
 
@@ -185,13 +185,13 @@ function hideLoading() {
 // 修复处方
 async function repairPrescription() {
     if (!currentPatientId) {
-        alert('请先选择一个患者');
+        showErrorNotification('请先选择一个患者');
         return;
     }
 
     const rules = document.getElementById('repairRules').value;
     if (!rules.trim()) {
-        alert('请输入修复规则');
+        showErrorNotification('请输入修复规则');
         return;
     }
 
@@ -219,15 +219,7 @@ async function repairPrescription() {
         document.getElementById('repairedMedicine').value = result.medicine || '';
     } catch (error) {
         console.error('Error repairing prescription:', error);
-        // 只在控制台显示错误，不弹窗
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'alert alert-danger mt-3';
-        errorMessage.textContent = '修复失败：' + error.message;
-        document.getElementById('repairedPrescription').parentNode.appendChild(errorMessage);
-        // 3秒后自动移除错误提示
-        setTimeout(() => {
-            errorMessage.remove();
-        }, 3000);
+        showErrorNotification('修复失败：' + error.message);
     } finally {
         hideLoading(); // 隐藏加载动画
     }
@@ -236,7 +228,7 @@ async function repairPrescription() {
 // 采纳修复
 async function adoptRepair() {
     if (!currentPatientId) {
-        alert('请先选择一个患者');
+        showErrorNotification('请先选择一个患者');
         return;
     }
 
@@ -264,11 +256,11 @@ async function adoptRepair() {
         }
 
         const result = await response.json();
-        alert('采纳成功');
+        showSuccessNotification('采纳成功');
         await loadPatientPrescription(currentPatientId); // 重新加载处方信息
     } catch (error) {
         console.error('Error adopting repair:', error);
-        alert('采纳失败：' + error.message);
+        showErrorNotification('采纳失败：' + error.message);
     }
 }
 
@@ -289,6 +281,7 @@ async function loadLatestRepairRule() {
         const result = await response.json();
         if (result.rule_content) {
             document.getElementById('repairRules').value = result.rule_content;
+            showSuccessNotification('规则加载成功'); // 添加成功提示
         } else {
             // 如果没有找到规则，加载默认规则
             document.getElementById('repairRules').value = `1. 放疗阶段需加：天冬12g、麦冬12g；
@@ -317,20 +310,20 @@ async function loadLatestRepairRule() {
         }
     } catch (error) {
         console.error('Error loading repair rules:', error);
-        alert('加载修复规则失败：' + error.message);
+        showErrorNotification('加载修复规则失败：' + error.message);
     }
 }
 
 // 保存修复规则
 async function saveRepairRule() {
     if (!currentPatientId) {
-        alert('请先选择一个患者');
+        showErrorNotification('请先选择一个患者');
         return;
     }
 
     const rules = document.getElementById('repairRules').value;
     if (!rules.trim()) {
-        alert('请输入修复规则');
+        showErrorNotification('请输入修复规则');
         return;
     }
 
@@ -350,10 +343,10 @@ async function saveRepairRule() {
             throw new Error(errorData.detail || '保存失败');
         }
 
-        alert('修复规则保存成功');
+        showSuccessNotification('修复规则保存成功');
     } catch (error) {
         console.error('Error saving repair rule:', error);
-        alert('保存失败：' + error.message);
+        showErrorNotification('保存失败：' + error.message);
     }
 }
 
@@ -380,20 +373,78 @@ async function deletePatient(patientId) {
         });
 
         if (response.ok) {
-            alert('患者删除成功');
+            showSuccessNotification('患者删除成功');
             getPatients();
         } else {
-            alert('删除失败');
+            showErrorNotification('删除失败');
         }
     } catch (error) {
         console.error('Error deleting patient:', error);
-        alert('删除失败');
+        showErrorNotification('删除失败');
     }
 }
 
 // 新建患者
 function createNewPatient() {
     window.location.href = '/patient_info';
+}
+
+// 显示全屏成功通知
+function showSuccessNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <div class="success-icon">
+            <i class='bx bx-check'></i>
+        </div>
+        <div class="success-message">${message}</div>
+    `;
+
+    // 添加到body
+    document.body.appendChild(notification);
+
+    // 显示通知
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    // 1秒后隐藏并移除
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300); // 等待淡出动画完成
+    }, 1000);
+}
+
+// 显示全屏错误通知
+function showErrorNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'success-notification error-notification';
+    notification.innerHTML = `
+        <div class="success-icon error-icon">
+            <i class='bx bx-x'></i>
+        </div>
+        <div class="success-message">${message}</div>
+    `;
+
+    // 添加到body
+    document.body.appendChild(notification);
+
+    // 显示通知
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    // 1秒后隐藏并移除
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300); // 等待淡出动画完成
+    }, 1000);
 }
 
 // 返回到处方生成界面
@@ -404,4 +455,4 @@ function goBack() {
     } else {
         window.location.href = '/prescription';
     }
-} 
+}
