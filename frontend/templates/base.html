@@ -16,31 +16,18 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* 页面主容器 */
-        .page-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        /* 导航栏背景 */
         .nav-bg {
             background-color: var(--primary-color);
             width: 100%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* 内容宽度限制 */
         .content-width {
             width: 100%;
             max-width: 1000px;
@@ -48,11 +35,10 @@
             padding: 0 15px;
         }
 
-        /* 导航栏样式 */
         .navbar {
-            background-color: transparent !important;
             padding: 0;
             height: 50px;
+            background-color: transparent !important;
         }
 
         .navbar-brand {
@@ -62,7 +48,6 @@
             padding: 0;
             margin-right: 1rem;
             line-height: 50px;
-            white-space: nowrap;
         }
 
         .highlight-name {
@@ -80,21 +65,13 @@
             color: rgba(255,255,255,0.9) !important;
             font-weight: 500;
             padding: 0 0.8rem;
-            margin: 0;
-            border-radius: 0;
-            transition: all 0.3s ease;
             line-height: 50px;
             height: 50px;
             display: flex;
             align-items: center;
         }
 
-        .nav-link:hover {
-            background-color: var(--secondary-color);
-            color: white !important;
-        }
-
-        .nav-link.active {
+        .nav-link:hover, .nav-link.active {
             background-color: var(--secondary-color);
             color: white !important;
         }
@@ -115,16 +92,6 @@
             font-size: 1.1rem;
         }
 
-        /* 响应式布局 */
-        @media (max-width: 1200px) {
-            .navbar-brand {
-                font-size: 1rem;
-            }
-            .highlight-name {
-                font-size: 1.8rem !important;
-            }
-        }
-
         @media (max-width: 992px) {
             .navbar {
                 height: auto;
@@ -134,7 +101,6 @@
             .navbar-brand {
                 font-size: 0.9rem;
                 line-height: 40px;
-                height: 40px;
             }
 
             .highlight-name {
@@ -149,7 +115,6 @@
 
             .nav-item {
                 width: 100%;
-                height: auto;
             }
 
             .nav-link {
@@ -177,47 +142,43 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <div class="page-container">
-        <!-- 导航栏 -->
-        <div class="nav-bg">
-            <div class="content-width">
-                <nav class="navbar navbar-expand-lg navbar-dark">
-                    <div class="container-fluid p-0">
-                        <a class="navbar-brand" href="/">
-                            <i class='bx bx-plus-medical medical-icon'></i>
-                            <span class="highlight-name">林洪生</span>教授辨治非小细胞肺癌人工智能辅助诊疗系统
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/patient_info" id="patientInfoLink">
-                                        <i class='bx bx-user medical-icon'></i>患者信息
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/prescription" id="prescriptionLink">
-                                        <i class='bx bx-notepad medical-icon'></i>处方生成
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/repair" id="repairLink">
-                                        <i class='bx bx-edit medical-icon'></i>处方修复
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+    <div class="nav-bg">
+        <div class="content-width">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <div class="container-fluid p-0">
+                    <a class="navbar-brand" href="/">
+                        <i class='bx bx-plus-medical medical-icon'></i>
+                        <span class="highlight-name">林洪生</span>教授辨治非小细胞肺癌人工智能辅助诊疗系统
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/patient_info" id="patientInfoLink">
+                                    <i class='bx bx-user medical-icon'></i>患者信息
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/prescription" id="prescriptionLink">
+                                    <i class='bx bx-notepad medical-icon'></i>处方生成
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/repair" id="repairLink">
+                                    <i class='bx bx-edit medical-icon'></i>处方修复
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </div>
+    </div>
 
-        <!-- 主要内容区域 -->
-        <div class="content-width mt-4">
-            {% block content %}{% endblock %}
-        </div>
+    <div class="content-width mt-4">
+        {% block content %}{% endblock %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -230,13 +191,8 @@
                 '/repair': document.getElementById('repairLink')
             };
 
-            Object.values(navLinks).forEach(link => {
-                if (link) link.classList.remove('active');
-            });
-
-            if (navLinks[currentPath]) {
-                navLinks[currentPath].classList.add('active');
-            }
+            Object.values(navLinks).forEach(link => link?.classList.remove('active'));
+            navLinks[currentPath]?.classList.add('active');
         });
     </script>
     {% block scripts %}{% endblock %}

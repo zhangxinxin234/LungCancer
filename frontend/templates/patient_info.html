@@ -364,6 +364,43 @@
             }
         }
 
+        /* 保存成功提示样式 */
+        .save-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(72, 187, 120, 0.95);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .notification-content i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
         /* 确保滚动区域内容正确显示 */
         .card-body.d-flex.flex-column {
             overflow: hidden; /* 防止卡片体溢出 */
@@ -480,6 +517,14 @@
         <div style="text-align: center;">
             <div class="loading-spinner"></div>
             <div class="loading-text">正在生成处方，请稍候...</div>
+        </div>
+    </div>
+
+    <!-- 保存成功提示 -->
+    <div class="save-notification" id="saveNotification">
+        <div class="notification-content">
+            <i class='bx bx-check-circle'></i>
+            <span>保存成功</span>
         </div>
     </div>
 
