@@ -8,6 +8,34 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
+        /* 加载指示器样式 */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .fancy-title {
             font-family: 'Ma Shan Zheng', cursive;
             font-size: 1.3rem;
@@ -490,6 +518,10 @@
     </style>
 </head>
 <body>
+    <!-- 加载指示器 -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid" style="width: 90%; margin: 0 auto; position: relative;">
             <a class="navbar-brand fancy-title" href="#"><i class='bx bx-plus-medical medical-icon'></i>林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</a>
@@ -536,7 +568,7 @@
                         <i class='bx bx-list-ul medical-icon'></i>患者列表
                     </div>
                     <div class="card-body d-flex flex-column" style="padding-bottom: 20px;">
-                        <button class="btn btn-primary mb-3 w-100" onclick="window.location.href='/patient_info'">
+                        <button class="btn btn-primary mb-3 w-100" onclick="createNewPatient()">
                             <i class='bx bx-plus medical-icon'></i>新建患者
                         </button>
                         <div id="patientList" class="patient-list flex-grow-1"></div>

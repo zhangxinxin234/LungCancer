@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import relationship
-from .base import Base
+from app.models.base import Base
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -27,5 +27,4 @@ class Patient(Base):
     doctor_comment = Column(Text)  # 医师评价
 
     # 关系
-    prescriptions = relationship("Prescription", back_populates="patient")
-    repair_rules = relationship("RepairRule", back_populates="patient") 
+    repair_rules = relationship("RepairRule", back_populates="patient", foreign_keys="RepairRule.patient_id")

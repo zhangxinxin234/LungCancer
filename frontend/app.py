@@ -4,7 +4,7 @@ import requests
 app = Flask(__name__)
 
 # API代理配置
-BACKEND_URL = 'http://localhost:8000'
+BACKEND_URL = 'http://192.168.31.98:8000'  # 请确保这是正确的后端 API 地址
 
 @app.route('/api/v1/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def proxy(path):

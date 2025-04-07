@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     LLM_HOST: str = "127.0.0.1"
     LLM_PORT: int = 7853
     LLM_NAME: str = "qwen"
-    LLM_ADAPTER: str = "Qwen2.5-14B_cotrc_no_r8a16"
+    LLM_ADAPTER: str = "Qwen2.5-14B_cotrc_no1_r8a16"
 
 
 

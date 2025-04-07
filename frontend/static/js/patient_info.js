@@ -13,13 +13,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     await getPatients();
 
     const patientId = getUrlParam('patient_id');
+    const isNewPatient = getUrlParam('new') === 'true';
+
     if (patientId) {
         currentPatientId = patientId;
         await loadPatientInfo(patientId);
         updateNavigationLinks(patientId);
-    } else {
-        // 如果URL中没有patient_id，加载最新的患者信息
+    } else if (!isNewPatient) {
+        // 只有在不是新建患者的情况下，才加载最新的患者信息
         await loadLatestPatient();
+    } else {
+        // 新建患者时，清空表单
+        clearPatientForm();
+        currentPatientId = null;
+        updateNavigationLinks(null);
     }
 
     // 设置表单提交事件
@@ -136,7 +143,7 @@ async function deletePatient(patientId) {
         // 记录删除前的当前患者ID，用于后续比较
         const deletingCurrentPatient = String(currentPatientId) === String(patientId);
 
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
             method: 'DELETE'
         });
 
@@ -212,7 +219,7 @@ function updateNavigationLinks(patientId) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`);
         if (!response.ok) {
             throw new Error('获取患者信息失败');
         }
@@ -257,6 +264,29 @@ function updateActivePatientInList(patientId) {
     }
 }
 
+// 清空患者表单
+function clearPatientForm() {
+    const elements = [
+        'diagnosis',
+        'diseaseStage',
+        'pathologyReport',
+        'staging',
+        'tnmStaging',
+        'labTests',
+        'imagingReport',
+        'symptoms',
+        'tongue',
+        'pulse'
+    ];
+
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = '';
+        }
+    });
+}
+
 // 填充患者表单
 function fillPatientForm(patient) {
     const elements = {
@@ -281,20 +311,29 @@ function fillPatientForm(patient) {
 }
 
 // 新建患者
-function createNewPatient() {
-    // 清空表单
-    const form = document.getElementById('patientForm');
-    if (form) {
-        form.reset();
+async function createNewPatient() {
+    try {
+        // 清空表单并更新URL
+        clearPatientForm();
+        window.history.pushState({}, '', '/patient_info?new=true');
+        currentPatientId = null;
+        updateNavigationLinks(null);
+
+        // 清空患者信息卡片
+        const patientInfo = document.getElementById('patientInfo');
+        if (patientInfo) {
+            patientInfo.innerHTML = '';
+        }
+
+        // 更新患者列表中的活动项
+        updateActivePatientInList(null);
+    } catch (error) {
+        console.error('Error creating new patient:', error);
+        showErrorMessage('创建新患者失败');
+    } finally {
+        // 隐藏加载指示器
+        hideLoading();
     }
-    // 清除当前患者ID
-    currentPatientId = null;
-    // 更新URL，移除patient_id参数
-    window.history.pushState({}, '', '/patient_info');
-    // 更新导航链接
-    updateNavigationLinks(null);
-    // 刷新患者列表以更新选中状态
-    getPatients();
 }
 
 // 保存患者信息
@@ -313,11 +352,11 @@ async function savePatient() {
     };
 
     try {
-        let url = `${API_BASE_URL}/patients`;
+        let url = `${API_BASE_URL}/patients/`;  // 添加末尾斜杠
         let method = 'POST';
 
         if (currentPatientId) {
-            url = `${API_BASE_URL}/patients/${currentPatientId}`;
+            url = `${API_BASE_URL}/patients/${currentPatientId}/`;  // 添加末尾斜杠
             method = 'PUT';
         }
 
@@ -335,19 +374,20 @@ async function savePatient() {
             // 显示中央保存成功提示
             showSaveNotification();
 
-            if (!currentPatientId) {
-                // 如果是新建患者，先显示保存成功提示，然后延迟跳转
-                // 先更新当前患者ID，避免重复保存
-                currentPatientId = savedPatient.id;
+            // 更新当前患者ID
+            currentPatientId = savedPatient.id;
 
-                // 延迟跳转，确保提示显示完整
-                setTimeout(() => {
-                    window.location.href = `/patient_info?patient_id=${savedPatient.id}`;
-                }, 800); // 延迟800ms，确保提示显示完整
-            } else {
-                // 如果是更新患者，刷新患者列表
-                await getPatients();
-            }
+            // 更新URL（移除new参数，添加patient_id）
+            window.history.replaceState({}, '', `/patient_info?patient_id=${savedPatient.id}`);
+
+            // 更新导航链接
+            updateNavigationLinks(savedPatient.id);
+
+            // 显示患者卡片
+            displayPatientCard(savedPatient);
+
+            // 刷新患者列表
+            await getPatients();
         } else {
             throw new Error('保存失败');
         }
