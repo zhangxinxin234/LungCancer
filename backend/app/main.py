@@ -11,8 +11,11 @@ app = FastAPI()
 
 # 配置CORS
 origins = [
-    "http://localhost:5000",
-    "http://127.0.0.1:5000",
+    "http://localhost:5001",
+    "http://127.0.0.1:5001",
+    "http://0.0.0.0:5001",
+    # 允许所有局域网IP访问
+    "http://192.168.*.*:5001",
 ]
 
 app.add_middleware(
