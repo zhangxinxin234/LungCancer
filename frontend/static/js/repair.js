@@ -18,7 +18,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadLatestRepairRule();
     }
     await getPatients(); // 确保在页面加载时获取患者列表
+
+    // 添加复选框的change事件监听器
+    const betterOption = document.getElementById('betterOption');
+    const worseOption = document.getElementById('worseOption');
+    if (betterOption && worseOption) {
+        betterOption.addEventListener('change', updateDoctorComment);
+        worseOption.addEventListener('change', updateDoctorComment);
+    }
 });
+
+// 更新医师评价
+function updateDoctorComment(event) {
+    const betterOption = document.getElementById('betterOption');
+    const worseOption = document.getElementById('worseOption');
+    const doctorComment = document.getElementById('doctorComment');
+    const clickedCheckbox = event.target;
+
+    // 确保只有一个选项被选中
+    if (clickedCheckbox.id === 'betterOption') {
+        worseOption.checked = false;
+    } else if (clickedCheckbox.id === 'worseOption') {
+        betterOption.checked = false;
+    }
+
+    // 更新医师评价文本
+    if (betterOption.checked) {
+        doctorComment.value = "优化后较原处方更好。";
+    } else if (worseOption.checked) {
+        doctorComment.value = "优化后较原处方更差。";
+    } else {
+        doctorComment.value = "";
+    }
+}
 
 // 获取患者列表
 async function getPatients() {
