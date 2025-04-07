@@ -24,6 +24,7 @@ class Patient(Base):
     medicine_repair = Column(Text)  # 中成药修复
     western_treatment_stage = Column(String(255))  # 西医诊疗分期
     csco_guideline = Column(Text)  # 西医标准诊疗方案CSCO指南
+    doctor_comment = Column(Text)  # 医师评价
 
     # 关系
     prescriptions = relationship("Prescription", back_populates="patient")

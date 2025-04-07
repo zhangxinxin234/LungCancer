@@ -10,6 +10,9 @@ from pydantic import BaseModel
 class RepairRequest(BaseModel):
     rule_content: str
 
+class DoctorCommentRequest(BaseModel):
+    comment: str
+
 # 添加处方更新请求的模型
 class PrescriptionUpdate(BaseModel):
     western_treatment_stage: str
@@ -199,4 +202,22 @@ async def update_prescription(
         }
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/patients/{patient_id}/save-doctor-comment")
+async def save_doctor_comment(
+    patient_id: int,
+    comment_request: DoctorCommentRequest,
+    db: Session = Depends(get_db)
+):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    patient.doctor_comment = comment_request.comment
+    try:
+        db.commit()
+        return {"message": "Doctor comment saved successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))

@@ -201,6 +201,7 @@
             border-bottom: 2px solid var(--accent-color);
         }
 
+        /* 处方区域样式 */
         .comparison-content {
             font-family: "Noto Sans SC", sans-serif;
             line-height: 1.8;
@@ -214,6 +215,12 @@
             width: 100%;
             resize: none;
             overflow-y: auto;
+        }
+
+        /* 中成药区域样式 */
+        .comparison-content.medicine {
+            min-height: 100px !important;
+            height: 100px !important;
         }
 
         textarea.comparison-content {
@@ -373,6 +380,65 @@
             background: #fff5f5;
             color: #e53e3e;
         }
+
+        /* 医师评价样式 */
+        .doctor-comment-section {
+            background: linear-gradient(to right bottom, #ffffff, #f8fafc);
+            border-left: 4px solid var(--primary-color);
+            margin-top: 15px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .doctor-comment-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .doctor-comment-label i {
+            margin-right: 8px;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        #doctorComment {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: white;
+            width: 100%;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        #doctorComment:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+            outline: none;
+        }
+
+        .doctor-comment-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-info {
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #0284c7;
+            border-color: #0284c7;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -456,13 +522,13 @@
                                         <div class="comparison-section">
                                             <div class="comparison-box">
                                                 <h5 class="comparison-title">原中成药</h5>
-                                                <div class="comparison-content" id="originalMedicine">
+                                                <div class="comparison-content medicine" id="originalMedicine">
                                                     <!-- 原中成药将通过JavaScript动态填充 -->
                                                 </div>
                                             </div>
                                             <div class="comparison-box">
                                                 <h5 class="comparison-title">修复后中成药</h5>
-                                                <textarea class="comparison-content" id="repairedMedicine"></textarea>
+                                                <textarea class="comparison-content medicine" id="repairedMedicine"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -470,16 +536,26 @@
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
-                        <button class="btn btn-secondary mx-2" onclick="goBack()">
-                            <i class='bx bx-arrow-back'></i>返回
-                        </button>
-                        <button class="btn btn-primary mx-2" onclick="repairPrescription()">
-                            <i class='bx bx-edit'></i>修复处方
-                        </button>
-                        <button class="btn btn-success mx-2" onclick="adoptRepair()">
-                            <i class='bx bx-save'></i>采纳修复结果
-                        </button>
+                    <div class="doctor-comment-section">
+                        <div class="doctor-comment-label">
+                            <i class='bx bx-comment-detail'></i>
+                            <label for="doctorComment" class="form-label" style="font-weight: 600; color: var(--primary-color); margin-bottom: 0;">医师评价</label>
+                        </div>
+                        <textarea class="form-control" id="doctorComment" placeholder="请输入医师评价..."></textarea>
+                        <div class="doctor-comment-buttons">
+                            <button class="btn btn-secondary" onclick="goBack()">
+                                <i class='bx bx-arrow-back'></i>返回
+                            </button>
+                            <button class="btn btn-primary" onclick="repairPrescription()">
+                                <i class='bx bx-edit'></i>修复处方
+                            </button>
+                            <button class="btn btn-success" onclick="adoptRepair()">
+                                <i class='bx bx-save'></i>采纳修复结果
+                            </button>
+                            <button class="btn btn-info" onclick="saveDoctorComment()">
+                                <i class='bx bx-comment-check'></i>保存医师评价
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -494,4 +570,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/repair.js"></script>
 </body>
-</html> 
+</html>

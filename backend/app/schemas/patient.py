@@ -26,6 +26,7 @@ class Patient(PatientBase):
     medicine_repair: Optional[str] = None
     western_treatment_stage: Optional[str] = None
     csco_guideline: Optional[str] = None
+    doctor_comment: Optional[str] = None
 
     class Config:
         orm_mode = True 

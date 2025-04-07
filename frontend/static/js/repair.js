@@ -447,6 +447,42 @@ function showErrorNotification(message) {
     }, 1000);
 }
 
+// 保存医师评价
+async function saveDoctorComment() {
+    if (!currentPatientId) {
+        showErrorNotification('请先选择一个患者');
+        return;
+    }
+
+    const comment = document.getElementById('doctorComment').value;
+    if (!comment.trim()) {
+        showErrorNotification('请输入医师评价');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-doctor-comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ comment: comment })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || '保存失败');
+        }
+
+        showSuccessNotification('医师评价保存成功');
+    } catch (error) {
+        console.error('Error saving doctor comment:', error);
+        showErrorNotification('保存失败：' + error.message);
+    }
+}
+
 // 返回到处方生成界面
 function goBack() {
     const patientId = getUrlParam('patient_id');

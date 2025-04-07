@@ -9,11 +9,17 @@ function getUrlParam(param) {
 
 // 页面加载时的初始化
 document.addEventListener('DOMContentLoaded', async () => {
+    // 获取患者列表
+    await getPatients();
+
     const patientId = getUrlParam('patient_id');
     if (patientId) {
         currentPatientId = patientId;
         await loadPatientInfo(patientId);
         updateNavigationLinks(patientId);
+    } else {
+        // 如果URL中没有patient_id，加载最新的患者信息
+        await loadLatestPatient();
     }
 
     // 设置表单提交事件
@@ -36,9 +42,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
-    // 获取患者列表
-    await getPatients();
 });
 
 // 获取患者列表
@@ -50,9 +53,23 @@ async function getPatients() {
         }
         const patients = await response.json();
         displayPatients(patients);
+        return patients;
     } catch (error) {
         console.error('Error fetching patients:', error);
-            showErrorMessage('获取患者列表失败');
+        showErrorMessage('获取患者列表失败');
+        return [];
+    }
+}
+
+// 加载最新的患者信息
+async function loadLatestPatient() {
+    const patients = await getPatients();
+    if (patients.length > 0) {
+        // 对患者列表进行倒序排列，以便获取最新添加的患者
+        patients.sort((a, b) => b.id - a.id);
+        const latestPatient = patients[0];
+        await loadPatientInfo(latestPatient.id);
+        updateNavigationLinks(latestPatient.id);
     }
 }
 
