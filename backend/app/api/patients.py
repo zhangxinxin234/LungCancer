@@ -4,7 +4,7 @@ from typing import List
 from app.db.database import get_db
 from app.models.patient import Patient as PatientModel
 from app.models.repair_rule import RepairRule
-from app.schemas.patient import Patient, PatientCreate
+from app.schemas.patient import Patient, PatientCreate, PatientList
 
 router = APIRouter()
 
@@ -16,8 +16,9 @@ def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
     db.refresh(db_patient)
     return db_patient
 
-@router.get("/patients/", response_model=List[Patient])
+@router.get("/patients/", response_model=List[PatientList])
 def read_patients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    # 只返回前端需要的字段，减少数据传输量
     # patients = db.query(PatientModel).offset(skip).limit(limit).all()
     patients = db.query(PatientModel).offset(skip).all()
     return patients

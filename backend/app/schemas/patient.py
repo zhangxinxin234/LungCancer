@@ -29,4 +29,12 @@ class Patient(PatientBase):
     doctor_comment: Optional[str] = None
 
     class Config:
-        orm_mode = True 
+        orm_mode = True
+
+class PatientList(BaseModel):
+    id: int
+    diagnosis: Optional[str] = None
+    disease_stage: Optional[str] = None
+
+    class Config:
+        orm_mode = True
