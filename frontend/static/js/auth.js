@@ -1,39 +1,50 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const showRegisterLink = document.getElementById('showRegister');
-    const showLoginLink = document.getElementById('showLogin');
-
     // 显示当前登录用户
     displayCurrentUser();
 
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        login(username, password);
-    });
+    // 检查是否在登录页面
+    if (window.location.pathname === '/login') {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
 
-    registerForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('regUsername').value;
-        const password = document.getElementById('regPassword').value;
-        register(username, password);
-    });
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                login(username, password);
+            });
+        }
 
-    showRegisterLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'block';
-        document.getElementById('formTitle').textContent = '注册';
-    });
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('regUsername').value;
+                const password = document.getElementById('regPassword').value;
+                register(username, password);
+            });
+        }
 
-    showLoginLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        registerForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        document.getElementById('formTitle').textContent = '登录';
-    });
+        if (showRegisterLink) {
+            showRegisterLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                document.getElementById('formTitle').textContent = '注册';
+            });
+        }
+
+        if (showLoginLink) {
+            showLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerForm.style.display = 'none';
+                loginForm.style.display = 'block';
+                document.getElementById('formTitle').textContent = '登录';
+            });
+        }
+    }
 });
 
 // 获取cookie函数

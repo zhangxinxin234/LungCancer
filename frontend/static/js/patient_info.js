@@ -542,8 +542,16 @@ function hideLoading() {
 
 // 生成处方
 async function generatePrescription() {
+    // 首先检查认证状态
+    if (!checkAuth()) {
+        console.error('认证失败，无法生成处方');
+        showErrorMessage('认证失败，请重新登录');
+        return;
+    }
+
+    // 检查是否有选中的患者
     if (!currentPatientId) {
-        showErrorMessage('请先保存患者信息');
+        showErrorMessage('请先选择或保存患者信息');
         return;
     }
 
@@ -555,22 +563,35 @@ async function generatePrescription() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
             method: 'POST',
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+            credentials: 'include'  // 确保包含凭据
         });
 
         console.log(`处方生成响应状态: ${response.status}`);
 
-        if (response.ok) {
-            // 直接跳转到处方页面
-            window.location.href = `/prescription?patient_id=${currentPatientId}`;
-        } else {
-            hideLoading(); // 出错时隐藏加载动画
-            throw new Error('处方生成失败');
+        if (!response.ok) {
+            // 处理不同的错误状态
+            switch (response.status) {
+                case 401:
+                    throw new Error('认证失败，请重新登录');
+                case 403:
+                    throw new Error('您没有权限生成处方');
+                case 404:
+                    throw new Error('找不到指定的患者信息');
+                default:
+                    const errorText = await response.text();
+                    throw new Error(`处方生成失败: ${errorText || '未知错误'}`);
+            }
         }
+
+        // 处方生成成功，跳转到处方页面
+        window.location.href = `/prescription?patient_id=${currentPatientId}`;
     } catch (error) {
-        hideLoading(); // 确保出错时也隐藏加载动画
-        console.error('Error generating prescription:', error);
-            showErrorMessage('处方生成失败');
+        console.error('处方生成过程中发生错误:', error);
+        showErrorMessage(error.message || '处方生成失败');
+    } finally {
+        // 确保无论成功失败都隐藏加载动画
+        hideLoading();
     }
 }
 

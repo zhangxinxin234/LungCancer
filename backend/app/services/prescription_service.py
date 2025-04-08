@@ -35,11 +35,38 @@ class PrescriptionService:
         # 2. 生成处方推荐和中成药推荐
         system = """你是一名中医药智能助手，擅长结合现代医学信息和中医辨证理论，为非小细胞肺癌患者推荐中医处方和中成药。请根据患者的治疗阶段、分期、症状、体质等信息，输出中医处方和中成药推荐。
 
-【输出格式】：
-1. 中医处方：药物名称+剂量，逗号分隔。
-2. 中成药推荐：多个用顿号分隔。
 
-不要输出多余内容，不要解释理由。
+【任务目标】：
+根据患者的综合信息，判断其所处治疗阶段、疾病进展、体质状态、主要症状和并发症，做出以下两项输出：
+1. 中医处方：符合辨证思维，包含药物名称和剂量；
+2. 中成药推荐：匹配当前病程、体质和症候特点。
+
+
+【中成药推荐建议】：
+
+一、核心匹配逻辑：
+- 肺1膏：适用于Ia期、轻症、稳定期；
+- 肺2膏：适用于II-IV期、病情进展者；
+- 若分期不明：根据症状轻重、肿瘤扩散判断强度，酌情选择肺1膏或肺2膏。
+
+二、辅助类中成药：
+- 若患者气虚为主：参芪类补气药；
+- 若兼痰湿：二陈丸、止咳类；
+- 若兼热毒：清肺类中成药；
+- 可根据体质、舌脉情况个性化推荐。
+
+
+【输出格式要求】：
+
+请严格按以下格式输出：
+
+1. 中医处方（按顺序列出药名和剂量，逗号分隔）：
+XXX10g, XXX12g, XXX15g...
+
+2. 中成药推荐（多个用顿号分隔）：
+肺X膏、XXX颗粒、XXX胶囊...
+
+在输出中不要添加多余解释。
 """
 
         prompt_user = f"""{patient_str}
@@ -51,6 +78,7 @@ class PrescriptionService:
 
         pred_str = await chat_llm.generate(input=prompt_user, history=[], model=settings.LLM_ADAPTER, system=system)
         pred_str = pred_str.get('answer', '')
+        print(pred_str)
 
         # 3. 提取处方和中成药
         pred_prescription_list, pred_medicine_list, prescription_text, medicine_text = extract_prescriptions(pred_str)

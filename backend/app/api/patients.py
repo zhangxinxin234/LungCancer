@@ -65,11 +65,20 @@ def update_patient(
     if db_patient is None:
         raise HTTPException(status_code=404, detail="Patient not found")
 
-    for key, value in patient.dict().items():
+    # 获取要更新的数据，但不包括 user_id
+    update_data = patient.dict(exclude={"user_id"})
+
+    # 更新患者信息，但保留 user_id
+    for key, value in update_data.items():
         setattr(db_patient, key, value)
+
+    # 确保 user_id 是当前用户的 ID
+    db_patient.user_id = current_user.id
+
     db.commit()
     db.refresh(db_patient)
     return db_patient
+
 
 @router.delete("/patients/{patient_id}")
 def delete_patient(

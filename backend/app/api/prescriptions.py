@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Optional
 from ..db.database import get_db
 from ..models.patient import Patient
+from ..models.user import User
 from ..models.repair_rule import RepairRule
 from ..services.prescription_service import PrescriptionService
+from ..core.auth import get_current_active_user
 from pydantic import BaseModel
 
 class RepairRequest(BaseModel):
@@ -25,11 +27,27 @@ router = APIRouter()
 @router.post("/patients/{patient_id}/generate-prescription")
 async def generate_prescription(
     patient_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法生成处方"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
 
     result = await PrescriptionService.generate_prescription(patient)
 
@@ -40,7 +58,6 @@ async def generate_prescription(
     patient.csco_guideline = result["csco_guideline"]
     patient.prescription = result["prescription"]
     patient.chinese_medicine = result["medicine"]
-    print(patient.csco_guideline)
 
     db.commit()
 
@@ -50,11 +67,27 @@ async def generate_prescription(
 async def repair_prescription(
     patient_id: int,
     repair_request: RepairRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法修复处方"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
 
     # 创建新的修复规则
     repair_rule = RepairRule(
@@ -65,8 +98,8 @@ async def repair_prescription(
 
     result = await PrescriptionService.repair_prescription(
         patient=patient,
-        prescription=patient.generated_prescription,
-        medicine=patient.generated_medicine,
+        prescription=patient.generated_prescription or patient.prescription,
+        medicine=patient.generated_medicine or patient.chinese_medicine,
         rules=repair_request.rule_content
     )
 
@@ -86,11 +119,27 @@ class AdoptRepairRequest(BaseModel):
 async def adopt_repair(
     patient_id: int,
     repair_data: AdoptRepairRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法采纳处方修复"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
 
     # 使用前端传递的处方和中成药更新
     patient.prescription = repair_data.prescription
@@ -107,15 +156,32 @@ async def adopt_repair(
 @router.get("/patients/{patient_id}/latest-repair-rule")
 async def get_latest_repair_rule(
     patient_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    # 获取所有患者中最新的修复规则
-    latest_rule = db.query(RepairRule)\
-        .order_by(RepairRule.id.desc())\
-        .first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法获取修复规则"
+        )
+
+    # 验证患者是否属于当前用户
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id
+    ).first()
+
+    if not patient:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
+
+    # 获取最新的修复规则
+    latest_rule = db.query(RepairRule).filter(RepairRule.patient_id == patient_id).order_by(RepairRule.id.desc()).first()
 
     if not latest_rule:
-        # 如果没有找到规则，返回默认规则
         default_rule = """1. 放疗阶段需加：天冬12g、麦冬12g；
 2. 化疗阶段需加：半夏12g、竹茹15g、阿胶珠6g；
 3. 靶向治疗阶段加：生黄芪15g、炒白术12g、防风10g；
@@ -147,46 +213,100 @@ async def get_latest_repair_rule(
 async def save_repair_rule(
     patient_id: int,
     repair_request: RepairRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法保存修复规则"
+        )
+
+    # 验证患者是否属于当前用户
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id
+    ).first()
+
+    if not patient:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
+
     # 创建新的修复规则
     repair_rule = RepairRule(
         patient_id=patient_id,
         rule_content=repair_request.rule_content
     )
+
     db.add(repair_rule)
     db.commit()
-
     return {"message": "Repair rule saved successfully"}
 
 @router.get("/patients/{patient_id}/prescription")
 async def get_prescription(
     patient_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法获取处方"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
 
     return {
-        "prescription": patient.prescription,
-        "medicine": patient.chinese_medicine,
-        "western_treatment_stage": patient.western_treatment_stage,
-        "csco_guideline": patient.csco_guideline
-    }
+            "prescription": patient.prescription,
+            "medicine": patient.chinese_medicine,
+            "western_treatment_stage": patient.western_treatment_stage,
+            "csco_guideline": patient.csco_guideline
+        }
+
+
 
 @router.put("/patients/{patient_id}/prescription")
 async def update_prescription(
     patient_id: int,
     prescription_update: PrescriptionUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法更新处方"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
 
     # 更新患者的处方信息
-    patient.western_treatment_stage = prescription_update.western_treatment_stage
+    # patient.western_treatment_stage = prescription_update.western_treatment_stage
     # patient.csco_guideline = prescription_update.csco_guideline
     patient.prescription = prescription_update.prescription
     patient.chinese_medicine = prescription_update.medicine
@@ -208,13 +328,31 @@ async def update_prescription(
 async def save_doctor_comment(
     patient_id: int,
     comment_request: DoctorCommentRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    # 检查用户权限
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="账号未激活，无法保存医生评论"
+        )
+
+    # 查询患者并验证所属关系
+    patient = db.query(Patient).filter(
+        Patient.id == patient_id,
+        Patient.user_id == current_user.id  # 确保患者属于当前用户
+    ).first()
+
     if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="未找到患者或该患者不属于当前用户"
+        )
+        raise HTTPException(status_code=500, detail=str(e))
 
     patient.doctor_comment = comment_request.comment
+
     try:
         db.commit()
         return {"message": "Doctor comment saved successfully"}
