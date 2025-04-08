@@ -207,6 +207,27 @@ async function loadPatientPrescription(patientId) {
         document.getElementById('repairedPrescription').value = patient.prescription_repair || '';
         document.getElementById('repairedMedicine').value = patient.medicine_repair || '';
 
+        // 加载医师评价
+        const doctorComment = document.getElementById('doctorComment');
+        if (doctorComment && patient.doctor_comment) {
+            doctorComment.value = patient.doctor_comment;
+            // 根据医师评价内容设置复选框状态
+            const betterOption = document.getElementById('betterOption');
+            const worseOption = document.getElementById('worseOption');
+            if (betterOption && worseOption) {
+                if (patient.doctor_comment.includes('更好')) {
+                    betterOption.checked = true;
+                    worseOption.checked = false;
+                } else if (patient.doctor_comment.includes('更差')) {
+                    betterOption.checked = false;
+                    worseOption.checked = true;
+                } else {
+                    betterOption.checked = false;
+                    worseOption.checked = false;
+                }
+            }
+        }
+
         // 清空修复建议，除非是刚加载的修复后的处方
         if (!patient.prescription_repair) {
             document.getElementById('repairRules').value = '';
