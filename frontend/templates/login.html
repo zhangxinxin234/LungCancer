@@ -1,69 +1,43 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        body {
-            background-color: #f0f2f5;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .login-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2b6cb0;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .btn-login {
-            width: 100%;
-            background-color: #2b6cb0;
-            border-color: #2b6cb0;
-        }
-        .btn-login:hover {
-            background-color: #2c5282;
-            border-color: #2c5282;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="login-container">
-            <h2 class="login-title">
-                <i class='bx bx-plus-medical'></i> 系统登录
-            </h2>
-            <form id="loginForm" method="POST" action="{{ url_for('login') }}">
-                <div class="form-group">
-                    <label for="username">用户名</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="mb-4">登录</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="username" required>
                 </div>
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-login">登录</button>
+                <button type="submit" class="btn btn-primary">登录</button>
+            </form>
+            <p class="mt-3">还没有账号？<a href="#" id="showRegister">注册</a></p>
+        </div>
+    </div>
+    <div class="row mt-5" id="registerForm" style="display: none;">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="mb-4">注册</h2>
+            <form id="registerFormInner">
+                <div class="mb-3">
+                    <label for="regUsername" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="regUsername" required>
+                </div>
+                <div class="mb-3">
+                    <label for="regPassword" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="regPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">注册</button>
             </form>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 检查是否有错误消息
-        {% if error %}
-            alert('{{ error }}');
-        {% endif %}
-    </script>
-</body>
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

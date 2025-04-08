@@ -1,6 +1,33 @@
 const API_BASE_URL = '/api/v1';
 let currentPatientId = null;
 
+// 检查认证状态
+function checkAuth() {
+    const token = getCookie('token');
+    if (!token) {
+        window.location.href = '/login';
+        return false;
+    }
+    return true;
+}
+
+// 获取认证头部
+function getAuthHeaders() {
+    const token = getCookie('token');
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+}
+
+// 从cookie中获取token
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 // 从URL获取参数
 function getUrlParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -9,6 +36,7 @@ function getUrlParam(param) {
 
 // 页面加载时的初始化
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!checkAuth()) return;
     const patientId = getUrlParam('patient_id');
     if (patientId) {
         currentPatientId = patientId;
@@ -44,8 +72,11 @@ function updateNavigationLinks(patientId) {
 
 // 加载现有处方
 async function loadExistingPrescription(patientId) {
+    if (!checkAuth()) return;
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`);
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`, {
+            headers: getAuthHeaders()
+        });
         if (!response.ok) {
             if (response.status === 404) {
                 // 如果没有找到处方，清空显示
@@ -69,8 +100,11 @@ async function loadExistingPrescription(patientId) {
 
 // 获取患者列表
 async function getPatients() {
+    if (!checkAuth()) return;
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/`);
+        const response = await fetch(`${API_BASE_URL}/patients/`, {
+            headers: getAuthHeaders()
+        });
         if (!response.ok) {
             throw new Error('获取患者列表失败');
         }
@@ -122,7 +156,8 @@ async function deletePatient(patientId) {
 
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
 
         if (response.ok) {
@@ -150,10 +185,7 @@ async function generatePrescription() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}/generate-prescription`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include'
         });
 
@@ -263,10 +295,7 @@ async function savePrescription() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify(prescriptionData)
         });
@@ -326,7 +355,9 @@ async function loadPatientPrescription(patientId) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+            headers: getAuthHeaders()
+        });
         if (!response.ok) {
             throw new Error('获取患者信息失败');
         }

@@ -1,6 +1,32 @@
 const API_BASE_URL = '/api/v1';
 let currentPatientId = null;
 
+// 检查认证状态
+function checkAuth() {
+    const token = getCookie('token');
+    if (!token) {
+        window.location.href = '/login';
+        return false;
+    }
+    return true;
+}
+
+// 获取认证头部
+function getAuthHeaders() {
+    const token = getCookie('token');
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+}
+
+// 从cookie中获取token
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 // 从URL获取参数
 function getUrlParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -53,9 +79,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // 获取患者列表
 async function getPatients() {
+    if (!checkAuth()) return;
     try {
         console.log('开始获取患者列表...');
-        const response = await fetch(`${API_BASE_URL}/patients/`); // 添加末尾斜杠
+        const response = await fetch(`${API_BASE_URL}/patients/`, {
+            headers: getAuthHeaders()
+        });
 
         console.log(`患者列表响应状态: ${response.status}`);
 
@@ -160,7 +189,8 @@ async function deletePatient(patientId) {
         const deletingCurrentPatient = String(currentPatientId) === String(patientId);
 
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
 
         if (response.ok) {
@@ -241,7 +271,9 @@ async function loadPatientInfo(patientId) {
         const url = `${API_BASE_URL}/patients/${patientId}`;
         console.log(`请求URL: ${url}`);
 
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: getAuthHeaders()
+        });
         console.log(`响应状态: ${response.status}`);
 
         if (!response.ok) {
@@ -400,9 +432,7 @@ async function savePatient() {
 
         const response = await fetch(url, {
             method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify(patientData)
         });
 
@@ -488,9 +518,7 @@ async function generatePrescription() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: getAuthHeaders()
         });
 
         console.log(`处方生成响应状态: ${response.status}`);

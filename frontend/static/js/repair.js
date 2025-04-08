@@ -1,6 +1,33 @@
 const API_BASE_URL = '/api/v1';
 let currentPatientId = null;
 
+// 检查认证状态
+function checkAuth() {
+    const token = getCookie('token');
+    if (!token) {
+        window.location.href = '/login';
+        return false;
+    }
+    return true;
+}
+
+// 获取认证头部
+function getAuthHeaders() {
+    const token = getCookie('token');
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+}
+
+// 从cookie中获取token
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 // 从URL获取参数
 function getUrlParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -9,6 +36,7 @@ function getUrlParam(param) {
 
 // 页面加载时的初始化
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!checkAuth()) return;
     const patientId = getUrlParam('patient_id');
     if (patientId) {
         currentPatientId = patientId;
@@ -54,11 +82,10 @@ function updateDoctorComment(event) {
 
 // 获取患者列表
 async function getPatients() {
+    if (!checkAuth()) return;
     try {
         const response = await fetch(`${API_BASE_URL}/patients/`, {
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include'
         });
 
@@ -105,7 +132,9 @@ function displayPatients(patients) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+            headers: getAuthHeaders()
+        });
         if (!response.ok) {
             throw new Error('获取患者信息失败');
         }
@@ -160,9 +189,7 @@ function updateNavigationLinks(patientId) {
 async function loadPatientPrescription(patientId) {
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include'
         });
 
@@ -232,10 +259,7 @@ async function repairPrescription() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/repair-prescription`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify({ rule_content: rules })
         });
@@ -271,10 +295,7 @@ async function adoptRepair() {
 
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/adopt-repair`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify({
                 prescription: repairedPrescription,
@@ -300,9 +321,7 @@ async function adoptRepair() {
 async function loadLatestRepairRule() {
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/latest-repair-rule`, {
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include'
         });
 
@@ -362,10 +381,7 @@ async function saveRepairRule() {
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-repair-rule`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify({ rule_content: rules })
         });
@@ -401,7 +417,8 @@ async function deletePatient(patientId) {
 
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
 
         if (response.ok) {
@@ -495,10 +512,7 @@ async function saveDoctorComment() {
     try {
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-doctor-comment`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify({ comment: comment })
         });

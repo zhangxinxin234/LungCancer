@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import patients, prescriptions
+from app.api import patients, prescriptions, auth
 from app.db.database import engine
 from app.models.base import Base
+from app.models.user import User
+from app.models.patient import Patient
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -31,6 +33,7 @@ app.add_middleware(
 )
 
 # 包含路由
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["authentication"])
 app.include_router(patients.router, prefix="/api/v1", tags=["patients"])
 app.include_router(prescriptions.router, prefix="/api/v1", tags=["prescriptions"])
 

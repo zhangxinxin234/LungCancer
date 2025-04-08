@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class PatientBase(BaseModel):
+    user_id: Optional[int] = None
     diagnosis: Optional[str] = None
     disease_stage: Optional[str] = None
     pathology_report: Optional[str] = None

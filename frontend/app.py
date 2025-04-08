@@ -1,7 +1,16 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import requests
+from functools import wraps
 
 app = Flask(__name__)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'token' not in request.cookies:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # API代理配置
 BACKEND_URL = 'http://127.0.0.1:8603'  # 使用localhost地址访问本机后端服务
@@ -15,6 +24,13 @@ def proxy(path):
     url = f'{BACKEND_URL}/api/v1/{path}'
     print(f"代理请求到: {url}")  # 调试日志
 
+    # 获取所有请求头
+    headers = {key: value for (key, value) in request.headers if key != 'Host'}
+
+    # 确保认证头部被传递
+    if 'Authorization' in request.headers:
+        print("发现认证令牌，将传递给后端")
+
     try:
         # 处理URL尾部的斜杠问题
         # 如果路径以斜杠结尾，尝试去掉斜杠再请求
@@ -26,7 +42,7 @@ def proxy(path):
             resp = requests.request(
                 method=request.method,
                 url=alternative_url,
-                headers={key: value for (key, value) in request.headers if key != 'Host'},
+                headers=headers,
                 data=request.get_data(),
                 cookies=request.cookies,
                 allow_redirects=True)  # 允许重定向
@@ -35,13 +51,13 @@ def proxy(path):
             resp = requests.request(
                 method=request.method,
                 url=url,
-                headers={key: value for (key, value) in request.headers if key != 'Host'},
+                headers=headers,
                 data=request.get_data(),
                 cookies=request.cookies,
                 allow_redirects=True)  # 允许重定向
 
         print(f"后端响应状态码: {resp.status_code}")  # 调试日志
-        print(f"后端响应内容: {resp.text}")  # 调试日志
+        # print(f"后端响应内容: {resp.text}")  # 调试日志
 
         # 如果是重定向响应，打印更多信息
         if resp.status_code in (301, 302, 303, 307, 308):
@@ -70,18 +86,26 @@ def proxy(path):
         return jsonify({"error": str(e)}), 500
 
 @app.route('/')
+@login_required
 def index():
     return render_template('patient_info.html')
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 @app.route('/patient_info')
+@login_required
 def patient_info():
     return render_template('patient_info.html')
 
 @app.route('/prescription')
+@login_required
 def prescription():
     return render_template('prescription.html')
 
 @app.route('/repair')
+@login_required
 def repair():
     return render_template('repair.html')
 

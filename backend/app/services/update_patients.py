@@ -16,6 +16,7 @@ sys.path.append(str(project_root))
 from app.db.database import get_db
 from app.models.patient import Patient
 from app.models.repair_rule import RepairRule
+from app.models.user import User
 from app.utils.tools import extract_prescriptions
 from app.services.embeddings import get_embeddings, retrieve, rerank
 from app.core.config import settings
@@ -105,7 +106,8 @@ def create_patient(id, data, prescription_text, medicine_text):
         generated_prescription=prescription_text,
         generated_medicine=medicine_text,
         prescription=prescription_text,
-        chinese_medicine=medicine_text
+        chinese_medicine=medicine_text,
+        user_id=1
     )
 
 
@@ -278,7 +280,7 @@ def batch_import(json_file):
 if __name__ == "__main__":
     # Get JSON file path from command line argument or use default
     # json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no_r8a16_20250402143857_results.json"
-    json_file = "/home/ubuntu/remote/LungCancer_for_chuchu/部署/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no13_r8a16_20250408092045_results.json"
+    json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no13_r8a16_20250408092045_results.json"
     # json_file = sys.argv[1] if len(sys.argv) > 1 else "backend/data/raw/2025_03_31_raw_test_data_num_379_ctx_2048.json"
 
     print(f"Starting import from {json_file}")

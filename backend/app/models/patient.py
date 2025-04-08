@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 
@@ -6,6 +6,7 @@ class Patient(Base):
     __tablename__ = "patients"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
     diagnosis = Column(String(255))  # 西医诊断
     disease_stage = Column(String(255))  # 现病程阶段
     pathology_report = Column(Text)  # 病理报告
@@ -28,3 +29,4 @@ class Patient(Base):
 
     # 关系
     repair_rules = relationship("RepairRule", back_populates="patient", foreign_keys="RepairRule.patient_id")
+    user = relationship("User", back_populates="patients")
