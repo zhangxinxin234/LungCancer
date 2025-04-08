@@ -231,18 +231,29 @@ def batch_import(json_file):
 
             # 提取处方和中成药
             prescription_list, medicine_list, prescription_text, medicine_text = extract_prescriptions(pred_str)
-            # Create patient
-            patient_data = create_patient(id, record["raw_data"], prescription_text, medicine_text)
 
-            # 获取患者信息
-            patient_str = get_patient_info(patient_data)
+            patient_data = db.query(Patient).filter(Patient.id == id).first()
+            if not patient_data:
+                # Create patient
+                print(f"Patient ID {id} not found, creating new patient record.")
+                patient_data = create_patient(id, record["raw_data"], prescription_text, medicine_text)
 
-            # 获取临床路径
-            clinical_path, candi_doc_md = clinical_pathway(patient_str)
+                # 获取患者信息
+                patient_str = get_patient_info(patient_data)
 
-            # 更新患者的临床路径信息
-            patient_data.western_treatment_stage = clinical_path
-            patient_data.csco_guideline = candi_doc_md
+                # 获取临床路径
+                clinical_path, candi_doc_md = clinical_pathway(patient_str)
+
+                # 更新患者的临床路径信息
+                patient_data.western_treatment_stage = clinical_path
+                patient_data.csco_guideline = candi_doc_md
+
+            else:
+                print(f"Patient ID {id} already exists, updating existing record.")
+                patient_data.generated_prescription = prescription_text
+                patient_data.generated_medicine = medicine_text
+                patient_data.prescription = prescription_text
+                patient_data.chinese_medicine = medicine_text
 
 
             db.add(patient_data)
@@ -266,7 +277,7 @@ def batch_import(json_file):
 if __name__ == "__main__":
     # Get JSON file path from command line argument or use default
     # json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no_r8a16_20250402143857_results.json"
-    json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no1_r8a16_20250407133703_results.json"
+    json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no13_r8a16_20250408092045_results.json"
     # json_file = sys.argv[1] if len(sys.argv) > 1 else "backend/data/raw/2025_03_31_raw_test_data_num_379_ctx_2048.json"
 
     print(f"Starting import from {json_file}")
