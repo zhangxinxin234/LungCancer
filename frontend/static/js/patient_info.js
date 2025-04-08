@@ -75,6 +75,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // 设置ID筛选事件
+    const patientIdFilter = document.getElementById('patientIdFilter');
+    if (patientIdFilter) {
+        patientIdFilter.addEventListener('input', async function() {
+            await getPatients();
+        });
+    }
 });
 
 // 获取患者列表
@@ -137,7 +145,14 @@ function displayPatients(patients) {
 
     console.log(`正在显示患者列表，当前选中的患者ID: ${currentPatientId}`);
 
+    // 获取筛选输入框的值
+    const filterValue = document.getElementById('patientIdFilter').value.toLowerCase();
+
     patients.forEach(patient => {
+        // 如果有筛选值，且患者ID不包含筛选值，则跳过此患者
+        if (filterValue && !String(patient.id).toLowerCase().includes(filterValue)) {
+            return;
+        }
         const patientItem = document.createElement('div');
         patientItem.className = 'patient-item';
         patientItem.dataset.id = String(patient.id); // 添加 data-id 属性，统一使用字符串
