@@ -297,8 +297,8 @@ if __name__ == '__main__':
 
     raw_data_path = f"{BASE_DIR}/{dir_test}"
 
-    texts_ids, texts, metadatas = data_loader_save_as_dict(raw_data_path, "faq")
-    save_jsonl(metadatas, os.path.join(BASE_DIR, "data/rag/csco 指南 (7)_metadatas.jsonl"))
+    # texts_ids, texts, metadatas = data_loader_save_as_dict(raw_data_path, "faq")
+    # save_jsonl(metadatas, os.path.join(BASE_DIR, "data/rag/csco 指南 (7)_metadatas.jsonl"))
     # texts_ids, texts, metadatas = data_loader_fun(raw_data_path, "faq")
 
     # data_list = [d["分期"] for d in load_jsonl(raw_data_path)]

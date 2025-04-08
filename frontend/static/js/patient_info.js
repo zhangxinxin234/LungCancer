@@ -54,16 +54,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 获取患者列表
 async function getPatients() {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/`);
+        console.log('开始获取患者列表...');
+        const response = await fetch(`${API_BASE_URL}/patients/`); // 添加末尾斜杠
+
+        console.log(`患者列表响应状态: ${response.status}`);
+
         if (!response.ok) {
-            throw new Error('获取患者列表失败');
+            throw new Error(`获取患者列表失败，状态码: ${response.status}`);
         }
-        const patients = await response.json();
+
+        const responseText = await response.text();
+        // console.log(`患者列表响应内容: ${responseText.substring(0, 100)}...`);
+
+        let patients;
+        try {
+            patients = JSON.parse(responseText);
+            console.log(`解析到 ${patients.length} 个患者`);
+        } catch (parseError) {
+            console.error('JSON解析错误:', parseError);
+            throw new Error('无法解析服务器响应的JSON数据');
+        }
+
         displayPatients(patients);
         return patients;
     } catch (error) {
         console.error('Error fetching patients:', error);
-        showErrorMessage('获取患者列表失败');
+        showErrorMessage(`获取患者列表失败: ${error.message}`);
         return [];
     }
 }
@@ -143,7 +159,7 @@ async function deletePatient(patientId) {
         // 记录删除前的当前患者ID，用于后续比较
         const deletingCurrentPatient = String(currentPatientId) === String(patientId);
 
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
+        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE'
         });
 
@@ -219,11 +235,29 @@ function updateNavigationLinks(patientId) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`);
+        console.log(`尝试加载患者信息，ID: ${patientId}`);
+
+        // 尝试不带斜杠的URL
+        const url = `${API_BASE_URL}/patients/${patientId}`;
+        console.log(`请求URL: ${url}`);
+
+        const response = await fetch(url);
+        console.log(`响应状态: ${response.status}`);
+
         if (!response.ok) {
-            throw new Error('获取患者信息失败');
+            throw new Error(`获取患者信息失败，状态码: ${response.status}`);
         }
-        const patient = await response.json();
+
+        const responseText = await response.text();
+        console.log(`响应内容: ${responseText.substring(0, 100)}...`);
+
+        let patient;
+        try {
+            patient = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON解析错误:', parseError);
+            throw new Error('无法解析服务器响应的JSON数据');
+        }
 
         // 设置当前患者ID
         currentPatientId = patientId;
@@ -245,7 +279,7 @@ async function loadPatientInfo(patientId) {
         await getPatients();
     } catch (error) {
         console.error('Error loading patient info:', error);
-            showErrorMessage('获取患者信息失败');
+        showErrorMessage(`获取患者信息失败: ${error.message}`);
     }
 }
 
@@ -352,6 +386,8 @@ async function savePatient() {
     };
 
     try {
+        console.log('准备保存患者信息:', patientData);
+
         let url = `${API_BASE_URL}/patients/`;  // 添加末尾斜杠
         let method = 'POST';
 
@@ -359,6 +395,8 @@ async function savePatient() {
             url = `${API_BASE_URL}/patients/${currentPatientId}/`;  // 添加末尾斜杠
             method = 'PUT';
         }
+
+        console.log(`请求URL: ${url}, 方法: ${method}`);
 
         const response = await fetch(url, {
             method: method,
@@ -437,14 +475,16 @@ function hideLoading() {
 
 // 生成处方
 async function generatePrescription() {
-            if (!currentPatientId) {
-                showErrorMessage('请先保存患者信息');
-                return;
-            }
+    if (!currentPatientId) {
+        showErrorMessage('请先保存患者信息');
+        return;
+    }
 
     try {
         // 显示加载动画
         showLoading();
+
+        console.log(`尝试为患者 ${currentPatientId} 生成处方`);
 
         const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
             method: 'POST',
@@ -452,6 +492,8 @@ async function generatePrescription() {
                 'Content-Type': 'application/json'
             }
         });
+
+        console.log(`处方生成响应状态: ${response.status}`);
 
         if (response.ok) {
             // 直接跳转到处方页面

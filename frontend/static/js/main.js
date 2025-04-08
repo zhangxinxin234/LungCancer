@@ -1,16 +1,51 @@
 // API基础URL
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = '/api/v1';
 
 let currentPatientId = null;
+
+// 检查API连接
+async function checkApiConnection() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/patients/`);
+        console.log('API连接状态:', response.status);
+        return response.ok;
+    } catch (error) {
+        console.error('API连接检查失败:', error);
+        return false;
+    }
+}
+
+// 格式化API URL
+function formatApiUrl(...parts) {
+    return parts.join('/').replace(/\/+/g, '/');
+}
 
 // 获取患者列表
 async function getPatients() {
     try {
+        console.log('开始获取患者列表...');
         const response = await fetch(`${API_BASE_URL}/patients/`);
-        const patients = await response.json();
-        displayPatients(patients);
+        console.log('获取患者列表响应状态:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const text = await response.text();
+        // console.log('原始响应内容:', text);
+
+        try {
+            const patients = JSON.parse(text);
+            console.log('解析后的患者数据:', patients);
+            displayPatients(patients);
+        } catch (parseError) {
+            console.error('JSON解析错误:', parseError);
+            throw new Error('无法解析服务器响应的JSON数据');
+        }
     } catch (error) {
-        console.error('Error fetching patients:', error);
+        console.error('获取患者列表错误:', error);
+        document.getElementById('patientList').innerHTML =
+            `<div class="alert alert-danger">获取患者列表失败: ${error.message}</div>`;
     }
 }
 
@@ -18,7 +53,7 @@ async function getPatients() {
 function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
     patientList.innerHTML = '';
-    
+
     patients.forEach(patient => {
         const patientItem = document.createElement('div');
         patientItem.className = 'card mb-2';
@@ -36,13 +71,48 @@ function displayPatients(patients) {
 // 加载患者信息
 async function loadPatient(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`);
-        const patient = await response.json();
-        currentPatientId = patientId;
-        fillPatientForm(patient);
-        displayPrescriptionInfo(patient);
+        const url = formatApiUrl(API_BASE_URL, 'patients', patientId);
+        console.log(`尝试加载患者信息，URL: ${url}`);
+
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const patient = await response.json();
+            console.log('患者信息加载成功:', patient);
+            currentPatientId = patientId;
+            fillPatientForm(patient);
+            displayPrescriptionInfo(patient);
+        } else if (response.status === 307) {
+            console.log('收到307重定向，尝试跟随重定向');
+            const redirectUrl = response.headers.get('Location');
+            if (redirectUrl) {
+                const redirectResponse = await fetch(redirectUrl);
+                if (redirectResponse.ok) {
+                    const patient = await redirectResponse.json();
+                    console.log('重定向后患者信息加载成功:', patient);
+                    currentPatientId = patientId;
+                    fillPatientForm(patient);
+                    displayPrescriptionInfo(patient);
+                } else {
+                    throw new Error(`重定向失败，状态码: ${redirectResponse.status}`);
+                }
+            } else {
+                throw new Error('重定向URL未找到');
+            }
+        } else {
+            console.error(`加载患者信息失败，状态码: ${response.status}`);
+            throw new Error(`服务器返回错误: ${response.status}`);
+        }
     } catch (error) {
         console.error('Error loading patient:', error);
+
+        if (error.message.includes('Failed to fetch') ||
+            error.message.includes('NetworkError') ||
+            error.message.includes('ERR_CONNECTION_REFUSED')) {
+            alert('无法连接到后端服务，请确保服务已启动并且配置正确。');
+        } else {
+            alert(`加载患者信息失败: ${error.message}`);
+        }
     }
 }
 
@@ -170,7 +240,7 @@ async function adoptRepair() {
 // 提交患者信息
 document.getElementById('patientForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData(e.target);
     const patientData = {};
     formData.forEach((value, key) => {
@@ -200,5 +270,12 @@ document.getElementById('patientForm').addEventListener('submit', async (e) => {
     }
 });
 
-// 页面加载时获取患者列表
-document.addEventListener('DOMContentLoaded', getPatients); 
+// 页面加载时检查API连接并获取患者列表
+document.addEventListener('DOMContentLoaded', async () => {
+    const isConnected = await checkApiConnection();
+    if (isConnected) {
+        getPatients();
+    } else {
+        document.getElementById('patientList').innerHTML = '<div class="alert alert-danger">无法连接到后端服务，请确保服务已启动</div>';
+    }
+});

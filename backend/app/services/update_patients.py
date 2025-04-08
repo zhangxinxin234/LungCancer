@@ -274,10 +274,11 @@ def batch_import(json_file):
     finally:
         db.close()
 
+
 if __name__ == "__main__":
     # Get JSON file path from command line argument or use default
     # json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no_r8a16_20250402143857_results.json"
-    json_file = "/Users/zhangxinxin/CursorProject/LungCancer/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no13_r8a16_20250408092045_results.json"
+    json_file = "/home/ubuntu/remote/LungCancer_for_chuchu/部署/backend/data/infer/pred_test_data_Qwen2.5-14B_cotrc_no13_r8a16_20250408092045_results.json"
     # json_file = sys.argv[1] if len(sys.argv) > 1 else "backend/data/raw/2025_03_31_raw_test_data_num_379_ctx_2048.json"
 
     print(f"Starting import from {json_file}")

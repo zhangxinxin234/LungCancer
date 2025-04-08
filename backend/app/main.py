@@ -11,11 +11,13 @@ app = FastAPI()
 
 # 配置CORS
 origins = [
-    "http://localhost:5001",
-    "http://127.0.0.1:5001",
-    "http://0.0.0.0:5001",
+    "http://localhost:8602",
+    "http://127.0.0.1:8602",
+    "http://0.0.0.0:8602",
+    "http://10.0.0.116:8602",
+    "http://36.103.234.9:8602",
     # 允许特定的局域网IP访问
-    "http://192.168.31.98:5001",
+    # "http://192.168.31.98:5001",
     # 允许所有来源，仅在开发环境使用
     "*"
 ]
@@ -42,4 +44,4 @@ async def health_check():
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8603)

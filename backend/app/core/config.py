@@ -21,19 +21,21 @@ class Settings(BaseSettings):
     STORAGE_DIR: str = os.path.join(BASE_DIR, "storage")
 
     # 嵌入服务配置
-    EMB_HOST: str = "192.168.31.230"
+    # EMB_HOST: str = "192.168.31.230"
+    EMB_HOST: str = "127.0.0.1"
     EMB_PORT: int = 7862
     EMB_SIZE: int = 1024
 
     # Qdrant配置
-    DB_HOST: str = "192.168.31.230"
+    # DB_HOST: str = "192.168.31.230"
+    DB_HOST: str = "127.0.0.1"
     DB_PORT: int = 6333
-    DB_NAME: str = "qwen"
+    DB_NAME: str = "bge_2025_04_02_csco指南"
 
     # LLM 服务配置
     LLM_HOST: str = "127.0.0.1"
     LLM_PORT: int = 7853
-    LLM_NAME: str = "qwen"
+    LLM_NAME: str = "qwen-14b"
     LLM_ADAPTER: str = "Qwen2.5-14B_cotrc_no1_r8a16"
 
 
