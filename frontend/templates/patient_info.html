@@ -798,8 +798,12 @@
             <div class="col-md-8">
                 <div style="height: calc(100vh - 140px); display: flex; flex-direction: column;">
                     <div class="card" style="flex: 1; overflow: hidden;">
-                        <div class="card-header">
-                            <i class='bx bx-user medical-icon'></i>患者信息
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class='bx bx-user-circle medical-icon'></i>
+                                <span id="patientInfoTitle">患者信息</span>
+                            </div>
+                            <div id="newPatientIndicator" class="badge bg-success" style="display: none;">新建患者</div>
                         </div>
                         <div class="card-body" style="overflow-y: auto;">
                             <form id="patientForm" style="height: 100%; display: flex; flex-direction: column;">
