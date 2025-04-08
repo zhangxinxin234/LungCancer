@@ -540,6 +540,14 @@
                         <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
                     </li>
                 </ul>
+                <!-- 添加退出登录按钮 -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class='bx bx-log-out medical-icon'></i>退出登录
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -683,5 +691,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/patient_info.js"></script>
+    <script src="/static/js/auth.js"></script>
 </body>
-</html> 
+</html>

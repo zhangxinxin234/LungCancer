@@ -1,38 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h2 class="mb-4">登录</h2>
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="username" class="form-label">用户名</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">密码</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">登录</button>
-            </form>
-            <p class="mt-3">还没有账号？<a href="#" id="showRegister">注册</a></p>
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-primary">
+            <div class="text-white text-center">
+                <h1 class="display-4 mb-4">林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</h1>
+                <p class="lead">欢迎使用我们的智能诊疗系统，为您提供专业的医疗辅助。</p>
+            </div>
         </div>
-    </div>
-    <div class="row mt-5" id="registerForm" style="display: none;">
-        <div class="col-md-6 offset-md-3">
-            <h2 class="mb-4">注册</h2>
-            <form id="registerFormInner">
-                <div class="mb-3">
-                    <label for="regUsername" class="form-label">用户名</label>
-                    <input type="text" class="form-control" id="regUsername" required>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="card shadow-lg" style="width: 100%; max-width: 400px;">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4" id="formTitle">登录</h2>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">登录</button>
+                        <p class="text-center mb-0">还没有账号？<a href="#" id="showRegister" class="text-primary">注册</a></p>
+                    </form>
+                    <form id="registerForm" style="display: none;">
+                        <div class="mb-3">
+                            <label for="regUsername" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="regUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regPassword" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="regPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">注册</button>
+                        <p class="text-center mb-0">已有账号？<a href="#" id="showLogin" class="text-primary">登录</a></p>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="regPassword" class="form-label">密码</label>
-                    <input type="password" class="form-control" id="regPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">注册</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -40,4 +46,19 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script>
+    document.getElementById('showRegister').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('formTitle').textContent = '注册';
+    });
+
+    document.getElementById('showLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('formTitle').textContent = '登录';
+    });
+</script>
 {% endblock %}

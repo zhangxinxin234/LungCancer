@@ -12,14 +12,74 @@
         :root {
             --primary-color: #2c5282;
             --secondary-color: #4299e1;
+            --accent-color: #63b3ed;
+            --background-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f8f9fa;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* 登录页面特殊样式 */
+        .container-fluid.vh-100 {
+            background-color: var(--background-color);
+            padding: 0;
+        }
+
+        .card.shadow-lg {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .card .form-control {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .card .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(44, 82, 130, 0.25);
+        }
+
+        .card .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .card .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        a {
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color) !important;
         }
 
         .nav-bg {
@@ -170,6 +230,12 @@
                                     <i class='bx bx-edit medical-icon'></i>处方修复
                                 </a>
                             </li>
+                            <li class="nav-item" id="userInfoNav">
+                                <span class="nav-link" style="cursor: default;">
+                                    <i class='bx bx-user-circle medical-icon'></i>
+                                    <span id="currentUsername"></span>
+                                </span>
+                            </li>
                             <li class="nav-item" id="authNav">
                                 <a class="nav-link" href="#" id="logoutLink" onclick="logout()">
                                     <i class='bx bx-log-out medical-icon'></i>退出登录
@@ -188,6 +254,30 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // 获取cookie函数
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // 显示用户名
+        function displayCurrentUser() {
+            const username = getCookie('username');
+            if (username && window.location.pathname !== '/login') {
+                const usernameElement = document.getElementById('currentUsername');
+                if (usernameElement) {
+                    usernameElement.textContent = decodeURIComponent(username);
+                }
+                document.getElementById('userInfoNav').style.display = 'block';
+            }
+        }
+
+        // 在页面加载时显示用户名
+        document.addEventListener('DOMContentLoaded', function() {
+            displayCurrentUser();
+        });
+    <script>
         function checkAuthStatus() {
             const token = localStorage.getItem('token');
             if (!token && window.location.pathname !== '/login') {
@@ -196,7 +286,10 @@
         }
 
         function logout() {
-            localStorage.removeItem('token');
+            // 清除所有相关的cookie
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            // 重定向到登录页
             window.location.href = '/login';
         }
 

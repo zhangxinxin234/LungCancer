@@ -548,6 +548,8 @@
     </style>
 </head>
 <body>
+<!-- 确保引入auth.js脚本 -->
+<script src="/static/js/auth.js"></script>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid" style="width: 90%; margin: 0 auto; position: relative;">
             <a class="navbar-brand fancy-title" href="#"><i class='bx bx-plus-medical medical-icon'></i>林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</a>
@@ -560,10 +562,19 @@
                         <a class="nav-link" id="patientInfoLink" href="/patient_info"><i class='bx bx-user medical-icon'></i>患者信息</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-notepad medical-icon'></i>处方生成</a>
+                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-file medical-icon'></i>处方生成</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
+                        <a class="nav-link active" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
+                    </li>
+                </ul>
+                <!-- 用户信息和退出登录按钮 -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- 用户信息将通过JavaScript动态添加到这里 -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class='bx bx-log-out medical-icon'></i>退出登录
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -687,5 +698,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/repair.js"></script>
+    <script src="/static/js/auth.js"></script>
 </body>
 </html>
