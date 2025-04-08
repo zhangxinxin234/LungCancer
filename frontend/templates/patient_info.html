@@ -178,16 +178,86 @@
             border-color: var(--secondary-color);
         }
 
-        .btn-light-blue {
-            background-color: #4299e1 !important;
-            border-color: #4299e1 !important;
-            color: white !important;
+        /* 新建患者按钮样式 */
+        .btn-new-patient {
+            background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+            border: none;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 15px rgba(66, 153, 225, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            width: 100%;
+            margin-bottom: 1.5rem;
         }
 
-        .btn-light-blue:hover {
-            background-color: #3182ce !important;
-            border-color: #3182ce !important;
-            color: white !important;
+        .btn-new-patient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2b6cb0 0%, #1a365d 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-new-patient:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 20px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn-new-patient:hover::before {
+            opacity: 1;
+        }
+
+        .btn-new-patient:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn-new-patient i {
+            font-size: 1.6rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-new-patient span {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-glow {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            right: -10px;
+            top: -10px;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0.1; }
+            100% { transform: scale(1); opacity: 0.3; }
         }
 
         .btn-light-blue {
@@ -478,6 +548,66 @@
             100% { opacity: 0; }
         }
 
+        /* 删除确认对话框样式 */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 1.5rem 1.5rem 1rem;
+        }
+
+        .modal-header .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            color: #4a5568;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .modal-footer .btn {
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #e2e8f0;
+            border: none;
+            color: #4a5568;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: #cbd5e0;
+        }
+
+        .modal-footer .btn-danger {
+            background-color: #f56565;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-footer .btn-danger:hover {
+            background-color: #e53e3e;
+        }
+
+        .modal-footer .btn-danger i {
+            font-size: 1.2rem;
+        }
+
         /* 确保滚动区域内容正确显示 */
         .card-body.d-flex.flex-column {
             overflow: hidden; /* 防止卡片体溢出 */
@@ -609,11 +739,36 @@
         </div>
     </div>
 
-    <!-- 保存成功提示 -->
+    <!-- 操作成功提示 -->
     <div class="save-notification" id="saveNotification">
         <div class="notification-content">
             <i class='bx bx-check-circle'></i>
-            <span>保存成功</span>
+            <span>操作成功</span>
+        </div>
+    </div>
+
+    <!-- 删除确认对话框 -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">
+                        <i class='bx bx-error-circle text-danger' style="font-size: 1.5rem;"></i>
+                        确认删除
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    确定要删除这个患者吗？此操作不可恢复。
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class='bx bx-trash'></i>
+                        确认删除
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -625,8 +780,10 @@
                         <i class='bx bx-list-ul medical-icon'></i>患者列表
                     </div>
                     <div class="card-body d-flex flex-column" style="padding-bottom: 20px;">
-                        <button class="btn btn-primary mb-3 w-100" onclick="createNewPatient()">
-                            <i class='bx bx-plus medical-icon'></i>新建患者
+                        <button class="btn-new-patient" onclick="createNewPatient()">
+                            <i class='bx bx-plus-medical'></i>
+                            <span>新建患者</span>
+                            <div class="btn-glow"></div>
                         </button>
                         <div class="mb-3 filter-wrapper">
                             <div class="filter-container">

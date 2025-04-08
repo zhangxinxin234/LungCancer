@@ -191,18 +191,23 @@ function showErrorMessage(message) {
 
 // 处理删除患者的点击事件
 async function handleDeletePatient(patientId) {
-    if (!confirm('确定要删除这个患者吗？')) {
-        return;
-    }
+    // 显示删除确认对话框
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    deleteModal.show();
 
-    // 确保认证有效
-    if (!checkAuth()) {
-        console.error('认证失败，无法删除患者');
-        showErrorMessage('认证失败，请重新登录');
-        return;
-    }
+    // 监听确认删除按钮的点击事件
+    document.getElementById('confirmDeleteBtn').onclick = async () => {
+        deleteModal.hide(); // 隐藏对话框
 
-    await deletePatient(patientId);
+        // 确保认证有效
+        if (!checkAuth()) {
+            console.error('认证失败，无法删除患者');
+            showErrorMessage('认证失败，请重新登录');
+            return;
+        }
+
+        await deletePatient(patientId);
+    };
 }
 
 // 执行删除患者操作
@@ -266,8 +271,8 @@ async function deletePatient(patientId) {
             // 刷新患者列表
             displayPatients(patients);
 
-            // 显示成功消息
-            showSaveNotification();
+            // 显示删除成功消息
+            showDeleteNotification();
         } else {
             console.log('没有剩余患者，清空所有状态');
 
@@ -519,8 +524,21 @@ async function savePatient() {
 
 // 显示保存成功的中央提示
 function showSaveNotification() {
+    showNotification('保存成功');
+}
+
+// 显示删除成功的中央提示
+function showDeleteNotification() {
+    showNotification('删除成功');
+}
+
+// 通用的显示通知函数
+function showNotification(message) {
     const notification = document.getElementById('saveNotification');
     if (!notification) return;
+
+    // 更新通知内容
+    notification.querySelector('span').textContent = message;
 
     // 显示通知
     notification.style.display = 'block';
