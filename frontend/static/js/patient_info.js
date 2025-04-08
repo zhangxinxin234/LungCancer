@@ -179,69 +179,106 @@ async function handleDeletePatient(patientId) {
     if (!confirm('确定要删除这个患者吗？')) {
         return;
     }
+
+    // 确保认证有效
+    if (!checkAuth()) {
+        console.error('认证失败，无法删除患者');
+        showErrorMessage('认证失败，请重新登录');
+        return;
+    }
+
     await deletePatient(patientId);
 }
 
 // 执行删除患者操作
 async function deletePatient(patientId) {
     try {
-        // 记录删除前的当前患者ID，用于后续比较
-        const deletingCurrentPatient = String(currentPatientId) === String(patientId);
+        console.log(`尝试删除患者，ID: ${patientId}`);
+
+        // 显示加载动画
+        showLoading();
 
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE',
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+            credentials: 'include'  // 确保包含凭据
         });
 
-        if (response.ok) {
-            // 如果删除的是当前查看的患者，立即更新URL
-            if (deletingCurrentPatient) {
-                // 立即更新URL和状态
-                currentPatientId = null;
-                window.history.replaceState({}, '', '/patient_info');
-                updateNavigationLinks(null);
-            }
+        console.log(`删除患者响应状态: ${response.status}`);
 
-            // 获取最新的患者列表
-            const patientsResponse = await fetch(`${API_BASE_URL}/patients/`);
-            if (patientsResponse.ok) {
-                const patients = await patientsResponse.json();
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`删除患者错误: ${errorText}`);
+            throw new Error(`删除患者失败，状态码: ${response.status}, 错误: ${errorText}`);
+        }
 
-                // 如果还有其他患者
-                if (patients && patients.length > 0) {
-                    // 对患者列表进行倒序排列，以便获取最新添加的患者
-                    patients.sort((a, b) => b.id - a.id);
-                    const firstPatientId = patients[0].id;
+        console.log('患者删除成功，正在获取最新患者列表...');
 
-                    // 如果删除的是当前患者，或者当前没有选中患者，加载第一个患者
-                    if (deletingCurrentPatient || !currentPatientId) {
-                        // 加载新的患者信息并更新URL
-                        await loadPatientInfo(firstPatientId);
-                    } else {
-                        // 如果删除的不是当前患者，只需刷新列表
-                        await getPatients();
-                    }
-                } else {
-                    // 如果没有患者了，清空所有状态
-                    document.getElementById('patientForm').reset();
-                    if (document.getElementById('patientInfo')) {
-                        document.getElementById('patientInfo').innerHTML = '';
-                    }
-                    currentPatientId = null;
-                    // 更新URL（使用replaceState避免在历史记录中留下多余条目）
-                    window.history.replaceState({}, '', '/patient_info');
-                    // 更新导航链接
-                    updateNavigationLinks(null);
-                    // 清空患者列表
-                    document.getElementById('patientList').innerHTML = '';
-                }
-            }
+        // 获取最新的患者列表
+        const patientsResponse = await fetch(`${API_BASE_URL}/patients/`, {
+            headers: getAuthHeaders(),
+            credentials: 'include'  // 确保包含凭据
+        });
+
+        if (!patientsResponse.ok) {
+            throw new Error(`获取患者列表失败，状态码: ${patientsResponse.status}`);
+        }
+
+        const patients = await patientsResponse.json();
+        console.log(`获取到 ${patients.length} 个患者`);
+
+        // 如果还有其他患者
+        if (patients && patients.length > 0) {
+            // 对患者列表进行倒序排列，以便获取最新添加的患者
+            patients.sort((a, b) => b.id - a.id);
+            const latestPatient = patients[0];
+
+            console.log(`加载最新患者，ID: ${latestPatient.id}`);
+
+            // 无条件加载最新的患者
+            currentPatientId = latestPatient.id;
+
+            // 更新URL为最新患者的ID
+            window.history.replaceState({}, '', `/patient_info?patient_id=${latestPatient.id}`);
+
+            // 更新导航链接
+            updateNavigationLinks(latestPatient.id);
+
+            // 填充表单和显示患者卡片
+            fillPatientForm(latestPatient);
+            displayPatientCard(latestPatient);
+
+            // 刷新患者列表
+            displayPatients(patients);
+
+            // 显示成功消息
+            showSaveNotification();
         } else {
-            throw new Error('删除患者失败');
+            console.log('没有剩余患者，清空所有状态');
+
+            // 如果没有患者了，清空所有状态
+            document.getElementById('patientForm').reset();
+            if (document.getElementById('patientInfo')) {
+                document.getElementById('patientInfo').innerHTML = '<div class="alert alert-info">没有患者记录，请创建新患者。</div>';
+            }
+
+            currentPatientId = null;
+
+            // 更新URL
+            window.history.replaceState({}, '', '/patient_info');
+
+            // 更新导航链接
+            updateNavigationLinks(null);
+
+            // 清空患者列表
+            document.getElementById('patientList').innerHTML = '';
         }
     } catch (error) {
-        console.error('Error deleting patient:', error);
-        showErrorMessage('删除患者失败');
+        console.error('删除患者过程中发生错误:', error);
+        showErrorMessage(`删除患者时出错: ${error.message}`);
+    } finally {
+        // 隐藏加载动画
+        hideLoading();
     }
 }
 
