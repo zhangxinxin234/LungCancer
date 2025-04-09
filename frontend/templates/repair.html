@@ -13,6 +13,56 @@
             font-size: 1.3rem;
             letter-spacing: 0.5px;
         }
+
+        /* 快速评价选项样式 */
+        .quick-option-box {
+            display: inline-block;
+            margin: 0.5rem 1rem 0.5rem 0;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quick-option-box:hover {
+            background-color: #f0f0f0;
+        }
+
+        .quick-option-input {
+            display: none;
+        }
+
+        .quick-option-input:checked + .quick-option-text {
+            font-weight: 600;
+        }
+
+        /* 更好选项样式 */
+        .quick-option-input[value="优化后较原处方更好"]:checked + .quick-option-text {
+            color: #28a745;
+        }
+        .quick-option-input[value="优化后较原处方更好"]:checked ~ .quick-option-box {
+            border-color: #28a745;
+            background-color: #e8f5e9;
+        }
+
+        /* 更差选项样式 */
+        .quick-option-input[value="优化后较原处方更差"]:checked + .quick-option-text {
+            color: #dc3545;
+        }
+        .quick-option-input[value="优化后较原处方更差"]:checked ~ .quick-option-box {
+            border-color: #dc3545;
+            background-color: #fbe9e7;
+        }
+
+        .quick-option-row {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
         :root {
             --primary-color: #2b6cb0;
             --secondary-color: #4299e1;
@@ -315,14 +365,41 @@
             padding: 1.5rem;
             border: 1px solid var(--border-color);
             flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        /* 原处方样式 */
+        .comparison-box.original {
+            background-color: #f8f9fa;
+            border-left: 3px solid #718096;
+        }
+
+        /* 修复后处方样式 */
+        .comparison-box.repaired {
+            background-color: #f0f9ff;
+            border-left: 3px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.1);
         }
 
         .comparison-title {
-            color: var(--primary-color);
             font-weight: 600;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 原处方标题样式 */
+        .comparison-box.original .comparison-title {
+            color: #4a5568;
+            border-bottom-color: #a0aec0;
+        }
+
+        /* 修复后处方标题样式 */
+        .comparison-box.repaired .comparison-title {
+            color: var(--primary-color);
         }
 
         /* 处方区域样式 */
@@ -331,7 +408,6 @@
             line-height: 1.8;
             white-space: pre-wrap;
             padding: 1rem;
-            background-color: #f8fafc;
             border-radius: 6px;
             border: 1px solid var(--border-color);
             min-height: 200px;
@@ -339,12 +415,43 @@
             width: 100%;
             resize: none;
             overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        /* 原处方内容样式 */
+        .comparison-box.original .comparison-content {
+            background-color: #f8f9fa;
+            color: #4a5568;
+        }
+
+        /* 修复后处方内容样式 */
+        .comparison-box.repaired .comparison-content {
+            background-color: #f0f9ff;
+            color: #2d3748;
+            border-color: #bee3f8;
+        }
+
+        /* 修复后处方文本框聚焦时的样式 */
+        .comparison-box.repaired .comparison-content:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+            outline: none;
         }
 
         /* 中成药区域样式 */
         .comparison-content.medicine {
             min-height: 60px !important;
             height: 60px !important;
+        }
+
+        /* 突出显示修改后的内容 */
+        .highlight-changes {
+            animation: highlight-fade 2s ease-in-out;
+        }
+
+        @keyframes highlight-fade {
+            0% { background-color: rgba(66, 153, 225, 0.2); }
+            100% { background-color: transparent; }
         }
 
         /* 中成药文本框样式 */
@@ -711,15 +818,41 @@
             cursor: pointer;
             font-size: 14px;
             user-select: none;
-            background: #f0f9ff;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
             transition: all 0.2s ease;
         }
 
-        .quick-option-box:hover {
+        /* 第一个选项样式 - 浅绿色主题 */
+        .quick-option-box:nth-child(1) {
+            background: #f0fdf4;
+        }
+        .quick-option-box:nth-child(1):hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+        .quick-option-box:nth-child(1) .quick-option-text {
+            color: #16a34a;
+        }
+        .quick-option-box:nth-child(1) .quick-option-input:checked + .quick-option-text {
+            background-color: #16a34a;
+            color: white;
+        }
+
+        /* 第二个选项样式 - 浅蓝色主题 */
+        .quick-option-box:nth-child(2) {
+            background: #f0f9ff;
+        }
+        .quick-option-box:nth-child(2):hover {
             background: #e0f2fe;
             border-color: #93c5fd;
+        }
+        .quick-option-box:nth-child(2) .quick-option-text {
+            color: var(--primary-color);
+        }
+        .quick-option-box:nth-child(2) .quick-option-input:checked + .quick-option-text {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .quick-option-input {
@@ -734,21 +867,12 @@
             display: block;
             padding: 12px 16px;
             text-align: center;
-            color: var(--primary-color);
-        }
-
-        .quick-option-input:checked + .quick-option-text {
-            background-color: var(--primary-color);
-            color: white;
+            transition: all 0.2s ease;
             border-radius: 5px;
         }
 
-        .quick-option-box:hover .quick-option-text {
-            color: var(--primary-color);
-        }
-
-        .quick-option-input:checked + .quick-option-text:hover {
-            color: white;
+        .quick-option-input:checked + .quick-option-text {
+            font-weight: 500;
         }
     </style>
 </head>
@@ -835,27 +959,27 @@
                                         </div>
 
                                         <div class="comparison-section">
-                                            <div class="comparison-box">
-                                                <h5 class="comparison-title">原处方</h5>
+                                            <div class="comparison-box original">
+                                                <h5 class="comparison-title"><i class='bx bx-file'></i>原处方</h5>
                                                 <div class="comparison-content" id="originalPrescription">
                                                     <!-- 原处方将通过JavaScript动态填充 -->
                                                 </div>
                                             </div>
-                                            <div class="comparison-box">
-                                                <h5 class="comparison-title">修复后处方</h5>
+                                            <div class="comparison-box repaired">
+                                                <h5 class="comparison-title"><i class='bx bx-edit-alt'></i>修复后处方</h5>
                                                 <textarea class="comparison-content" id="repairedPrescription"></textarea>
                                             </div>
                                         </div>
 
                                         <div class="comparison-section">
-                                            <div class="comparison-box">
-                                                <h5 class="comparison-title">原中成药</h5>
+                                            <div class="comparison-box original">
+                                                <h5 class="comparison-title"><i class='bx bx-capsule'></i>原中成药</h5>
                                                 <div class="comparison-content medicine" id="originalMedicine">
                                                     <!-- 原中成药将通过JavaScript动态填充 -->
                                                 </div>
                                             </div>
-                                            <div class="comparison-box">
-                                                <h5 class="comparison-title">修复后中成药</h5>
+                                            <div class="comparison-box repaired">
+                                                <h5 class="comparison-title"><i class='bx bx-plus-medical'></i>修复后中成药</h5>
                                                 <textarea class="comparison-content medicine" id="repairedMedicine"></textarea>
                                             </div>
                                         </div>
@@ -870,15 +994,21 @@
                             <label for="doctorComment" class="form-label" style="font-weight: 600; color: var(--primary-color); margin-bottom: 0;">医师评价</label>
                         </div>
                         <textarea class="form-control" id="doctorComment" placeholder="请输入医师评价..."></textarea>
-                        <div class="quick-comment-options mt-3">
-                            <div class="option-row">
-                                <label class="custom-checkbox">
-                                    <input type="checkbox" id="betterOption">
-                                    <span class="checkbox-text">优化后较原处方更好</span>
+                        <div class="quick-comment-options">
+                            <div class="quick-option-row">
+                                <label class="quick-option-box better-option">
+                                    <input type="radio" name="doctorQuickComment" class="quick-option-input" value="优化后较原处方更好">
+                                    <span class="quick-option-text">
+                                        <i class='bx bx-like'></i>
+                                        优化后较原处方更好
+                                    </span>
                                 </label>
-                                <label class="custom-checkbox">
-                                    <input type="checkbox" id="worseOption">
-                                    <span class="checkbox-text">优化后较原处方更差</span>
+                                <label class="quick-option-box worse-option">
+                                    <input type="radio" name="doctorQuickComment" class="quick-option-input" value="优化后较原处方更差">
+                                    <span class="quick-option-text">
+                                        <i class='bx bx-dislike'></i>
+                                        优化后较原处方更差
+                                    </span>
                                 </label>
                             </div>
                         </div>

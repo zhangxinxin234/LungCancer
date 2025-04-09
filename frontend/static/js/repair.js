@@ -47,34 +47,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     await getPatients(); // 确保在页面加载时获取患者列表
 
-    // 添加复选框的change事件监听器
-    const betterOption = document.getElementById('betterOption');
-    const worseOption = document.getElementById('worseOption');
-    if (betterOption && worseOption) {
-        betterOption.addEventListener('change', updateDoctorComment);
-        worseOption.addEventListener('change', updateDoctorComment);
-    }
+    // 添加单选框的change事件监听器
+    const radioInputs = document.querySelectorAll('input[name="doctorQuickComment"]');
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', updateDoctorComment);
+    });
 });
 
 // 更新医师评价
 function updateDoctorComment(event) {
-    const betterOption = document.getElementById('betterOption');
-    const worseOption = document.getElementById('worseOption');
     const doctorComment = document.getElementById('doctorComment');
-    const clickedCheckbox = event.target;
+    const selectedValue = event.target.value;
 
-    // 确保只有一个选项被选中
-    if (clickedCheckbox.id === 'betterOption') {
-        worseOption.checked = false;
-    } else if (clickedCheckbox.id === 'worseOption') {
-        betterOption.checked = false;
-    }
-
-    // 更新医师评价文本
-    if (betterOption.checked) {
-        doctorComment.value = "优化后较原处方更好。";
-    } else if (worseOption.checked) {
-        doctorComment.value = "优化后较原处方更差。";
+    if (selectedValue) {
+        doctorComment.value = selectedValue + "。";
     } else {
         doctorComment.value = "";
     }
@@ -238,21 +224,13 @@ async function loadPatientPrescription(patientId) {
         const doctorComment = document.getElementById('doctorComment');
         if (doctorComment && patient.doctor_comment) {
             doctorComment.value = patient.doctor_comment;
-            // 根据医师评价内容设置复选框状态
-            const betterOption = document.getElementById('betterOption');
-            const worseOption = document.getElementById('worseOption');
-            if (betterOption && worseOption) {
-                if (patient.doctor_comment.includes('更好')) {
-                    betterOption.checked = true;
-                    worseOption.checked = false;
-                } else if (patient.doctor_comment.includes('更差')) {
-                    betterOption.checked = false;
-                    worseOption.checked = true;
-                } else {
-                    betterOption.checked = false;
-                    worseOption.checked = false;
+            // 根据医师评价内容设置单选框状态
+            const radioInputs = document.querySelectorAll('input[name="doctorQuickComment"]');
+            radioInputs.forEach(radio => {
+                if (patient.doctor_comment.includes(radio.value)) {
+                    radio.checked = true;
                 }
-            }
+            });
         }
 
         // 清空修复建议，除非是刚加载的修复后的处方
