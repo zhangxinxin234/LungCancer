@@ -54,9 +54,14 @@ function displayPatients(patients) {
     const patientList = document.getElementById('patientList');
     patientList.innerHTML = '';
 
-    patients.forEach(patient => {
+    patients.forEach((patient, index) => {
         const patientItem = document.createElement('div');
         patientItem.className = 'card mb-2';
+        patientItem.style.opacity = '0';
+        patientItem.style.transform = 'translateY(10px)';
+        patientItem.style.transition = 'all 0.3s ease';
+        patientItem.style.transitionDelay = `${index * 0.05}s`;
+
         patientItem.innerHTML = `
             <div class="card-body">
                 <h6 class="card-title">患者ID: ${patient.id}</h6>
@@ -65,6 +70,12 @@ function displayPatients(patients) {
             </div>
         `;
         patientList.appendChild(patientItem);
+
+        // 触发动画
+        setTimeout(() => {
+            patientItem.style.opacity = '1';
+            patientItem.style.transform = 'translateY(0)';
+        }, 10);
     });
 }
 
@@ -130,15 +141,37 @@ function fillPatientForm(patient) {
 // 显示处方信息
 function displayPrescriptionInfo(patient) {
     const prescriptionCard = document.getElementById('prescriptionCard');
+
     if (patient.generated_prescription) {
+        // 先设置内容但保持隐藏状态
+        prescriptionCard.style.opacity = '0';
+        prescriptionCard.style.transform = 'translateY(20px)';
         prescriptionCard.style.display = 'block';
+        prescriptionCard.style.transition = 'all 0.4s ease-out';
+
         document.getElementById('westernTreatmentStage').textContent = patient.western_treatment_stage || '';
         document.getElementById('cscoGuideline').innerHTML = patient.csco_guideline || '';
         document.getElementById('prescription').textContent = patient.prescription || '';
         document.getElementById('medicine').textContent = patient.chinese_medicine || '';
         document.getElementById('repairRules').value = patient.repair_rules || '';
+
+        // 触发动画
+        setTimeout(() => {
+            prescriptionCard.style.opacity = '1';
+            prescriptionCard.style.transform = 'translateY(0)';
+        }, 100);
     } else {
-        prescriptionCard.style.display = 'none';
+        // 如果需要隐藏，先执行淡出动画
+        if (prescriptionCard.style.display !== 'none') {
+            prescriptionCard.style.opacity = '0';
+            prescriptionCard.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                prescriptionCard.style.display = 'none';
+            }, 300);
+        } else {
+            prescriptionCard.style.display = 'none';
+        }
     }
 }
 
