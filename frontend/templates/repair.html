@@ -153,6 +153,31 @@
             color: var(--primary-color);
         }
 
+        .patient-info-column {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            max-width: 400px;
+        }
+
+        .patient-info-column p {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .patient-info-column p:last-child {
+            border-bottom: none;
+        }
+
+        .patient-info-column strong {
+            color: #2c5282;
+            min-width: 100px;
+            display: inline-block;
+        }
+
         .repair-rules {
             background-color: #f8fafc;
             border-radius: 6px;
@@ -387,7 +412,7 @@
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 0;
-            height: 60px;
+            height: 52px; /* 调整高度以匹配处方生成页面 */
             display: flex;
             align-items: center;
             justify-content: flex-end;
@@ -486,8 +511,8 @@
 
         .card-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 1.2rem;
-            border-radius: 12px 12px 0 0;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
         }
 
         /* 医师评价样式 */
@@ -700,7 +725,7 @@
                 <div style="height: calc(100vh - 140px); display: flex; flex-direction: column;">
                     <div class="card" style="flex: 1; overflow: hidden;">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <i class='bx bx-edit medical-icon'></i>处方修复
                                 </div>
