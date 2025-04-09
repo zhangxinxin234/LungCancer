@@ -374,7 +374,20 @@ async function loadLatestRepairRule() {
         const result = await response.json();
         if (result.rule_content) {
             document.getElementById('repairRules').value = result.rule_content;
-            showSuccessNotification('规则加载成功'); // 添加成功提示
+            // 创建规则加载成功提示
+            const ruleSection = document.querySelector('.prescription-section');
+            if (ruleSection) {
+                const toast = document.createElement('div');
+                toast.className = 'rule-success-toast';
+                toast.innerHTML = `
+                    <i class='bx bx-check-circle' style="font-size: 1.2rem;"></i>
+                    <span>规则加载成功</span>
+                `;
+                ruleSection.appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }
         } else {
             // 如果没有找到规则，加载默认规则
             document.getElementById('repairRules').value = `1. 放疗阶段需加：天冬12g、麦冬12g；
@@ -433,7 +446,20 @@ async function saveRepairRule() {
             throw new Error(errorData.detail || '保存失败');
         }
 
-        showSuccessNotification('修复规则保存成功');
+        // 创建规则保存成功提示
+        const ruleSection = document.querySelector('.prescription-section');
+        if (ruleSection) {
+            const toast = document.createElement('div');
+            toast.className = 'rule-success-toast';
+            toast.innerHTML = `
+                <i class='bx bx-check-circle' style="font-size: 1.2rem;"></i>
+                <span>规则保存成功</span>
+            `;
+            ruleSection.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 500);
+        }
     } catch (error) {
         console.error('Error saving repair rule:', error);
         showErrorNotification('保存失败：' + error.message);
