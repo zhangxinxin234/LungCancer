@@ -173,54 +173,6 @@
             }
         }
 
-        /* 自定义导航样式 */
-        .nav-pills-custom {
-            padding: 4px;
-            background: var(--nav-bg-color);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            margin-top: 8px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .nav-pills-custom .custom-nav-link {
-            padding: 8px 16px;
-            color: #4a5568;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            background: rgba(248, 250, 252, 0.7);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .nav-pills-custom .custom-nav-link:hover {
-            color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(43, 108, 176, 0.1);
-        }
-
-        .nav-pills-custom .custom-nav-link.active {
-            color: white;
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.2);
-        }
-
-        .nav-pills-custom .custom-nav-link .medical-icon {
-            font-size: 1.1rem;
-            margin-right: 6px;
-            position: relative;
-            top: 1px;
-        }
-
-        .nav-pills-custom .custom-nav-link.active .medical-icon {
-            color: white;
-        }
-
         /* 加载指示器样式 */
         #loadingOverlay {
             position: fixed;
@@ -277,11 +229,11 @@
         }
 
         .card-header {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             font-weight: 600;
-            padding: 1rem;
-            border-radius: 8px 8px 0 0;
+            padding: 1.2rem;
+            border-radius: 12px 12px 0 0;
         }
 
         .card-body {
@@ -289,6 +241,8 @@
         }
 
         .form-control {
+            width: 100%;
+            max-width: 100%;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 0.75rem;
@@ -304,6 +258,11 @@
         .form-control:focus {
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
         }
 
         /* 新建患者表单样式 */
@@ -333,21 +292,55 @@
             border-radius: 6px;
             font-weight: 500;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        /* 按钮变体 */
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
+            color: white;
         }
 
         .btn-primary:hover {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
+            transform: translateY(-1px);
         }
 
-        /* 新建患者按钮样式 */
+        .btn-success {
+            background-color: #48bb78;
+            border-color: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #38a169;
+            border-color: #38a169;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: #f56565;
+            border-color: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+            transform: translateY(-1px);
+        }
+
+        /* 新建患者按钮特殊样式 */
         .btn-new-patient {
-            background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
             border: none;
             color: white;
             padding: 1rem 2.5rem;
@@ -358,116 +351,25 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             box-shadow: 0 8px 15px rgba(66, 153, 225, 0.3);
             position: relative;
-            overflow: hidden;
-            z-index: 1;
             width: 100%;
             margin-bottom: 1.5rem;
         }
 
-        .btn-new-patient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #2b6cb0 0%, #1a365d 100%);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
         .btn-new-patient:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 20px rgba(66, 153, 225, 0.4);
-        }
-
-        .btn-new-patient:hover::before {
-            opacity: 1;
-        }
-
-        .btn-new-patient:active {
             transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(66, 153, 225, 0.4);
+            box-shadow: 0 12px 20px rgba(66, 153, 225, 0.4);
         }
 
         .btn-new-patient i {
             font-size: 1.6rem;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
 
         .btn-new-patient span {
             font-size: 1.2rem;
             letter-spacing: 1px;
-        }
-
-        .btn-glow {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            right: -10px;
-            top: -10px;
-            animation: glow 2s infinite;
-        }
-
-        @keyframes glow {
-            0% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.5); opacity: 0.1; }
-            100% { transform: scale(1); opacity: 0.3; }
-        }
-
-        .btn-light-blue {
-            background-color: #4299e1;
-            border-color: #4299e1;
-            color: white;
-        }
-
-        .btn-light-blue:hover {
-            background-color: #3182ce;
-            border-color: #3182ce;
-            color: white;
-        }
-
-        .btn-success {
-            background-color: #48bb78;
-            border-color: #48bb78;
-        }
-
-        .btn-success:hover {
-            background-color: #38a169;
-            border-color: #38a169;
-        }
-
-        .btn-warning {
-            background-color: #ecc94b;
-            border-color: #ecc94b;
-            color: #744210;
-        }
-
-        .btn-warning:hover {
-            background-color: #d69e2e;
-            border-color: #d69e2e;
-        }
-
-        .btn-danger {
-            background-color: #f56565;
-            border-color: #f56565;
-        }
-
-        .btn-danger:hover {
-            background-color: #e53e3e;
-            border-color: #e53e3e;
         }
 
         .patient-list {
@@ -722,13 +624,6 @@
             margin-right: 10px;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
         /* 删除确认对话框样式 */
         .modal-content {
             border: none;
@@ -800,19 +695,6 @@
         }
 
         /* 表单区域样式 */
-        .form-section {
-            margin-bottom: 15px;
-        }
-
-        .form-control {
-            width: 100%;
-            max-width: 100%;
-        }
-
-        textarea.form-control {
-            resize: vertical;
-        }
-
         .row {
             margin-right: 0;
             margin-left: 0;
