@@ -49,10 +49,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 只有在不是新建患者的情况下，才加载最新的患者信息
         await loadLatestPatient();
     } else {
-        // 新建患者时，清空表单
+        // 新建患者时，清空表单并应用新建样式
         clearPatientForm();
         currentPatientId = null;
         updateNavigationLinks(null);
+
+        // 应用新建患者样式
+        const patientForm = document.getElementById('patientForm');
+        if (patientForm) {
+            patientForm.classList.add('new-patient-form');
+        }
+
+        // 显示"新建患者"标识
+        const newPatientIndicator = document.getElementById('newPatientIndicator');
+        if (newPatientIndicator) {
+            newPatientIndicator.style.display = 'block';
+        }
     }
 
     // 设置表单提交事件
