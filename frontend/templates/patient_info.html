@@ -322,7 +322,7 @@
         }
 
         .container {
-            width: 80%;
+            width: 90%;
             max-width: 1600px !important;
             margin: 1.5rem auto;
         }
@@ -574,11 +574,11 @@
         }
 
         .patient-item .btn {
-            padding: 0.2rem 0.5rem;
-            font-size: 0.75rem;
-            border-radius: 3px;
+            padding: 0.35rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 4px;
             transition: all 0.2s;
-            margin-left: 0.3rem;
+            margin-left: 0.5rem;
         }
 
         .patient-item .btn i {
@@ -1002,14 +1002,14 @@
         </div>
     </div>
 
-    <div class="container">
+            <div class="container" style="width: 80%; max-width: 1600px;">
         <div class="row">
             <div class="col-md-4">
-                <div class="card" style="height: calc(100vh - 140px);">
+                <div class="card sticky-top" style="top: 20px; height: calc(100vh - 140px);">
                     <div class="card-header">
                         <i class='bx bx-list-ul medical-icon'></i>患者列表
                     </div>
-                    <div class="card-body d-flex flex-column" style="padding-bottom: 20px;">
+                    <div class="card-body d-flex flex-column" style="overflow-y: auto; padding-bottom: 20px;">
                         <button class="btn-new-patient" onclick="createNewPatient()">
                             <i class='bx bx-plus-medical'></i>
                             <span>新建患者</span>

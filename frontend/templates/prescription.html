@@ -242,9 +242,10 @@
         }
 
         .prescription-content.single-line {
-            min-height: 38px;
-            max-height: 38px;
-            height: 38px;
+            height: 50px;
+            resize: none;
+            overflow: hidden;
+            font-size: 1.0rem;
             resize: none;
             white-space: nowrap;
             overflow-x: auto;
@@ -252,9 +253,10 @@
 
         .prescription-content {
             font-family: "Noto Sans SC", sans-serif;
-            line-height: 1.6;
+            font-size: 1.0rem;
+            line-height: 1.8;
             white-space: pre-wrap;
-            padding: 0.75rem;
+            padding: 1rem;
             background-color: #f8fafc;
             border-radius: 6px;
             border: 1px solid var(--border-color);
@@ -262,13 +264,14 @@
             resize: vertical;
             min-height: 60px;
             max-height: 150px;
-            font-size: 14px;
             transition: border-color 0.2s;
         }
 
         textarea.prescription-content {
-            display: block;
-            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+            font-size: 1.0rem;
         }
 
         textarea.prescription-content:focus {
