@@ -66,5 +66,18 @@
         document.getElementById('loginForm').style.display = 'block';
         document.getElementById('formTitle').textContent = '登录';
     });
+
+    // 隐藏导航栏中所有的链接
+    document.addEventListener('DOMContentLoaded', function() {
+        const patientInfoLink = document.getElementById('patientInfoLink');
+        const prescriptionLink = document.getElementById('prescriptionLink');
+        const repairLink = document.getElementById('repairLink');
+        const authNav = document.getElementById('authNav');
+
+        if (patientInfoLink) patientInfoLink.style.display = 'none';
+        if (prescriptionLink) prescriptionLink.style.display = 'none';
+        if (repairLink) repairLink.style.display = 'none';
+        if (authNav) authNav.style.display = 'none';
+    });
 </script>
 {% endblock %}
