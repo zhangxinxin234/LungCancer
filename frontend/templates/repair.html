@@ -81,6 +81,15 @@
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .prescription-title i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
         }
 
         .prescription-content {
@@ -244,28 +253,53 @@
         }
 
         .repair-rules {
-            background-color: #f8fafc;
-            border-radius: 6px;
+            background-color: transparent;
+            border-radius: 12px;
             padding: 1rem;
             margin-bottom: 1rem;
-            border: 1px solid var(--border-color);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .repair-rules::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 179, 237, 0.2);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .repair-rules textarea {
             width: 100%;
             min-height: 200px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 1.2rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
             font-family: "Noto Sans SC", monospace;
-            line-height: 1.6;
+            line-height: 1.8;
             resize: vertical;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
         }
 
         .repair-rules textarea:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.1);
             outline: none;
+            transform: translateY(-1px);
+        }
+
+        .repair-rules textarea:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(43, 108, 176, 0.08);
         }
 
         .comparison-section {
@@ -786,9 +820,9 @@
                                 <div style="flex: 1; overflow-y: auto; overflow-x: hidden;">
                                     <div style="padding-right: 15px;">
                                         <div class="prescription-section">
-                                            <h5 class="prescription-title">修复规则</h5>
-                                            <div class="repair-rules">
-                                                <textarea id="repairRules" placeholder="请输入或修改处方修复规则..."></textarea>
+                                            <h5 class="prescription-title"><i class='bx bx-list-check'></i>修复规则</h5>
+                                            <div class="repair-rules" style="background: transparent;">
+                                                <textarea id="repairRules" placeholder="请输入或修改处方修复规则，每行一条..." style="background: transparent;"></textarea>
                                             </div>
                                             <div class="text-center mt-3">
                                                 <button class="btn btn-primary" onclick="loadLatestRepairRule()">
