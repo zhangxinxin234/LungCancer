@@ -57,6 +57,54 @@
             }
         }
 
+        /* 自定义导航样式 */
+        .nav-pills-custom {
+            padding: 4px;
+            background: var(--nav-bg-color);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            margin-top: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-pills-custom .custom-nav-link {
+            padding: 8px 16px;
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(248, 250, 252, 0.7);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .nav-pills-custom .custom-nav-link:hover {
+            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(43, 108, 176, 0.1);
+        }
+
+        .nav-pills-custom .custom-nav-link.active {
+            color: white;
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.2);
+        }
+
+        .nav-pills-custom .custom-nav-link .medical-icon {
+            font-size: 1.1rem;
+            margin-right: 6px;
+            position: relative;
+            top: 1px;
+        }
+
+        .nav-pills-custom .custom-nav-link.active .medical-icon {
+            color: white;
+        }
+
         /* 加载指示器样式 */
         #loadingOverlay {
             position: fixed;
@@ -798,14 +846,14 @@
                                 </div>
                                 <div id="newPatientIndicator" class="badge bg-success" style="display: none;">新建患者</div>
                             </div>
-                            <div class="d-flex justify-content-end gap-3">
-                                <a href="/patient_info" class="btn btn-sm btn-light active" id="patientInfoLink">
+                            <div class="nav-pills-custom d-flex justify-content-end gap-2">
+                                <a href="/patient_info" class="nav-link custom-nav-link active" id="patientInfoLink">
                                     <i class='bx bx-user medical-icon'></i>患者信息
                                 </a>
-                                <a href="/prescription" class="btn btn-sm btn-light" id="prescriptionLink">
+                                <a href="/prescription" class="nav-link custom-nav-link" id="prescriptionLink">
                                     <i class='bx bx-notepad medical-icon'></i>处方生成
                                 </a>
-                                <a href="/repair" class="btn btn-sm btn-light" id="repairLink">
+                                <a href="/repair" class="nav-link custom-nav-link" id="repairLink">
                                     <i class='bx bx-edit medical-icon'></i>处方修复
                                 </a>
                             </div>
