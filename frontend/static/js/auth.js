@@ -113,9 +113,39 @@ function setFieldError(fieldId) {
     }
 }
 
+// 添加全局请求拦截器处理 401 错误
+function handleUnauthorized() {
+    // 清除认证信息
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+    // 如果不在登录页面，则重定向到登录页面
+    if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+    }
+}
+
+// 封装fetch请求，添加401处理
+async function fetchWithAuth(url, options = {}) {
+    try {
+        const response = await fetch(url, options);
+        if (response.status === 401) {
+            handleUnauthorized();
+            throw new Error('Unauthorized');
+        }
+        return response;
+    } catch (error) {
+        if (error.message === 'Unauthorized') {
+            throw error;
+        }
+        console.error('Fetch error:', error);
+        throw error;
+    }
+}
+
 function login(username, password) {
     clearErrors();
-    fetch('/api/v1/auth/token', {
+    fetchWithAuth('/api/v1/auth/token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -156,7 +186,7 @@ function logout() {
 }
 
 function register(username, password) {
-    fetch('/api/v1/auth/register', {
+    fetchWithAuth('/api/v1/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
