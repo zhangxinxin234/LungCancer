@@ -10,6 +10,62 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
+        /* 蓝色背景容器 */
+        .blue-background-container {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* 页面导航样式 */
+        .page-nav-pills {
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-nav-link {
+            padding: 8px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .page-nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .page-nav-link.active {
+            background: white;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .page-nav-link i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .page-nav-link.active i {
+            color: var(--primary-color);
+        }
+
         /* 自定义导航样式 */
         .nav-pills-custom {
             padding: 4px;
@@ -564,16 +620,18 @@
                                     <i class='bx bx-notepad medical-icon'></i>处方生成
                                 </div>
                             </div>
-                            <div class="nav-pills-custom d-flex justify-content-end gap-2">
-                                <a href="/patient_info" class="nav-link custom-nav-link" id="patientInfoLink">
-                                    <i class='bx bx-user medical-icon'></i>患者信息
-                                </a>
-                                <a href="/prescription" class="nav-link custom-nav-link active" id="prescriptionLink">
-                                    <i class='bx bx-notepad medical-icon'></i>处方生成
-                                </a>
-                                <a href="/repair" class="nav-link custom-nav-link" id="repairLink">
-                                    <i class='bx bx-edit medical-icon'></i>处方修复
-                                </a>
+                            <div class="blue-background-container">
+                                <div class="page-nav-pills d-flex justify-content-end gap-2">
+                                    <a href="/patient_info" class="page-nav-link" id="patientInfoLink">
+                                        <i class='bx bx-user medical-icon'></i>患者信息
+                                    </a>
+                                    <a href="/prescription" class="page-nav-link active" id="prescriptionLink">
+                                        <i class='bx bx-notepad medical-icon'></i>处方生成
+                                    </a>
+                                    <a href="/repair" class="page-nav-link" id="repairLink">
+                                        <i class='bx bx-edit medical-icon'></i>处方修复
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body" style="overflow-y: auto;">

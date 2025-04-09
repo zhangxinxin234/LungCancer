@@ -26,9 +26,13 @@
         /* 蓝色背景容器 */
         .blue-background-container {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         /* 页面导航样式 */
@@ -992,16 +996,18 @@
                                 </div>
                                 <div id="newPatientIndicator" class="badge bg-success" style="display: none;">新建患者</div>
                             </div>
-                            <div class="nav-pills-custom d-flex justify-content-end gap-2">
-                                <a href="/patient_info" class="nav-link custom-nav-link active" id="patientInfoLink">
-                                    <i class='bx bx-user medical-icon'></i>患者信息
-                                </a>
-                                <a href="/prescription" class="nav-link custom-nav-link" id="prescriptionLink">
-                                    <i class='bx bx-notepad medical-icon'></i>处方生成
-                                </a>
-                                <a href="/repair" class="nav-link custom-nav-link" id="repairLink">
-                                    <i class='bx bx-edit medical-icon'></i>处方修复
-                                </a>
+                            <div class="blue-background-container">
+                                <div class="page-nav-pills d-flex justify-content-end gap-2">
+                                    <a href="/patient_info" class="page-nav-link active" id="patientInfoLink">
+                                        <i class='bx bx-user medical-icon'></i>患者信息
+                                    </a>
+                                    <a href="/prescription" class="page-nav-link" id="prescriptionLink">
+                                        <i class='bx bx-notepad medical-icon'></i>处方生成
+                                    </a>
+                                    <a href="/repair" class="page-nav-link" id="repairLink">
+                                        <i class='bx bx-edit medical-icon'></i>处方修复
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body" style="overflow-y: auto;">
