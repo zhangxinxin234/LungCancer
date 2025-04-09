@@ -151,20 +151,23 @@ function displayPatientInfo(patient) {
     const patientInfo = document.getElementById('patientInfo');
     if (!patientInfo) return;
 
-    const content = patientInfo.querySelector('div:not(h5)') || patientInfo;
-    content.innerHTML = `
-        <div class="patient-info-column">
-            <p><i class='bx bx-id-card' style='color: var(--primary-color)'></i><strong>患者编号</strong>#${patient.id}</p>
-            <p><i class='bx bx-plus-medical' style='color: var(--primary-color)'></i><strong>西医诊断</strong>${patient.diagnosis || '暂无'}</p>
-            <p><i class='bx bx-time' style='color: var(--primary-color)'></i><strong>现病程阶段</strong>${patient.disease_stage || '暂无'}</p>
-            <p><i class='bx bx-layer' style='color: var(--primary-color)'></i><strong>分期</strong>${patient.staging || '暂无'}</p>
-            <p><i class='bx bx-scatter-chart' style='color: var(--primary-color)'></i><strong>TNM分期</strong>${patient.tnm_staging || '暂无'}</p>
-            <p><i class='bx bx-file' style='color: var(--primary-color)'></i><strong>病理报告</strong>${patient.pathology_report || '暂无'}</p>
-            <p><i class='bx bx-test-tube' style='color: var(--primary-color)'></i><strong>实验室检查</strong>${patient.lab_tests || '暂无'}</p>
-            <p><i class='bx bx-image' style='color: var(--primary-color)'></i><strong>影像学报告</strong>${patient.imaging_report || '暂无'}</p>
-            <p><i class='bx bx-body' style='color: var(--primary-color)'></i><strong>症状</strong>${patient.symptoms || '暂无'}</p>
-            <p><i class='bx bx-message-rounded-detail' style='color: var(--primary-color)'></i><strong>舌苔</strong>${patient.tongue || '暂无'}</p>
-            <p><i class='bx bx-pulse' style='color: var(--primary-color)'></i><strong>脉象</strong>${patient.pulse || '暂无'}</p>
+    patientInfo.innerHTML = `
+        <h5 class="mb-3" style="color: var(--primary-color); font-weight: 600; padding-bottom: 0.5rem;">
+            <i class='bx bx-user-pin' style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
+            患者资料
+        </h5>
+        <div class="patient-info-content">
+            <p><i class='bx bx-id-card'></i><strong>患者编号</strong><span>#${patient.id}</span></p>
+            <p><i class='bx bx-plus-medical'></i><strong>西医诊断</strong><span>${patient.diagnosis || ''}</span></p>
+            <p><i class='bx bx-time'></i><strong>现病程阶段</strong><span>${patient.disease_stage || ''}</span></p>
+            <p><i class='bx bx-layer'></i><strong>分期</strong><span>${patient.staging || ''}</span></p>
+            <p><i class='bx bx-scatter-chart'></i><strong>TNM分期</strong><span>${patient.tnm_staging || ''}</span></p>
+            <p><i class='bx bx-file'></i><strong>病理报告</strong><span>${patient.pathology_report || ''}</span></p>
+            <p><i class='bx bx-test-tube'></i><strong>实验室检查</strong><span>${patient.lab_tests || ''}</span></p>
+            <p><i class='bx bx-image'></i><strong>影像学报告</strong><span>${patient.imaging_report || ''}</span></p>
+            <p><i class='bx bx-body'></i><strong>症状</strong><span>${patient.symptoms || ''}</span></p>
+            <p><i class='bx bx-message-rounded-detail'></i><strong>舌苔</strong><span>${patient.tongue || ''}</span></p>
+            <p><i class='bx bx-pulse'></i><strong>脉象</strong><span>${patient.pulse || ''}</span></p>
         </div>
     `;
 }

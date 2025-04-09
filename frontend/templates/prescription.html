@@ -302,50 +302,82 @@
         }
 
         .patient-info {
-            padding: 1.2rem;
-            background: linear-gradient(to right bottom, #ffffff, #f8fafc);
-            border-radius: 12px;
-            margin-bottom: 1.2rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            padding: 0;
+            background: #ffffff;
+            margin-bottom: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .patient-info:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        .patient-info-content {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
         }
 
         .patient-info p {
-            margin-bottom: 0.8rem;
-            color: var(--text-color);
-            padding: 0.6rem 0.8rem;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(226, 232, 240, 0.6);
+            margin-bottom: 0;
+            padding: 0.75rem 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        .patient-info p:last-child {
+            border-bottom: none;
         }
 
         .patient-info p:hover {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: var(--border-color);
+            background: rgba(43, 108, 176, 0.05);
+        }
+
+        .patient-info p i {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .patient-info strong {
             color: var(--primary-color);
-            font-weight: 600;
+            font-weight: 500;
             min-width: 90px;
+            font-size: 0.95rem;
             display: inline-block;
             position: relative;
+            margin-right: 0.75rem;
+            font-family: var(--font-sans);
+            flex-shrink: 0;
         }
 
         .patient-info strong::after {
             content: ":";
             position: absolute;
-            right: 0;
-            color: #a0aec0;
+            right: -4px;
+            color: var(--text-color-lighter);
+        }
+
+        .patient-info span {
+            flex: 1;
+            color: var(--text-color);
+            line-height: 1.5;
+            font-size: 0.95rem;
+            font-family: var(--font-sans);
+            padding-left: 0.5rem;
+            white-space: pre-line;
+            word-break: break-word;
+            min-width: 0;
+        }
+
+        .patient-info span:empty::before {
+            content: '暂无';
+            color: var(--text-color-lighter);
+            font-style: italic;
         }
 
         .guideline-section {
@@ -367,29 +399,31 @@
             line-height: 1.6;
         }
 
-        .patient-info-column {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            max-width: 400px;
-        }
+        @media (max-width: 768px) {
+            .patient-info-content {
+                padding: 0.75rem;
+            }
 
-        .patient-info-column p {
-            margin-bottom: 8px;
-            padding: 8px;
-            border-bottom: 1px solid #e9ecef;
-        }
+            .patient-info p {
+                padding: 0.6rem 0;
+                gap: 8px;
+            }
 
-        .patient-info-column p:last-child {
-            border-bottom: none;
-        }
+            .patient-info strong {
+                min-width: 80px;
+                font-size: 0.9rem;
+                margin-right: 0.5rem;
+            }
 
-        .patient-info-column strong {
-            color: #2c5282;
-            min-width: 100px;
-            display: inline-block;
+            .patient-info span {
+                font-size: 0.9rem;
+                padding-left: 0.3rem;
+            }
+
+            .patient-info i {
+                font-size: 1rem;
+                width: 18px;
+            }
         }
 
         /* 卡片内容区域滚动样式 */
@@ -634,10 +668,6 @@
                     </div>
                     <div class="card-body" style="overflow-y: auto; padding-bottom: 20px;">
                         <div class="patient-info" id="patientInfo">
-                            <h5 class="mb-3" style="color: var(--primary-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem;">
-                                <i class='bx bx-user-pin' style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-                                基本资料
-                            </h5>
                             <!-- 患者信息将通过JavaScript动态填充 -->
                         </div>
                     </div>
