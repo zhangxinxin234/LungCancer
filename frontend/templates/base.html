@@ -8,6 +8,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         :root {
+            --nav-height: 60px;  /* 设置导航栏高度 */
             --primary-color: #0b46dd;
             --secondary-color: #60A5FA;
             --accent-color: #2563EB;
@@ -82,8 +83,13 @@
             color: var(--accent-color) !important;
         }
 
+        .navbar {
+            height: var(--nav-height);
+            position: relative;
+        }
+
         .nav-bg {
-            background-color: var(--primary-color);
+            background: #2B6CB0 !important;
             width: 100%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -132,7 +138,7 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background-color: var(--secondary-color);
+            background-color: #4299E1 !important;
             color: white !important;
         }
 
@@ -214,7 +220,7 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="mainNav" style="display: none;">
                             <li class="nav-item">
                                 <a class="nav-link" id="patientInfoLink" href="/patient_info">
                                     <i class='bx bx-user medical-icon'></i>
@@ -270,15 +276,52 @@
         }
 
         // 显示用户名
-        function displayCurrentUser() {
-            const username = getCookie('username');
-            if (username && window.location.pathname !== '/login') {
-                const usernameElement = document.getElementById('currentUsername');
-                if (usernameElement) {
-                    usernameElement.textContent = decodeURIComponent(username);
-                }
-                document.getElementById('userInfoNav').style.display = 'block';
+        function updateNavVisibility() {
+            const isLoginPage = window.location.pathname === '/login';
+            const systemTitle = document.getElementById('systemTitle');
+
+            if (isLoginPage) {
+                // 在登录页面将标题居中
+                systemTitle.style.margin = '0 auto';
+                systemTitle.style.position = 'absolute';
+                systemTitle.style.left = '50%';
+                systemTitle.style.transform = 'translateX(-50%)';
+            } else {
+                // 其他页面恢复默认样式
+                systemTitle.style.margin = '0';
+                systemTitle.style.position = 'static';
+                systemTitle.style.transform = 'none';
             }
+            const isLoginPage = window.location.pathname === '/login';
+            const mainNav = document.getElementById('mainNav');
+            const authNav = document.getElementById('authNav');
+            const userInfoNav = document.getElementById('userInfoNav');
+
+            if (isLoginPage) {
+                // 在登录页面隐藏所有导航项
+                mainNav.style.display = 'none';
+                authNav.style.display = 'none';
+                userInfoNav.style.display = 'none';
+            } else {
+                // 在其他页面显示导航项
+                mainNav.style.display = 'flex';
+                authNav.style.display = 'block';
+
+                // 显示用户名
+                const username = getCookie('username');
+                if (username) {
+                    const usernameElement = document.getElementById('currentUsername');
+                    if (usernameElement) {
+                        usernameElement.textContent = decodeURIComponent(username);
+                    }
+                    userInfoNav.style.display = 'block';
+                }
+            }
+        }
+
+        // 替换原来的 displayCurrentUser 函数
+        function displayCurrentUser() {
+            updateNavVisibility();
         }
 
         function checkAuthStatus() {
@@ -297,7 +340,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            displayCurrentUser();
+            updateNavVisibility();
             checkAuthStatus();
             const currentPath = window.location.pathname;
             const navLinks = {

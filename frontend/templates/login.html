@@ -54,6 +54,44 @@
 {% block styles %}
 {{ super() }}
 <style>
+    :root {
+        --primary-blue: #2B6CB0;
+        --primary-light: #4299E1;
+        --primary-dark: #2C5282;
+    }
+
+    .bg-primary {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark)) !important;
+    }
+
+    .text-primary {
+        color: var(--primary-blue) !important;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-blue) !important;
+        border-color: var(--primary-blue) !important;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+
+    a.text-primary:hover {
+        color: var(--primary-dark) !important;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(43, 108, 176, 0.1), 0 2px 4px -1px rgba(43, 108, 176, 0.06);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(43, 108, 176, 0.25);
+    }
+
     #errorMessage {
         margin-bottom: 1rem;
         padding: 0.75rem 1rem;
