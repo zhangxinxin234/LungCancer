@@ -95,7 +95,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function clearErrors() {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+    // 清除输入框的错误状态
+    document.querySelectorAll('.is-invalid').forEach(element => {
+        element.classList.remove('is-invalid');
+    });
+}
+
+function setFieldError(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.classList.add('is-invalid');
+    }
+}
+
 function login(username, password) {
+    clearErrors();
     fetch('/api/v1/auth/token', {
         method: 'POST',
         headers: {
@@ -118,7 +137,9 @@ function login(username, password) {
     })
     .catch(error => {
         console.error('登录错误:', error);
-        showError('登录过程中发生错误，请稍后重试。');
+        showError('登录失败：用户名或密码错误');
+        setFieldError('username');
+        setFieldError('password');
     });
 }
 
@@ -165,10 +186,17 @@ function showError(message) {
     if (errorDiv) {
         errorDiv.textContent = message;
         errorDiv.style.display = 'block';
+        // 添加动画效果
+        errorDiv.style.animation = 'none';
+        errorDiv.offsetHeight; // 触发重排
+        errorDiv.style.animation = 'shake 0.5s ease-in-out';
+
+        // 5秒后自动隐藏
         setTimeout(() => {
             errorDiv.style.display = 'none';
+            clearErrors();
         }, 5000);
     } else {
-        alert(message);
+        console.error('Error:', message);
     }
 }
