@@ -17,12 +17,13 @@
         /* 快速评价选项样式 */
         .quick-option-box {
             display: inline-block;
-            margin: 0.5rem 1rem 0.5rem 0;
-            padding: 0.5rem 1rem;
+            margin: 0.3rem 0.5rem 0.3rem 0;
+            padding: 0.35rem 0.8rem;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
+            font-size: 0.9rem;
         }
 
         .quick-option-box:hover {
@@ -34,7 +35,7 @@
         }
 
         .quick-option-input:checked + .quick-option-text {
-            font-weight: 600;
+            font-weight: 500;
         }
 
         /* 更好选项样式 */
@@ -43,7 +44,7 @@
         }
         .quick-option-input[value="优化后较原处方更好"]:checked ~ .quick-option-box {
             border-color: #28a745;
-            background-color: #e8f5e9;
+            background-color: rgba(40, 167, 69, 0.1);
         }
 
         /* 更差选项样式 */
@@ -52,14 +53,14 @@
         }
         .quick-option-input[value="优化后较原处方更差"]:checked ~ .quick-option-box {
             border-color: #dc3545;
-            background-color: #fbe9e7;
+            background-color: rgba(220, 53, 69, 0.1);
         }
 
         .quick-option-row {
             display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-            padding: 0.5rem;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+            padding: 0.4rem;
             border-radius: 6px;
             background-color: #f8f9fa;
         }
@@ -132,11 +133,11 @@
             top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(40, 167, 69, 0.9);
-            color: white;
+            background-color: rgba(72, 187, 120, 0.2);
+            color: #2f855a;
             padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(72, 187, 120, 0.1);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -145,6 +146,8 @@
             pointer-events: none;
             font-weight: 500;
             letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(72, 187, 120, 0.3);
         }
 
         @keyframes fadeInOut {
@@ -846,42 +849,42 @@
             position: relative;
             display: block;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.9rem;
             user-select: none;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
             transition: all 0.2s ease;
+            padding: 0;
+            margin: 0;
         }
 
-        /* 第一个选项样式 - 浅绿色主题 */
-        .quick-option-box:nth-child(1) {
-            background: #f0fdf4;
+        .quick-option-box.better-option {
+            background: rgba(40, 167, 69, 0.05);
         }
-        .quick-option-box:nth-child(1):hover {
-            background: #dcfce7;
-            border-color: #86efac;
+        .quick-option-box.better-option:hover {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: #28a745;
         }
-        .quick-option-box:nth-child(1) .quick-option-text {
-            color: #16a34a;
+        .quick-option-box.better-option .quick-option-text {
+            color: #28a745;
         }
-        .quick-option-box:nth-child(1) .quick-option-input:checked + .quick-option-text {
-            background-color: #16a34a;
+        .quick-option-box.better-option .quick-option-input:checked + .quick-option-text {
+            background-color: #28a745;
             color: white;
         }
 
-        /* 第二个选项样式 - 浅蓝色主题 */
-        .quick-option-box:nth-child(2) {
-            background: #f0f9ff;
+        .quick-option-box.worse-option {
+            background: rgba(220, 53, 69, 0.05);
         }
-        .quick-option-box:nth-child(2):hover {
-            background: #e0f2fe;
-            border-color: #93c5fd;
+        .quick-option-box.worse-option:hover {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: #dc3545;
         }
-        .quick-option-box:nth-child(2) .quick-option-text {
-            color: var(--primary-color);
+        .quick-option-box.worse-option .quick-option-text {
+            color: #dc3545;
         }
-        .quick-option-box:nth-child(2) .quick-option-input:checked + .quick-option-text {
-            background-color: var(--primary-color);
+        .quick-option-box.worse-option .quick-option-input:checked + .quick-option-text {
+            background-color: #dc3545;
             color: white;
         }
 
@@ -894,15 +897,33 @@
         }
 
         .quick-option-text {
-            display: block;
-            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
             text-align: center;
             transition: all 0.2s ease;
             border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .quick-option-text i {
+            font-size: 1rem;
         }
 
         .quick-option-input:checked + .quick-option-text {
             font-weight: 500;
+        }
+
+        .quick-comment-options {
+            margin-top: 0.8rem;
+        }
+
+        .quick-option-row {
+            display: flex;
+            gap: 1rem;
+            margin: 0.5rem 0;
         }
     </style>
 </head>

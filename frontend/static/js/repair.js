@@ -458,7 +458,7 @@ async function saveRepairRule() {
             ruleSection.appendChild(toast);
             setTimeout(() => {
                 toast.remove();
-            }, 500);
+            }, 1000);
         }
     } catch (error) {
         console.error('Error saving repair rule:', error);
