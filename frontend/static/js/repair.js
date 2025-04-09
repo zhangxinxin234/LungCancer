@@ -188,16 +188,20 @@ function updateNavigationLinks(patientId) {
 // 加载患者处方
 async function loadPatientPrescription(patientId) {
     try {
+        console.log('Loading prescription for patient:', patientId);
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
 
         if (!response.ok) {
-            throw new Error('加载失败');
+            const errorText = await response.text();
+            console.error('API response not OK:', response.status, errorText);
+            throw new Error(`加载失败 (${response.status}): ${errorText}`);
         }
 
         const patient = await response.json();
+        console.log('Received patient data:', patient);
 
         // 显示原始处方和中成药
         document.getElementById('originalPrescription').textContent = patient.prescription || '';
@@ -234,7 +238,8 @@ async function loadPatientPrescription(patientId) {
         }
     } catch (error) {
         console.error('Error loading patient prescription:', error);
-        alert('加载处方失败：' + error.message);
+        // 使用更友好的错误提示，替换alert
+        showErrorNotification('加载处方失败：' + error.message);
     }
 }
 
