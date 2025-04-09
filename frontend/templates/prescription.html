@@ -230,7 +230,15 @@
             margin-bottom: 0.75rem;
             padding-bottom: 0.4rem;
             border-bottom: 2px solid var(--accent-color);
-            font-size: 0.95rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prescription-title i {
+            font-size: 1.3rem;
+            color: var(--primary-color);
         }
 
         .prescription-content.single-line {
@@ -704,17 +712,17 @@
                                 <div style="flex: 1; overflow-y: auto; overflow-x: hidden;">
                                     <div style="padding-right: 15px;">
                                         <div class="prescription-section">
-                                            <h5 class="prescription-title">中医处方</h5>
+                                            <h5 class="prescription-title" style="font-size: 1.25rem !important;"><i class='bx bx-capsule' style="font-size: 1.3rem;"></i>中医处方</h5>
                                             <textarea class="prescription-content" id="prescription" rows="4"></textarea>
                                         </div>
 
                                         <div class="prescription-section">
-                                            <h5 class="prescription-title">推荐中成药</h5>
+                                            <h5 class="prescription-title" style="font-size: 1.25rem !important;"><i class='bx bx-vial' style="font-size: 1.3rem;"></i>推荐中成药</h5>
                                             <input type="text" class="prescription-content single-line" id="medicine">
                                         </div>
 
                                         <div class="prescription-section">
-                                            <h5 class="prescription-title">西医治疗阶段</h5>
+                                            <h5 class="prescription-title" style="font-size: 1.25rem !important;"><i class='bx bx-plus-medical' style="font-size: 1.3rem;"></i>西医治疗阶段</h5>
                                             <div class="prescription-content" id="treatmentStage">
                                                 <!-- 西医治疗阶段将通过JavaScript动态填充 -->
                                             </div>
