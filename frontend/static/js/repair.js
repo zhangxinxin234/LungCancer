@@ -80,6 +80,13 @@ function updateDoctorComment(event) {
     }
 }
 
+// 处理401未授权错误
+function handle401Error() {
+    console.log('认证失败，重定向到登录页面');
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = '/login';
+}
+
 // 获取患者列表
 async function getPatients() {
     if (!checkAuth()) return;
@@ -88,6 +95,11 @@ async function getPatients() {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
+
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
 
         if (!response.ok) {
             throw new Error('获取患者列表失败');
@@ -135,6 +147,12 @@ async function loadPatientInfo(patientId) {
         const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
             headers: getAuthHeaders()
         });
+
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
+
         if (!response.ok) {
             throw new Error('获取患者信息失败');
         }
@@ -193,6 +211,11 @@ async function loadPatientPrescription(patientId) {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
+
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -290,6 +313,11 @@ async function repairPrescription() {
             body: JSON.stringify({ rule_content: rules })
         });
 
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.detail || '修复失败');
@@ -329,6 +357,11 @@ async function adoptRepair() {
             })
         });
 
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.detail || '采纳失败');
@@ -350,6 +383,11 @@ async function loadLatestRepairRule() {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
+
+        if (response.status === 401) {
+            handle401Error();
+            return;
+        }
 
         if (!response.ok) {
             throw new Error('加载修复规则失败');
