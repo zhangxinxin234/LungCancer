@@ -15,12 +15,16 @@
             --background-color: #f7fafc;
             --text-color: #2d3748;
             --border-color: #e2e8f0;
+            --nav-bg-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         body {
             background-color: var(--background-color);
             color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            height: 100%;
+            overflow-x: hidden;
         }
 
         /* 蓝色背景容器 */
@@ -86,42 +90,6 @@
         .page-nav-link.active i {
             color: var(--primary-color);
         }
-
-        /* 标题气泡样式 */
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 1.2rem;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .header-content {
-            position: relative;
-        }
-
-        .title-bubble {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .title-bubble i {
-            font-size: 1.2rem;
-            margin-right: 8px;
-            color: white;
-        }
-
-        .title-bubble span {
-            font-weight: 500;
-            color: white;
-        }
-
-        /* 筛选框样式 */
-        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
         /* 标题气泡样式 */
         .card-header {
@@ -276,36 +244,11 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .fancy-title {
             font-family: 'Ma Shan Zheng', cursive;
             font-size: 1.3rem;
             letter-spacing: 0.5px;
         }
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        :root {
-            --primary-color: #2b6cb0;
-            --secondary-color: #4299e1;
-            --accent-color: #63b3ed;
-            --background-color: #f7fafc;
-            --text-color: #2d3748;
-            --border-color: #e2e8f0;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
         .navbar {
             background-color: var(--primary-color) !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -711,7 +654,7 @@
             }
         }
 
-        /* 加载动画容器 */
+        /* 加载动画 */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -725,7 +668,6 @@
             align-items: center;
         }
 
-        /* 加载动画 */
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -746,9 +688,8 @@
         }
 
         @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* 保存成功提示样式 */
@@ -989,10 +930,6 @@
     </style>
 </head>
 <body>
-    <!-- 加载指示器 -->
-    <div id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid" style="width: 90%; margin: 0 auto; position: relative;">
             <a class="navbar-brand fancy-title" href="#"><i class='bx bx-plus-medical medical-icon'></i>林洪生教授辨治非小细胞肺癌人工智能辅助诊疗系统</a>
