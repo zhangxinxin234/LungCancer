@@ -152,10 +152,6 @@ function displayPatientInfo(patient) {
     if (!patientInfo) return;
 
     patientInfo.innerHTML = `
-        <h5 class="mb-3" style="color: var(--primary-color); font-weight: 600; padding-bottom: 0.5rem;">
-            <i class='bx bx-user-pin' style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-            患者资料
-        </h5>
         <div class="patient-info-content">
             <p><i class='bx bx-id-card'></i><strong>患者编号</strong><span>#${patient.id}</span></p>
             <p><i class='bx bx-plus-medical'></i><strong>西医诊断</strong><span>${patient.diagnosis || ''}</span></p>
