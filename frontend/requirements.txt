@@ -1,0 +1,8 @@
+# 前端依赖
+flask==2.3.3
+jinja2==3.1.2
+werkzeug==2.3.7
+flask-login==0.6.2
+flask-wtf==1.1.1
+requests==2.31.0
+python-dotenv==1.0.0
