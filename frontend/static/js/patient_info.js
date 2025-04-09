@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (currentPatientId) {
                 await handleDeletePatient(currentPatientId);
             } else {
-                showToast('请先选择要删除的患者', 'error');
+                showErrorNotification('请先选择要删除的患者');
             }
         });
     }
@@ -116,7 +116,7 @@ async function getPatients() {
         return patients;
     } catch (error) {
         console.error('Error fetching patients:', error);
-        showErrorMessage(`获取患者列表失败: ${error.message}`);
+        showErrorNotification(`获取患者列表失败: ${error.message}`);
         return [];
     }
 }
@@ -184,9 +184,8 @@ function displayPatients(patients) {
 }
 
 // 显示错误提示
-function showErrorMessage(message) {
-    // 使用原生的alert来显示错误信息
-    alert(message);
+function showErrorNotification(message) {
+    showNotification(message, 'error');
 }
 
 // 处理删除患者的点击事件
@@ -295,7 +294,7 @@ async function deletePatient(patientId) {
         }
     } catch (error) {
         console.error('删除患者过程中发生错误:', error);
-        showErrorMessage(`删除患者时出错: ${error.message}`);
+        showErrorNotification(`删除患者时出错: ${error.message}`);
     } finally {
         // 隐藏加载动画
         hideLoading();
@@ -368,7 +367,7 @@ async function loadPatientInfo(patientId) {
         await getPatients();
     } catch (error) {
         console.error('Error loading patient info:', error);
-        showErrorMessage(`获取患者信息失败: ${error.message}`);
+        showErrorNotification(`获取患者信息失败: ${error.message}`);
     }
 }
 
@@ -518,27 +517,41 @@ async function savePatient() {
         }
     } catch (error) {
         console.error('Error saving patient:', error);
-            showErrorMessage('保存失败');
+        showErrorNotification('保存失败');
     }
 }
 
 // 显示保存成功的中央提示
 function showSaveNotification() {
-    showNotification('保存成功');
+    showNotification('保存成功', 'success');
 }
 
 // 显示删除成功的中央提示
 function showDeleteNotification() {
-    showNotification('删除成功');
+    showNotification('删除成功', 'success');
 }
 
 // 通用的显示通知函数
-function showNotification(message) {
+function showNotification(message, type = 'success') {
     const notification = document.getElementById('saveNotification');
     if (!notification) return;
 
-    // 更新通知内容
-    notification.querySelector('span').textContent = message;
+    // 更新通知内容和样式
+    const notificationContent = notification.querySelector('.notification-content');
+    const icon = notificationContent.querySelector('i');
+    const span = notificationContent.querySelector('span');
+
+    // 根据类型设置不同的图标和背景色
+    if (type === 'success') {
+        icon.className = 'bx bx-check-circle';
+        notification.style.backgroundColor = 'rgba(72, 187, 120, 0.95)'; // 成功是绿色
+    } else if (type === 'error') {
+        icon.className = 'bx bx-error-circle';
+        notification.style.backgroundColor = 'rgba(245, 101, 101, 0.95)'; // 错误是红色
+    }
+
+    // 更新消息文本
+    span.textContent = message;
 
     // 显示通知
     notification.style.display = 'block';
@@ -547,13 +560,13 @@ function showNotification(message) {
     setTimeout(() => {
         notification.style.opacity = '1';
 
-        // 0.5秒后淡出并隐藏
+        // 1.5秒后淡出并隐藏
         setTimeout(() => {
             notification.style.opacity = '0';
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 200);
-        }, 500);
+        }, 1500);
     }, 10);
 }
 
