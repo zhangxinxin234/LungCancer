@@ -19,7 +19,6 @@
             <div class="card shadow-lg" style="width: 100%; max-width: 400px;">
                 <div class="card-body p-5">
                     <h2 class="card-title text-center mb-4" id="formTitle">登录</h2>
-                    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
                     <form id="loginForm">
                         <div class="mb-3">
                             <label for="username" class="form-label">用户名</label>
@@ -51,73 +50,6 @@
 </div>
 {% endblock %}
 
-{% block styles %}
-{{ super() }}
-<style>
-    :root {
-        --primary-blue: #2B6CB0;
-        --primary-light: #4299E1;
-        --primary-dark: #2C5282;
-    }
-
-    .bg-primary {
-        background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark)) !important;
-    }
-
-    .text-primary {
-        color: var(--primary-blue) !important;
-    }
-
-    .btn-primary {
-        background-color: var(--primary-blue) !important;
-        border-color: var(--primary-blue) !important;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-dark) !important;
-        border-color: var(--primary-dark) !important;
-    }
-
-    a.text-primary:hover {
-        color: var(--primary-dark) !important;
-    }
-
-    .card {
-        border: none;
-        box-shadow: 0 4px 6px -1px rgba(43, 108, 176, 0.1), 0 2px 4px -1px rgba(43, 108, 176, 0.06);
-    }
-
-    .form-control:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 0.2rem rgba(43, 108, 176, 0.25);
-    }
-
-    #errorMessage {
-        margin-bottom: 1rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.9rem;
-        animation: shake 0.5s ease-in-out;
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-
-    .form-control.is-invalid {
-        border-color: var(--danger-color);
-        background-image: none;
-    }
-
-    .form-control.is-invalid:focus {
-        border-color: var(--danger-color);
-        box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
-    }
-</style>
-{% endblock %}
-
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 <script>
@@ -136,5 +68,3 @@
     });
 </script>
 {% endblock %}
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

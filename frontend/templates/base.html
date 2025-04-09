@@ -7,27 +7,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+
         :root {
-            --nav-height: 60px;  /* 设置导航栏高度 */
-            --transition-duration: 400ms;
-            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
-            --primary-color: #0b46dd;
-            --secondary-color: #60A5FA;
-            --accent-color: #2563EB;
-            --text-color: #2D3748;
-            --light-text-color: #718096;
-            --background-color: #EDF2F7;
-            --card-bg-color: #F8FAFC;
-            --border-color: #E2E8F0;
-            --success-color: #10B981;
-            --warning-color: #F59E0B;
-            --danger-color: #EF4444;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --header-bg-start: #4299E1;
-            --header-bg-end: #3182CE;
-            --nav-bg-color: rgba(237, 242, 247, 0.7);
+            --primary-color: #2c5282;
+            --secondary-color: #4299e1;
+            --accent-color: #63b3ed;
+            --background-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--text-color);
         }
 
         /* 登录页面特殊样式 */
@@ -85,13 +82,8 @@
             color: var(--accent-color) !important;
         }
 
-        .navbar {
-            height: var(--nav-height);
-            position: relative;
-        }
-
         .nav-bg {
-            background: #2B6CB0 !important;
+            background-color: var(--primary-color);
             width: 100%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -140,7 +132,7 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background-color: #4299E1 !important;
+            background-color: var(--secondary-color);
             color: white !important;
         }
 
@@ -222,7 +214,7 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="mainNav" style="display: none;">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <a class="nav-link" id="patientInfoLink" href="/patient_info">
                                     <i class='bx bx-user medical-icon'></i>
@@ -262,73 +254,13 @@
         </div>
     </div>
 
-    <div class="page-transition-overlay"></div>
     <main class="container-fluid">
         {% block content %}{% endblock %}
     </main>
 
-    <style>
-        /* 页面过渡效果 */
-        .container-fluid {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity var(--transition-duration) var(--transition-timing),
-                        transform var(--transition-duration) var(--transition-timing);
-        }
-
-        .container-fluid.loaded {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .page-transition-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-color);
-            transform: translateY(100%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform var(--transition-duration) var(--transition-timing),
-                        opacity var(--transition-duration) var(--transition-timing);
-        }
-
-        .page-transition-overlay.active {
-            transform: translateY(0);
-            opacity: 0.1;
-        }
-
-        /* 链接悬停效果 */
-        .nav-link {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background-color: white;
-            transform: translateX(-50%);
-            transition: width var(--transition-duration) var(--transition-timing);
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-    </style>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/auth.js"></script>
-    <script src="/static/js/transitions.js"></script>
-    <script src="/static/js/main.js"></script>
     <script>
+        // 获取cookie函数
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -336,52 +268,15 @@
         }
 
         // 显示用户名
-        function updateNavVisibility() {
-            const isLoginPage = window.location.pathname === '/login';
-            const systemTitle = document.getElementById('systemTitle');
-
-            if (isLoginPage) {
-                // 在登录页面将标题居中
-                systemTitle.style.margin = '0 auto';
-                systemTitle.style.position = 'absolute';
-                systemTitle.style.left = '50%';
-                systemTitle.style.transform = 'translateX(-50%)';
-            } else {
-                // 其他页面恢复默认样式
-                systemTitle.style.margin = '0';
-                systemTitle.style.position = 'static';
-                systemTitle.style.transform = 'none';
-            }
-            const isLoginPage = window.location.pathname === '/login';
-            const mainNav = document.getElementById('mainNav');
-            const authNav = document.getElementById('authNav');
-            const userInfoNav = document.getElementById('userInfoNav');
-
-            if (isLoginPage) {
-                // 在登录页面隐藏所有导航项
-                mainNav.style.display = 'none';
-                authNav.style.display = 'none';
-                userInfoNav.style.display = 'none';
-            } else {
-                // 在其他页面显示导航项
-                mainNav.style.display = 'flex';
-                authNav.style.display = 'block';
-
-                // 显示用户名
-                const username = getCookie('username');
-                if (username) {
-                    const usernameElement = document.getElementById('currentUsername');
-                    if (usernameElement) {
-                        usernameElement.textContent = decodeURIComponent(username);
-                    }
-                    userInfoNav.style.display = 'block';
-                }
-            }
-        }
-
-        // 替换原来的 displayCurrentUser 函数
         function displayCurrentUser() {
-            updateNavVisibility();
+            const username = getCookie('username');
+            if (username && window.location.pathname !== '/login') {
+                const usernameElement = document.getElementById('currentUsername');
+                if (usernameElement) {
+                    usernameElement.textContent = decodeURIComponent(username);
+                }
+                document.getElementById('userInfoNav').style.display = 'block';
+            }
         }
 
         function checkAuthStatus() {
@@ -400,7 +295,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            updateNavVisibility();
+            displayCurrentUser();
             checkAuthStatus();
             const currentPath = window.location.pathname;
             const navLinks = {
@@ -411,49 +306,6 @@
 
             Object.values(navLinks).forEach(link => link?.classList.remove('active'));
             navLinks[currentPath]?.classList.add('active');
-
-            // 页面加载动画
-            setTimeout(() => {
-                const mainContent = document.querySelector('main.container-fluid');
-                mainContent.classList.add('loaded');
-            }, 100);
-        });
-
-        // 页面切换动画
-        document.addEventListener('click', function(e) {
-            const target = e.target.closest('a');
-            if (target && target.getAttribute('href') &&
-                target.getAttribute('href').startsWith('/') &&
-                !target.getAttribute('href').startsWith('/#') &&
-                !e.ctrlKey && !e.metaKey) {
-
-                e.preventDefault();
-                const overlay = document.querySelector('.page-transition-overlay');
-                const mainContent = document.querySelector('main.container-fluid');
-
-                // 移除加载状态
-                mainContent.classList.remove('loaded');
-
-                // 添加过渡遮罩
-                overlay.classList.add('active');
-
-                setTimeout(() => {
-                    window.location.href = target.getAttribute('href');
-                }, var(--transition-duration));
-            }
-        });
-
-        // 处理浏览器的前进后退
-        window.addEventListener('popstate', function() {
-            const overlay = document.querySelector('.page-transition-overlay');
-            const mainContent = document.querySelector('main.container-fluid');
-
-            mainContent.classList.remove('loaded');
-            overlay.classList.add('active');
-
-            setTimeout(() => {
-                window.location.reload();
-            }, var(--transition-duration));
         });
     </script>
     {% block scripts %}{% endblock %}
