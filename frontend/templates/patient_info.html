@@ -121,8 +121,6 @@
         }
 
         /* 筛选框样式 */
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
         @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
         /* 标题气泡样式 */
@@ -357,6 +355,28 @@
         .form-control:focus {
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        /* 新建患者表单样式 */
+        .new-patient-form {
+            background: #f0f9ff !important; /* 浅蓝色背景 */
+            box-shadow: 0 2px 10px rgba(66, 153, 225, 0.1) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .new-patient-form .form-label {
+            color: #2b6cb0; /* 标签文字颜色加深 */
+        }
+
+        .new-patient-form .form-control {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            border-color: #4299e1 !important;
+        }
+
+        .new-patient-form .form-control:focus {
+            background-color: #fff !important;
+            border-color: #3182ce !important;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2) !important;
         }
 
         .btn {
@@ -951,9 +971,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="logout()">
                             <i class='bx bx-log-out medical-icon'></i>退出登录
-                        </a>
-                    </li>
-                </ul>
                         </a>
                     </li>
                 </ul>

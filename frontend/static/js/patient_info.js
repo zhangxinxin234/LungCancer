@@ -386,6 +386,50 @@ function updateActivePatientInList(patientId) {
     }
 }
 
+// 创建新患者
+function createNewPatient() {
+    try {
+        // 清空表单
+        clearPatientForm();
+
+        // 设置当前患者ID为null
+        currentPatientId = null;
+
+        // 更新URL为新建患者模式
+        window.history.pushState({}, '', '/patient_info?new=true');
+
+        // 更新导航链接
+        updateNavigationLinks(null);
+
+        // 清空患者信息卡片
+        const patientInfo = document.getElementById('patientInfo');
+        if (patientInfo) {
+            patientInfo.innerHTML = '';
+        }
+
+        // 设置表单的新建样式
+        const patientForm = document.getElementById('patientForm');
+        if (patientForm) {
+            patientForm.classList.add('new-patient-form');
+        }
+
+        // 显示"新建患者"标识
+        const newPatientIndicator = document.getElementById('newPatientIndicator');
+        if (newPatientIndicator) {
+            newPatientIndicator.style.display = 'inline-block';
+        }
+
+        // 更新患者列表中的活动项
+        updateActivePatientInList(null);
+
+        // 滚动表单到视图中
+        patientForm.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+        console.error('Error creating new patient:', error);
+        showErrorNotification('创建新患者失败');
+    }
+}
+
 // 清空患者表单
 function clearPatientForm() {
     const elements = [
@@ -430,57 +474,44 @@ function fillPatientForm(patient) {
             element.value = value || '';
         }
     }
-}
 
-// 新建患者
-async function createNewPatient() {
-    try {
-        // 清空表单并更新URL
-        clearPatientForm();
-        window.history.pushState({}, '', '/patient_info?new=true');
-        currentPatientId = null;
-        updateNavigationLinks(null);
+    // 移除表单的新建样式
+    const patientForm = document.getElementById('patientForm');
+    if (patientForm) {
+        patientForm.classList.remove('new-patient-form');
+    }
 
-        // 清空患者信息卡片
-        const patientInfo = document.getElementById('patientInfo');
-        if (patientInfo) {
-            patientInfo.innerHTML = '';
-        }
-
-        // 更新患者列表中的活动项
-        updateActivePatientInList(null);
-    } catch (error) {
-        console.error('Error creating new patient:', error);
-        showErrorMessage('创建新患者失败');
-    } finally {
-        // 隐藏加载指示器
-        hideLoading();
+    // 隐藏"新建患者"标识
+    const newPatientIndicator = document.getElementById('newPatientIndicator');
+    if (newPatientIndicator) {
+        newPatientIndicator.style.display = 'none';
     }
 }
 
 // 保存患者信息
 async function savePatient() {
-    const patientData = {
-        diagnosis: document.getElementById('diagnosis').value,
-        disease_stage: document.getElementById('diseaseStage').value,
-        pathology_report: document.getElementById('pathologyReport').value,
-        staging: document.getElementById('staging').value,
-        tnm_staging: document.getElementById('tnmStaging').value,
-        lab_tests: document.getElementById('labTests').value,
-        imaging_report: document.getElementById('imagingReport').value,
-        symptoms: document.getElementById('symptoms').value,
-        tongue: document.getElementById('tongue').value,
-        pulse: document.getElementById('pulse').value
-    };
-
     try {
+        // 收集表单数据
+        const patientData = {
+            diagnosis: document.getElementById('diagnosis').value,
+            disease_stage: document.getElementById('diseaseStage').value,
+            pathology_report: document.getElementById('pathologyReport').value,
+            staging: document.getElementById('staging').value,
+            tnm_staging: document.getElementById('tnmStaging').value,
+            lab_tests: document.getElementById('labTests').value,
+            imaging_report: document.getElementById('imagingReport').value,
+            symptoms: document.getElementById('symptoms').value,
+            tongue: document.getElementById('tongue').value,
+            pulse: document.getElementById('pulse').value
+        };
+
         console.log('准备保存患者信息:', patientData);
 
-        let url = `${API_BASE_URL}/patients/`;  // 添加末尾斜杠
+        let url = `${API_BASE_URL}/patients/`;
         let method = 'POST';
 
         if (currentPatientId) {
-            url = `${API_BASE_URL}/patients/${currentPatientId}/`;  // 添加末尾斜杠
+            url = `${API_BASE_URL}/patients/${currentPatientId}/`;
             method = 'PUT';
         }
 
@@ -495,7 +526,7 @@ async function savePatient() {
         if (response.ok) {
             const savedPatient = await response.json();
 
-            // 显示中央保存成功提示
+            // 显示保存成功提示
             showSaveNotification();
 
             // 更新当前患者ID
@@ -510,14 +541,27 @@ async function savePatient() {
             // 显示患者卡片
             displayPatientCard(savedPatient);
 
+            // 移除表单的新建样式
+            const patientForm = document.getElementById('patientForm');
+            if (patientForm) {
+                patientForm.classList.remove('new-patient-form');
+            }
+
+            // 隐藏"新建患者"标识
+            const newPatientIndicator = document.getElementById('newPatientIndicator');
+            if (newPatientIndicator) {
+                newPatientIndicator.style.display = 'none';
+            }
+
             // 刷新患者列表
             await getPatients();
         } else {
-            throw new Error('保存失败');
+            const errorText = await response.text();
+            throw new Error(`保存失败: ${errorText}`);
         }
     } catch (error) {
         console.error('Error saving patient:', error);
-        showErrorNotification('保存失败');
+        showErrorNotification(error.message || '保存失败');
     }
 }
 
