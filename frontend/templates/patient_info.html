@@ -708,22 +708,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" id="patientInfoLink" href="/patient_info"><i class='bx bx-user medical-icon'></i>患者信息</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="prescriptionLink" href="/prescription"><i class='bx bx-notepad medical-icon'></i>处方生成</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="repairLink" href="/repair"><i class='bx bx-edit medical-icon'></i>处方修复</a>
-                    </li>
-                </ul>
                 <!-- 添加退出登录按钮 -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="logout()">
                             <i class='bx bx-log-out medical-icon'></i>退出登录
+                        </a>
+                    </li>
+                </ul>
                         </a>
                     </li>
                 </ul>
@@ -798,12 +790,25 @@
             <div class="col-md-8">
                 <div style="height: calc(100vh - 140px); display: flex; flex-direction: column;">
                     <div class="card" style="flex: 1; overflow: hidden;">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class='bx bx-user-circle medical-icon'></i>
-                                <span id="patientInfoTitle">患者信息</span>
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <i class='bx bx-user-circle medical-icon'></i>
+                                    <span id="patientInfoTitle">患者信息</span>
+                                </div>
+                                <div id="newPatientIndicator" class="badge bg-success" style="display: none;">新建患者</div>
                             </div>
-                            <div id="newPatientIndicator" class="badge bg-success" style="display: none;">新建患者</div>
+                            <div class="d-flex justify-content-end gap-3">
+                                <a href="/patient_info" class="btn btn-sm btn-light active" id="patientInfoLink">
+                                    <i class='bx bx-user medical-icon'></i>患者信息
+                                </a>
+                                <a href="/prescription" class="btn btn-sm btn-light" id="prescriptionLink">
+                                    <i class='bx bx-notepad medical-icon'></i>处方生成
+                                </a>
+                                <a href="/repair" class="btn btn-sm btn-light" id="repairLink">
+                                    <i class='bx bx-edit medical-icon'></i>处方修复
+                                </a>
+                            </div>
                         </div>
                         <div class="card-body" style="overflow-y: auto;">
                             <form id="patientForm" style="height: 100%; display: flex; flex-direction: column;">

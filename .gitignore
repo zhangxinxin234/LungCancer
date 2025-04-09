@@ -1,1 +1,4 @@
 /backend/data
+/backend/data/rag
+/backend/data/infer
+/backend/data/raw
