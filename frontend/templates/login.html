@@ -19,6 +19,8 @@
             <div class="card shadow-lg" style="width: 100%; max-width: 400px;">
                 <div class="card-body p-5">
                     <h2 class="card-title text-center mb-4" id="formTitle">登录</h2>
+                    <!-- 错误消息显示区域 -->
+                    <div id="errorMessage" class="alert alert-danger" style="display: none; z-index: 1000; margin-bottom: 15px; border-left: 4px solid #dc3545;"></div>
                     <form id="loginForm">
                         <div class="mb-3">
                             <label for="username" class="form-label">用户名</label>
@@ -52,9 +54,110 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<style>
+    /* 错误提示动画 */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    /* 闪烁动画 */
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    /* 表单控件错误状态样式 */
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .invalid-feedback {
+        display: block !important;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+        padding: 0.375rem 0.75rem;
+        background-color: #fff3f3;
+        border-radius: 0.25rem;
+        border: 1px solid #dc3545;
+    }
+
+    /* 按钮加载状态样式 */
+    .btn .bx-loader {
+        margin-right: 5px;
+    }
+
+    /* 提高错误消息的可见性 */
+    #errorMessage {
+        border-left: 4px solid #dc3545;
+        background-color: #fff3f3;
+        color: #dc3545;
+        z-index: 1000;
+        position: relative;
+        font-weight: 500;
+        animation: shake 0.5s ease-in-out;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    #errorMessage i {
+        font-size: 1.2rem;
+        margin-right: 10px;
+        color: #dc3545;
+    }
+</style>
+
 <script>
+    // 添加一个全局函数，用于显示错误消息
+    window.showLoginError = function(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        if (errorDiv) {
+            errorDiv.innerHTML = `
+                <i class='bx bx-error-circle' style='margin-right: 8px;'></i>
+                <span>${message}</span>
+            `;
+            errorDiv.style.display = 'flex';
+            errorDiv.style.alignItems = 'center';
+
+            // 确保错误消息可见
+            errorDiv.style.opacity = '1';
+            errorDiv.style.visibility = 'visible';
+
+            // 添加动画效果
+            errorDiv.style.animation = 'none';
+            errorDiv.offsetHeight; // 触发重排
+            errorDiv.style.animation = 'shake 0.5s ease-in-out, blink 1s ease-in-out 2';
+
+            // 滚动到错误消息
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            alert('登录错误: ' + message);
+        }
+    };
+
     document.getElementById('showRegister').addEventListener('click', function(e) {
         e.preventDefault();
+        // 隐藏错误消息
+        const errorDiv = document.getElementById('errorMessage');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+        // 清除所有输入框的错误状态
+        document.querySelectorAll('.is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        // 切换表单
         document.getElementById('loginForm').style.display = 'none';
         document.getElementById('registerForm').style.display = 'block';
         document.getElementById('formTitle').textContent = '注册';
@@ -62,6 +165,16 @@
 
     document.getElementById('showLogin').addEventListener('click', function(e) {
         e.preventDefault();
+        // 隐藏错误消息
+        const errorDiv = document.getElementById('errorMessage');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+        // 清除所有输入框的错误状态
+        document.querySelectorAll('.is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        // 切换表单
         document.getElementById('registerForm').style.display = 'none';
         document.getElementById('loginForm').style.display = 'block';
         document.getElementById('formTitle').textContent = '登录';
@@ -78,6 +191,18 @@
         if (prescriptionLink) prescriptionLink.style.display = 'none';
         if (repairLink) repairLink.style.display = 'none';
         if (authNav) authNav.style.display = 'none';
+
+        // 测试错误消息显示
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('test_error')) {
+            window.showLoginError('这是一个测试错误消息');
+        }
+
+        // 检查是否有登录错误
+        if (urlParams.has('error')) {
+            const errorMessage = urlParams.get('error');
+            window.showLoginError(decodeURIComponent(errorMessage));
+        }
     });
 </script>
 {% endblock %}
