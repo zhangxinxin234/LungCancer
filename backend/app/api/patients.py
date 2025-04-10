@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List
 from app.db.database import get_db
 from app.models.patient import Patient as PatientModel
@@ -16,8 +17,20 @@ def create_patient(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    # 获取当前用户最大的patient_id
+    max_patient_id = db.query(func.max(PatientModel.patient_id)).filter(
+        PatientModel.user_id == current_user.id
+    ).scalar()
+
+    # 如果没有找到，从0开始，否则加1
+    new_patient_id = 0 if max_patient_id is None else max_patient_id + 1
+
+    # 准备患者数据
     patient_data = patient.dict()
     patient_data['user_id'] = current_user.id
+    patient_data['patient_id'] = new_patient_id
+
+    # 创建新患者记录
     db_patient = PatientModel(**patient_data)
     db.add(db_patient)
     db.commit()
@@ -78,7 +91,6 @@ def update_patient(
     db.commit()
     db.refresh(db_patient)
     return db_patient
-
 
 @router.delete("/patients/{patient_id}")
 def delete_patient(

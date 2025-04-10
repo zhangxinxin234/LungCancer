@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 
@@ -7,6 +7,12 @@ class Patient(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    patient_id = Column(Integer)  # 每个用户的患者从0开始计数的ID
+
+    # 添加联合唯一约束，确保每个用户的patient_id是唯一的
+    __table_args__ = (
+        UniqueConstraint('user_id', 'patient_id', name='unique_patient_id_per_user'),
+    )
     diagnosis = Column(String(255))  # 西医诊断
     disease_stage = Column(String(255))  # 现病程阶段
     pathology_report = Column(Text)  # 病理报告

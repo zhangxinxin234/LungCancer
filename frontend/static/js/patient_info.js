@@ -178,7 +178,7 @@ function displayPatients(patients) {
         patientItem.innerHTML = `
             <div class="patient-info">
                 <div class="patient-header">
-                    <span class="patient-id">患者 #${patient.id}</span>
+                    <span class="patient-id">患者 #${patient.patient_id}</span>
                 </div>
                 <div class="diagnosis">${patient.diagnosis || '暂无诊断'}</div>
             </div>
@@ -704,7 +704,7 @@ function displayPatientCard(patient) {
 
     patientInfo.innerHTML = `
         <div class="patient-info-card">
-            <h4>患者编号：#${patient.id}</h4>
+            <h4>患者编号：#${patient.patient_id}</h4>
             <div class="info-section">
                 <p><strong>西医诊断：</strong>${patient.diagnosis || '暂无'}</p>
                 <p><strong>现病程阶段：</strong>${patient.disease_stage || '暂无'}</p>

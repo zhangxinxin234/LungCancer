@@ -105,7 +105,7 @@ function displayPatients(patients) {
     patientItem.className = 'card mb-2';
     patientItem.innerHTML = `
         <div class="card-body">
-            <h6 class="card-title">患者ID: ${currentPatient.id}</h6>
+            <h6 class="card-title">患者ID: ${currentPatient.patient_id}</h6>
             <p class="card-text">${currentPatient.diagnosis || '暂无诊断'}</p>
             <div class="btn-group">
                 <button class="btn btn-sm btn-primary" onclick="selectPatient(${currentPatient.id})">查看</button>
@@ -140,7 +140,7 @@ function displayPatientInfo(patient) {
 
     patientInfo.innerHTML = `
         <div class="patient-info-content">
-            <p><i class='bx bx-id-card'></i><strong>患者编号</strong><span>#${patient.id}</span></p>
+            <p><i class='bx bx-id-card'></i><strong>患者编号</strong><span>#${patient.patient_id}</span></p>
             <p><i class='bx bx-plus-medical'></i><strong>西医诊断</strong><span>${patient.diagnosis || ''}</span></p>
             <p><i class='bx bx-time'></i><strong>现病程阶段</strong><span>${patient.disease_stage || ''}</span></p>
             <p><i class='bx bx-layer'></i><strong>分期</strong><span>${patient.staging || ''}</span></p>

@@ -29,11 +29,16 @@ class PrescriptionService:
         """
         生成处方推荐和中成药推荐
         """
+
         # 1. 生成患者信息
-        patient_str = PrescriptionService.get_patient_info(patient)
+        try:
+            patient_str = PrescriptionService.get_patient_info(patient)
+        except:
+            patient_str = f"""【患者信息】："""
 
         # 2. 生成处方推荐和中成药推荐
-        system = """你是一名中医药智能助手，擅长结合现代医学信息和中医辨证理论，为非小细胞肺癌患者推荐中医处方和中成药。请根据患者的治疗阶段、分期、症状、体质等信息，输出中医处方和中成药推荐。
+        try:
+            system = """你是一名中医药智能助手，擅长结合现代医学信息和中医辨证理论，为非小细胞肺癌患者推荐中医处方和中成药。请根据患者的治疗阶段、分期、症状、体质等信息，输出中医处方和中成药推荐。
 
 
 【任务目标】：
@@ -69,29 +74,46 @@ XXX10g, XXX12g, XXX15g...
 在输出中不要添加多余解释。
 """
 
-        prompt_user = f"""{patient_str}
+            prompt_user = f"""{patient_str}
 
 【请输出以下内容】：
 1. 中医处方：
 2. 中成药推荐：
 """
 
-        pred_str = await chat_llm.generate(input=prompt_user, history=[], model=settings.LLM_ADAPTER, system=system)
-        pred_str = pred_str.get('answer', '')
-        print(pred_str)
+            pred_str = await chat_llm.generate(input=prompt_user, history=[], model=settings.LLM_ADAPTER, system=system)
+            pred_str = pred_str.get('answer', '')
+            print(pred_str)
+        except Exception as e:
+            print(f"生成处方和中成药推荐失败: {e}")
+            pred_str = """1. 中医处方：
+
+
+2. 中成药推荐：
+"""
 
         # 3. 提取处方和中成药
-        pred_prescription_list, pred_medicine_list, prescription_text, medicine_text = extract_prescriptions(pred_str)
-        print(f"处方  pred: {prescription_text}")
-        print(f"中成药 pred: {medicine_text}")
+        try:
+            _, _, prescription_text, medicine_text = extract_prescriptions(pred_str)
+            print(f"处方  pred: {prescription_text}")
+            print(f"中成药 pred: {medicine_text}")
+        except Exception as e:
+            print(f"提取处方和中成药失败: {e}")
+            prescription_text, medicine_text = "", ""
 
         # 4. 生成西医诊疗路径标签
-        # western_treatment_stage = await PrescriptionService.clinical_pathway(patient_str, collection_name="bge_2025_04_02_csco指南")
-        # csco_guideline = await PrescriptionService.genetate_csco_guideline(western_treatment_stage)
+        try:
+            # western_treatment_stage = await PrescriptionService.clinical_pathway(patient_str, collection_name="bge_2025_04_02_csco指南")
+            # csco_guideline = await PrescriptionService.genetate_csco_guideline(western_treatment_stage)
 
-        western_treatment_stage, csco_guideline = await PrescriptionService.clinical_pathway(
-            patient_str, collection_name="bge_2025_04_02_csco指南"
-        )
+            western_treatment_stage, csco_guideline = await PrescriptionService.clinical_pathway(
+                patient_str, collection_name="bge_2025_04_02_csco指南"
+            )
+        except Exception as e:
+            print(f"生成西医诊疗路径标签失败: {e}")
+            western_treatment_stage = ""
+            csco_guideline = ""
+
         return {
             "prescription": prescription_text,
             "medicine": medicine_text,
@@ -110,21 +132,26 @@ XXX10g, XXX12g, XXX15g...
         修复处方和中成药
         """
         # 1. 生成患者信息
-        patient_str = PrescriptionService.get_patient_info(patient)
+        try:
+            patient_str = PrescriptionService.get_patient_info(patient)
+        except Exception as e:
+            print(f"生成患者信息失败: {e}")
+            patient_str = f"""【患者信息】："""
 
-        system = """你是一名资深的中医药智能诊疗助手，擅长根据非小细胞肺癌患者的病情信息与中医药治疗经验，对模型初步生成的中医处方和中成药推荐结果进行修复和优化。只返回修复后的中医处方和中成药推荐，不返回任何解释。"""
+        try:
+            system = """你是一名资深的中医药智能诊疗助手，擅长根据非小细胞肺癌患者的病情信息与中医药治疗经验，对模型初步生成的中医处方和中成药推荐结果进行修复和优化。只返回修复后的中医处方和中成药推荐，不返回任何解释。"""
 
-        # 2. 模型初步输出
-        model_text = f"""【系统初步推荐】
+            # 2. 模型初步输出
+            model_text = f"""【系统初步推荐】
 1. 中医处方：
 {prescription}
 
 2. 中成药推荐：
 {medicine}"""
 
-        # 3. 修复规则
-        if rules is None:
-            rules = """1. 放疗阶段需加：天冬12g、麦冬12g；
+            # 3. 修复规则
+            if rules is None:
+                rules = """1. 放疗阶段需加：天冬12g、麦冬12g；
 2. 化疗阶段需加：半夏12g、竹茹15g、阿胶珠6g；
 3. 靶向治疗阶段加：生黄芪15g、炒白术12g、防风10g；
 4. 所有阶段可加：红景天12g、灵芝15g、鸡血藤15g、白芍12g；
@@ -149,8 +176,8 @@ XXX10g, XXX12g, XXX15g...
         - 血府逐瘀类：舌暗瘀斑、舌下静脉怒张。
 """
 
-        # 4. 修复指令部分
-        instruction_text = """【任务说明】
+            # 4. 修复指令部分
+            instruction_text = """【任务说明】
         请根据以下规则提示，对模型初步生成的推荐结果进行分析、判断，并**执行必要的“加药、删药、替换中成药、保留合理用药”等修复动作**。
 
 注意：
@@ -164,8 +191,8 @@ XXX10g, XXX12g, XXX15g...
 【规则提示】
 """ + rules.strip()
 
-        # 5. 最终拼接
-        full_prompt = f"""{instruction_text}
+            # 5. 最终拼接
+            full_prompt = f"""{instruction_text}
 
 {patient_str}
 
@@ -183,12 +210,22 @@ XXX10g, XXX12g, XXX15g...
 【修复后的结果】
 """
 
-        pred_str = await chat_llm.generate(input=full_prompt, history=[], model=settings.LLM_NAME, system=system)
-        pred_str = pred_str.get('answer', '')
+            pred_str = await chat_llm.generate(input=full_prompt, history=[], model=settings.LLM_NAME, system=system)
+            pred_str = pred_str.get('answer', '')
+        except Exception as e:
+            print(f"修复处方和中成药失败: {e}")
+            pred_str = """1. 修复后的中医处方：
+
+2. 修复后的中成药推荐：
+"""
         print("\n", "=" * 150)
 
         # 6. 提取处方和中成药
-        pred_prescription_list, pred_medicine_list, prescription_text, medicine_text = extract_prescriptions(pred_str)
+        try:
+            _, _, prescription_text, medicine_text = extract_prescriptions(pred_str)
+        except Exception as e:
+            print(f"提取修复后的处方和中成药失败: {e}")
+            prescription_text, medicine_text = "", ""
         print(f"修复后的处方  pred: {prescription_text}")
         print(f"修复后的中成药 pred: {medicine_text}")
 
@@ -287,27 +324,38 @@ IV期无驱动基因、鳞癌三线治疗
 【请输出】只返回标签，不生成任何解释：
 匹配标签（从上述33个中选一条）：
 """
-        clinical_path = await chat_llm.generate(input=prompt_user, history=[], model=settings.LLM_NAME, system=system)
-        clinical_path = clinical_path.get('answer', '').replace("匹配标签（从上述33个中选一条）：", "").strip()
+        try:
+            clinical_path = await chat_llm.generate(input=prompt_user, history=[], model=settings.LLM_NAME, system=system)
+            clinical_path = clinical_path.get('answer', '').replace("匹配标签（从上述33个中选一条）：", "").strip()
+        except Exception as e:
+            print(f"生成西医诊疗路径标签失败: {e}")
+            clinical_path = ""
         print(f"临床路径-分层: {clinical_path}")
 
+        if not clinical_path:
+            return "", ""
+
         # 2. 用诊疗路径检索csco指南
-        clinical_embedding = get_embeddings([clinical_path])["embed_list"]
-        retrieve_result = retrieve(
-            clinical_embedding,
-            collection_name=collection_name,
-            topk=8
-        )
-        # 3. 重新排序
-        results = rerank(
-            query=clinical_path,
-            candidates=retrieve_result["candidates"],
-            para_info=retrieve_result["para_info"],
-            threshold=0,
-            num_candidates=3,
-            return_infos=True
-        )
-        candi_doc_md = results["candi_doc"][0]["content"]
+        try:
+            clinical_embedding = get_embeddings([clinical_path])["embed_list"]
+            retrieve_result = retrieve(
+                clinical_embedding,
+                collection_name=collection_name,
+                topk=8
+            )
+            # 3. 重新排序
+            results = rerank(
+                query=clinical_path,
+                candidates=retrieve_result["candidates"],
+                para_info=retrieve_result["para_info"],
+                threshold=0,
+                num_candidates=3,
+                return_infos=True
+            )
+            candi_doc_md = results["candi_doc"][0]["content"]
+        except Exception as e:
+            print(f"检索csco指南失败: {e}")
+            candi_doc_md = ""
 
         print(f"临床路径: {candi_doc_md}")
 

@@ -19,6 +19,7 @@ class PatientCreate(PatientBase):
 
 class Patient(PatientBase):
     id: int
+    patient_id: int  # 用户特定的患者ID，从0开始
     prescription: Optional[str] = None
     chinese_medicine: Optional[str] = None
     generated_prescription: Optional[str] = None
@@ -34,6 +35,7 @@ class Patient(PatientBase):
 
 class PatientList(BaseModel):
     id: int
+    patient_id: int  # 用户特定的患者ID
     diagnosis: Optional[str] = None
     disease_stage: Optional[str] = None
 
