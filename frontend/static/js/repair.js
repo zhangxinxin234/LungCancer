@@ -66,26 +66,14 @@ function updateDoctorComment(event) {
     }
 }
 
-// 处理401未授权错误
-function handle401Error() {
-    console.log('认证失败，重定向到登录页面');
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = '/login';
-}
-
 // 获取患者列表
 async function getPatients() {
     if (!checkAuth()) return;
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/`, {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             throw new Error('获取患者列表失败');
@@ -130,14 +118,9 @@ function displayPatients(patients) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             headers: getAuthHeaders()
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             throw new Error('获取患者信息失败');
@@ -193,15 +176,10 @@ function updateNavigationLinks(patientId) {
 async function loadPatientPrescription(patientId) {
     try {
         console.log('Loading prescription for patient:', patientId);
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -284,17 +262,12 @@ async function repairPrescription() {
     try {
         showLoading(); // 显示加载动画
 
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/repair-prescription`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/repair-prescription`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include',
             body: JSON.stringify({ rule_content: rules })
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -325,7 +298,7 @@ async function adoptRepair() {
         const repairedPrescription = document.getElementById('repairedPrescription').value;
         const repairedMedicine = document.getElementById('repairedMedicine').value;
 
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/adopt-repair`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/adopt-repair`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include',
@@ -334,11 +307,6 @@ async function adoptRepair() {
                 medicine: repairedMedicine
             })
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -357,15 +325,10 @@ async function adoptRepair() {
 // 加载最新的修复规则
 async function loadLatestRepairRule() {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/latest-repair-rule`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/latest-repair-rule`, {
             headers: getAuthHeaders(),
             credentials: 'include'
         });
-
-        if (response.status === 401) {
-            handle401Error();
-            return;
-        }
 
         if (!response.ok) {
             throw new Error('加载修复规则失败');
@@ -434,7 +397,7 @@ async function saveRepairRule() {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-repair-rule`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/save-repair-rule`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include',
@@ -484,7 +447,7 @@ async function deletePatient(patientId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
@@ -578,7 +541,7 @@ async function saveDoctorComment() {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/save-doctor-comment`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/save-doctor-comment`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include',

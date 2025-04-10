@@ -1,0 +1,47 @@
+# 版本控制
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+ENV/
+
+# IDE相关
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 日志
+*.log
+
+# 本地配置
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 系统文件
+.DS_Store
+Thumbs.db

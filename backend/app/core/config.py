@@ -33,7 +33,8 @@ class Settings(BaseSettings):
     DB_NAME: str = "bge_2025_04_02_csco指南"
 
     # LLM 服务配置
-    LLM_HOST: str = "127.0.0.1"
+    # LLM_HOST: str = "127.0.0.1"
+    LLM_HOST: str = "36.103.234.9"
     LLM_PORT: int = 7853
     LLM_NAME: str = "qwen-14b"
     LLM_ADAPTER: str = "Qwen2.5-14B_cotrc_no1_r8a16"

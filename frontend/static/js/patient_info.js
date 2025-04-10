@@ -102,7 +102,7 @@ async function getPatients() {
     if (!checkAuth()) return;
     try {
         console.log('开始获取患者列表...');
-        const response = await fetch(`${API_BASE_URL}/patients/`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/`, {
             headers: getAuthHeaders()
         });
 
@@ -229,7 +229,7 @@ async function deletePatient(patientId) {
         // 显示加载动画
         showLoading();
 
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE',
             headers: getAuthHeaders(),
             credentials: 'include'  // 确保包含凭据
@@ -246,7 +246,7 @@ async function deletePatient(patientId) {
         console.log('患者删除成功，正在获取最新患者列表...');
 
         // 获取最新的患者列表
-        const patientsResponse = await fetch(`${API_BASE_URL}/patients/`, {
+        const patientsResponse = await fetchWithAuth(`${API_BASE_URL}/patients/`, {
             headers: getAuthHeaders(),
             credentials: 'include'  // 确保包含凭据
         });
@@ -339,7 +339,7 @@ async function loadPatientInfo(patientId) {
         const url = `${API_BASE_URL}/patients/${patientId}`;
         console.log(`请求URL: ${url}`);
 
-        const response = await fetch(url, {
+        const response = await fetchWithAuth(url, {
             headers: getAuthHeaders()
         });
         console.log(`响应状态: ${response.status}`);
@@ -529,7 +529,7 @@ async function savePatient() {
 
         console.log(`请求URL: ${url}, 方法: ${method}`);
 
-        const response = await fetch(url, {
+        const response = await fetchWithAuth(url, {
             method: method,
             headers: getAuthHeaders(),
             body: JSON.stringify(patientData)
@@ -663,7 +663,7 @@ async function generatePrescription() {
 
         console.log(`尝试为患者 ${currentPatientId} 生成处方`);
 
-        const response = await fetch(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${currentPatientId}/generate-prescription`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include'  // 确保包含凭据

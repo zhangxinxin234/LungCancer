@@ -1,3 +1,21 @@
+// 全局的fetch函数封装，统一处理401错误
+async function fetchWithAuth(url, options = {}) {
+    try {
+        const response = await fetch(url, options);
+        if (response.status === 401) {
+            handleUnauthorized();
+            throw new Error('Unauthorized');
+        }
+        return response;
+    } catch (error) {
+        if (error.message === 'Unauthorized') {
+            throw error;
+        }
+        console.error('Fetch error:', error);
+        throw error;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // 显示当前登录用户
     displayCurrentUser();
@@ -122,24 +140,6 @@ function handleUnauthorized() {
     // 如果不在登录页面，则重定向到登录页面
     if (window.location.pathname !== '/login') {
         window.location.href = '/login';
-    }
-}
-
-// 封装fetch请求，添加401处理
-async function fetchWithAuth(url, options = {}) {
-    try {
-        const response = await fetch(url, options);
-        if (response.status === 401) {
-            handleUnauthorized();
-            throw new Error('Unauthorized');
-        }
-        return response;
-    } catch (error) {
-        if (error.message === 'Unauthorized') {
-            throw error;
-        }
-        console.error('Fetch error:', error);
-        throw error;
     }
 }
 

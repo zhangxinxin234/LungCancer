@@ -74,7 +74,7 @@ function updateNavigationLinks(patientId) {
 async function loadExistingPrescription(patientId) {
     if (!checkAuth()) return;
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}/prescription`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) {
@@ -102,7 +102,7 @@ async function loadExistingPrescription(patientId) {
 async function getPatients() {
     if (!checkAuth()) return;
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) {
@@ -155,7 +155,7 @@ async function deletePatient(patientId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
@@ -183,7 +183,7 @@ async function generatePrescription() {
     try {
         showLoading(); // 显示加载动画
 
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/generate-prescription`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}/generate-prescription`, {
             method: 'POST',
             headers: getAuthHeaders(),
             credentials: 'include'
@@ -293,7 +293,7 @@ async function savePrescription() {
             medicine: document.getElementById('medicine').value
         };
 
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}/prescription`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}/prescription`, {
             method: 'PUT',
             headers: getAuthHeaders(),
             credentials: 'include',
@@ -355,7 +355,7 @@ async function loadPatientPrescription(patientId) {
 // 加载患者信息
 async function loadPatientInfo(patientId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/patients/${patientId}`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) {
