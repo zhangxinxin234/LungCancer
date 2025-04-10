@@ -225,31 +225,24 @@ function login(username, password) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                console.log('登录失败，检查用户是否存在...');
-                // 检查用户是否存在
-                return fetch(`/api/v1/auth/check-user/${encodeURIComponent(username)}`)
-                    .then(checkResponse => {
-                        console.log('用户检查响应状态:', checkResponse.status);
-                        return checkResponse.json().catch(() => ({ exists: false }));
-                    })
-                    .then(checkData => {
-                        console.log('用户检查结果:', checkData);
-                        if (!checkData.exists) {
-                            console.log('用户名不存在');
-                            setFieldError('username', '用户名不存在，请先注册');
-                        } else {
-                            console.log('密码错误');
-                            setFieldError('password', '密码错误，请重试');
-                        }
-                        throw new Error('认证失败');
-                    })
-                    .catch(error => {
-                        console.error('检查用户存在性失败:', error);
-                        // 如果检查用户API失败，显示一般错误
-                        setFieldError('username');
-                        setFieldError('password', '用户名或密码错误');
-                        throw new Error('认证失败');
-                    });
+                console.log('登录失败');
+                // 统一显示"用户名或密码错误"的提示
+                const errorElement = document.getElementById('errorMessage');
+                if (errorElement) {
+                    errorElement.className = 'alert alert-danger';
+                    errorElement.innerHTML = `
+                        <i class='bx bx-error-circle' style='margin-right: 8px;'></i>
+                        <span>用户名或密码错误</span>
+                    `;
+                    errorElement.style.display = 'flex';
+                    errorElement.style.alignItems = 'center';
+                }
+
+                // 将输入框标记为错误状态
+                setFieldError('username');
+                setFieldError('password');
+
+                throw new Error('认证失败');
             } else {
                 setFieldError('password', '登录失败，请重试');
                 throw new Error(data.detail || '登录失败');
@@ -270,8 +263,21 @@ function login(username, password) {
     .catch(error => {
         console.error('登录错误:', error);
         if (!error.message.includes('认证失败')) {
-            setFieldError('username', '登录失败');
-            setFieldError('password', '请检查用户名和密码');
+            // 显示通用错误消息
+            const errorElement = document.getElementById('errorMessage');
+            if (errorElement) {
+                errorElement.className = 'alert alert-danger';
+                errorElement.innerHTML = `
+                    <i class='bx bx-error-circle' style='margin-right: 8px;'></i>
+                    <span>登录失败，请稍后重试</span>
+                `;
+                errorElement.style.display = 'flex';
+                errorElement.style.alignItems = 'center';
+            }
+
+            // 将输入框标记为错误状态
+            setFieldError('username');
+            setFieldError('password');
         }
     })
     .finally(() => {
@@ -390,11 +396,25 @@ function register(username, password) {
                     data.detail.forEach(err => {
                         if (err.loc && err.loc[1] === 'username') {
                             const field = document.getElementById('regUsername');
-                            if (field) field.classList.add('is-invalid');
+                            if (field) {
+                                field.classList.add('is-invalid');
+                                // 移除已存在的错误提示
+                                const existingFeedback = field.parentElement.querySelector('.invalid-feedback');
+                                if (existingFeedback) {
+                                    existingFeedback.remove();
+                                }
+                            }
                             errorMessages.push(`用户名: ${err.msg}`);
                         } else if (err.loc && err.loc[1] === 'password') {
                             const field = document.getElementById('regPassword');
-                            if (field) field.classList.add('is-invalid');
+                            if (field) {
+                                field.classList.add('is-invalid');
+                                // 移除已存在的错误提示
+                                const existingFeedback = field.parentElement.querySelector('.invalid-feedback');
+                                if (existingFeedback) {
+                                    existingFeedback.remove();
+                                }
+                            }
                             errorMessages.push(`密码: ${err.msg}`);
                         }
                     });
@@ -420,11 +440,18 @@ function register(username, password) {
                     errorElement.style.display = 'flex';
                     errorElement.style.alignItems = 'center';
                 }
-                // 标记输入框为错误状态
+                // 标记输入框为错误状态，但不添加具体的错误消息
                 const fields = ['regUsername', 'regPassword'];
                 fields.forEach(fieldId => {
                     const field = document.getElementById(fieldId);
-                    if (field) field.classList.add('is-invalid');
+                    if (field) {
+                        field.classList.add('is-invalid');
+                        // 移除已存在的错误提示
+                        const existingFeedback = field.parentElement.querySelector('.invalid-feedback');
+                        if (existingFeedback) {
+                            existingFeedback.remove();
+                        }
+                    }
                 });
             }
             throw new Error(data.detail || '注册失败');
@@ -440,8 +467,9 @@ function register(username, password) {
     .catch(error => {
         console.error('Error:', error);
         if (!error.message.includes('注册失败')) {
-            setFieldError('regUsername', '注册失败');
-            setFieldError('regPassword', '请稍后重试');
+            // 只将输入框标记为错误状态，不显示具体错误消息
+            setFieldError('regUsername');
+            setFieldError('regPassword');
         }
     })
     .finally(() => {
