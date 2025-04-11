@@ -504,47 +504,84 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
             }
 
             .card {
-                margin-bottom: 1rem;
-                height: auto !important; /* 移动设备上重置高度 */
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .col-md-4, .col-md-8 {
+                padding-right: 0;
+                padding-left: 0;
             }
 
             .comparison-section {
                 grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
 
-            .col-md-4 .card-body, .col-md-8 .card-body {
-                max-height: none; /* 移动设备上不限制高度 */
-                overflow-y: visible; /* 移动设备上不使用滚动条 */
+            .comparison-box {
+                border-radius: 0;
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-body {
+                padding: 0.5rem;
+            }
+
+            .comparison-content {
+                min-height: 120px;
+                height: auto;
+            }
+
+            .doctor-comment-section {
+                padding: 10px;
+                margin-top: 10px;
+            }
+
+            #doctorComment {
+                min-height: 80px;
+            }
+
+            .doctor-comment-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                width: 100%;
             }
         }
 
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
+        @media (min-width: 768px) and (max-width: 1200px) {
+            .container {
+                width: 98% !important;
+                margin: 1rem auto !important;
+                padding: 0 !important;
+            }
+
+            .comparison-section {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
         }
 
-        .loading-spinner.active {
-            display: flex;
-        }
+        @media (min-width: 1200px) {
+            .container {
+                width: 80% !important;
+                margin: 1rem auto !important;
+            }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
-            border-radius: 50%;
+            .comparison-section {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+        }
             animation: spin 1s linear infinite;
         }
 

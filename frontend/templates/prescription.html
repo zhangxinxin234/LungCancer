@@ -216,24 +216,37 @@
             padding: 1.5rem;
         }
 
-        .prescription-section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border-color);
+        @media (max-width: 768px) {
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
+
+            .card {
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .col-md-4, .col-md-8 {
+                padding-right: 0;
+                padding-left: 0;
+            }
         }
 
-        .prescription-title {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.4rem;
-            border-bottom: 2px solid var(--accent-color);
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        @media (min-width: 768px) and (max-width: 1200px) {
+            .container {
+                width: 98% !important;
+                margin: 1rem auto !important;
+                padding: 0 !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                width: 80% !important;
+                margin: 1rem auto !important;
+            }
         }
 
         .prescription-title i {
@@ -446,21 +459,55 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
+                padding: 0 !important;  /* 移除左右边距 */
+                width: 100% !important; /* 使用全宽 */
             }
 
             .card {
-                margin-bottom: 1rem;
-                height: auto !important; /* 移动设备上重置高度 */
+                margin-bottom: 0 !important;  /* 移除底部边距 */
+                border-radius: 0 !important;  /* 移除圆角 */
+                border-left: none !important;
+                border-right: none !important;
             }
 
             .prescription-section {
-                padding: 1rem;
+                padding: 0.5rem !important;  /* 减小内部边距 */
+                margin-bottom: 0.5rem !important;
             }
 
             .col-md-4 .card-body, .col-md-8 .card-body {
                 max-height: none; /* 移动设备上不限制高度 */
                 overflow-y: visible; /* 移动设备上不使用滚动条 */
+                padding: 0.5rem !important; /* 减小内边距 */
+            }
+
+            /* 针对移动设备的额外调整 */
+            .row {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+
+            .col-md-4, .col-md-8 {
+                padding-right: 0 !important;
+                padding-left: 0 !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .container {
+                width: 80%;  /* 恢复到原有的宽度 */
+                max-width: 1600px !important;
+                margin: 1.5rem auto;  /* 恢复原有的居中和边距 */
+            }
+
+            .card {
+                margin-bottom: 1rem;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+
+            .prescription-section {
+                padding: 1rem;
             }
         }
 

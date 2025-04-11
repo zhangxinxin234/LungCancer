@@ -239,26 +239,37 @@
         .card-body {
             padding: 1.5rem;
         }
+        @media (max-width: 768px) {
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
 
-        .form-control {
-            width: 100%;
-            max-width: 100%;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
+            .card {
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .col-md-4, .col-md-8 {
+                padding-right: 0;
+                padding-left: 0;
+            }
         }
 
-        .form-control:hover {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.1);
+        @media (min-width: 768px) and (max-width: 1200px) {
+            .container {
+                width: 98% !important;
+                margin: 1rem auto !important;
+                padding: 0 !important;
+            }
         }
 
-        .form-control:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
-            outline: none;
+        @media (min-width: 1200px) {
+            .container {
+                width: 80% !important;
+                margin: 1rem auto !important;
+            }
         }
 
         textarea.form-control {
@@ -536,12 +547,24 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
+                padding: 0 !important;  /* 移除左右边距 */
+                width: 100% !important; /* 使用全宽 */
             }
 
             .card {
-                margin-bottom: 1rem;
-                height: auto !important; /* 移动设备上重置高度 */
+                margin-bottom: 0 !important;  /* 移除底部边距 */
+                border-radius: 0 !important;  /* 移除圆角 */
+                border-left: none !important;
+                border-right: none !important;
+            }
+
+            .col-md-4, .col-md-8 {
+                padding-right: 0 !important;
+                padding-left: 0 !important;
+            }
+
+            .card-body {
+                padding: 0.5rem !important;
             }
 
             .col-md-9 .card-body {
@@ -550,9 +573,35 @@
             }
 
             .patient-list {
-                max-height: 400px; /* 移动设备上固定高度 */
-                margin-bottom: 20px; /* 移动设备上增加底部边距 */
-                padding-bottom: 20px; /* 移动设备上增加内部底部边距 */
+                max-height: none; /* 移动设备上不限制高度 */
+                margin-bottom: 0; /* 移除底部边距 */
+                padding-bottom: 10px; /* 减小内部底部边距 */
+            }
+
+            .btn-new-patient {
+                border-radius: 0 !important; /* 移除按钮圆角 */
+            }
+
+            .form-group {
+                margin-bottom: 0.8rem !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .container {
+                width: 80%;  /* 恢复到原有的宽度 */
+                max-width: 1600px !important;
+                margin: 1.5rem auto;  /* 恢复原有的居中和边距 */
+            }
+
+            .card {
+                margin-bottom: 1rem;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+
+            .card-body {
+                padding: 1.5rem;
             }
         }
 
