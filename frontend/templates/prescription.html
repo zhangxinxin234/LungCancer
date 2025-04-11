@@ -551,6 +551,22 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             background: white;
+            display: block;
+            overflow-x: auto;  /* 允许水平滚动 */
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                font-size: 0.8rem;  /* 在小屏幕上缩小字体 */
+                white-space: normal;  /* 允许内容换行 */
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 8px !important;  /* 减小内边距 */
+                word-wrap: break-word;  /* 长单词强制换行 */
+                max-width: 150px;  /* 限制单元格最大宽度 */
+            }
         }
 
         .markdown-content th,
